@@ -35,8 +35,6 @@
         android:layout_marginTop="20dp"
         android:hint="OTP"
         android:inputType="number"
-        android:focusable="false"
-        android:clickable="false"
         android:cursorVisible="false"
         android:longClickable="false"/>
 
