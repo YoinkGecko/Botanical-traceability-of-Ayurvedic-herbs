@@ -50,7 +50,7 @@ public class loginscreen extends AppCompatActivity {
                 otp.setText("");
                 i++;
 
-                Intent intent = new Intent(this, datacollectionpage.class);
+                Intent intent = new Intent(this, homepage.class);
                 startActivity(intent);
 
             } else {

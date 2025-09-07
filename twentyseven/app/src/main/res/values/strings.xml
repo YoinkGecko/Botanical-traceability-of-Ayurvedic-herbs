@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">twentyseven</string>
+    <string-array name="harvest_methods">
+        <item>manual</item>
+        <item>mechanical</item>
+        <item>wild</item>
+    </string-array>
 </resources>

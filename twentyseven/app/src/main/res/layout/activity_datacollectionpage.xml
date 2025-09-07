@@ -1,10 +1,114 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".datacollectionpage">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <LinearLayout
+        android:id="@+id/main"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <!-- Heading -->
+        <TextView
+            android:id="@+id/Datacollectionheading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Data Collection"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:paddingBottom="16dp" />
+
+        <!-- Collector ID (autofill, disabled) -->
+        <EditText
+            android:id="@+id/collectorId"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Collector ID (autofill)"
+            android:enabled="false" />
+
+        <!-- Collector Name (autofill, maybe hidden later) -->
+        <EditText
+            android:id="@+id/collectorName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Collector Name (autofill)"
+            android:enabled="false" />
+
+        <!-- Collection ID (UUID, generated) -->
+        <EditText
+            android:id="@+id/collectionId"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Collection ID (UUID)"
+            android:enabled="false" />
+
+        <!-- Species Common Name -->
+        <EditText
+            android:id="@+id/speciesCommon"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Species (Common Name)" />
+
+        <!-- Species Code (autofill from species) -->
+        <EditText
+            android:id="@+id/speciesCode"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Species Code (auto)"
+            android:enabled="false" />
+
+        <!-- Quantity -->
+        <EditText
+            android:id="@+id/quantityKg"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="numberDecimal"
+            android:hint="Quantity (Kg)" />
+
+        <!-- Location -->
+        <EditText
+            android:id="@+id/location"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Location (auto GPS)"
+            android:enabled="false" />
+
+        <!-- Accuracy (meters, optional) -->
+        <EditText
+            android:id="@+id/accuracyMeters"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Accuracy (meters)"
+            android:enabled="false" />
+
+        <!-- Timestamp -->
+        <EditText
+            android:id="@+id/timestampUTC"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Timestamp (auto)"
+            android:enabled="false" />
+
+        <!-- Harvest Method -->
+        <Spinner
+            android:id="@+id/harvestMethod"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:entries="@array/harvest_methods" />
+
+        <!-- Submit Button -->
+        <Button
+            android:id="@+id/submitBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Submit Data"
+            android:layout_marginTop="20dp"/>
+
+    </LinearLayout>
+</ScrollView>
