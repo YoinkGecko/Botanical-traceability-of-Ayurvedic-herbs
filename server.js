@@ -25,7 +25,7 @@ db.connect((err) => {
 });
 
 // Example Route
-app.get("/", (req, res) => {
+app.get("/test", (req, res) => {
   res.send("Hello from Express + MySQL!");
 });
 
