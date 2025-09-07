@@ -19,6 +19,7 @@ import androidx.core.view.WindowInsetsCompat;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -133,6 +134,7 @@ public class datacollectionpage extends AppCompatActivity {
 
         if (requestCode == 1) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(this,"Go Outdoor",Toast.LENGTH_SHORT).show();
                 progressDialog.show(); // ✅ Show loader after granting permission
                 startLocationUpdates();
             } else {

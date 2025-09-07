@@ -1,0 +1,26 @@
+{
+  "name": "sih27",
+  "version": "1.0.0",
+  "description": "Botanical traceability of Ayurvedic herbs",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kartikeya-kash/Botanical-traceability-of-Ayurvedic-herbs.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kartikeya-kash/Botanical-traceability-of-Ayurvedic-herbs/issues"
+  },
+  "homepage": "https://github.com/kartikeya-kash/Botanical-traceability-of-Ayurvedic-herbs#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "mysql2": "^3.14.4"
+  }
+}
