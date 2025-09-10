@@ -50,15 +50,17 @@ async function runTests() {
   //await addBlock({ farmer: "Ram", product: "Aloe Vera" });
   //await addBlock({ farmer: "Shyam", product: "Tulsi" });
 
-  //await getBlock(1); // Genesis block
-  //await getBlock(2); // First added block
+  //await getBlock(10); 
+  //await getBlock(2); 
 
   //await getChain();
-await addBlock({ farmer: "kashhacker", product: "hacker Vera" });
+for (let i = 1; i <= 5; i++) {
+  //  await addBlock({ farmer: `Farmer${i*10}`, product: `Product${i*10}` });
+    await addBlock({  qrid:`qr${i}` , farmer: `Farmer${i}`, product: `Product${i}` });
+}
 
   await verifyChain();
 
-  console.log("\n✅ All tests finished!\n");
 }
 
 runTests();

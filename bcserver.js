@@ -4,8 +4,11 @@ const fs = require("fs");
 const path = require("path");
 const crypto = require("crypto");
 
+
+const cors = require("cors");
 const app = express();
-app.use(express.json());
+
+app.use(cors()); // <-- allow all origins
 
 // Path to store blockchain file in same folder
 const chainFile = path.join(__dirname, "chain.json");
