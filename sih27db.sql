@@ -1,3 +1,86 @@
+Create Database sih27;
+use sih27;
+
+
+-- ================================
+-- Admin Registration Table
+-- ================================
+CREATE TABLE admins (
+    AdminID BIGINT AUTO_INCREMENT PRIMARY KEY,
+    AdminName VARCHAR(100) NOT NULL,
+    AdminPhone VARCHAR(15) UNIQUE NOT NULL,
+    APass VARCHAR(255) NOT NULL,
+    ARole ENUM('SuperAdmin','DistrictAdmin') NOT NULL,
+    District VARCHAR(100) NOT NULL
+);
+
+
+-- ================================
+-- Admin Functions (Audit Log)
+-- ================================
+CREATE TABLE admin_functions (
+    ActionID BIGINT AUTO_INCREMENT PRIMARY KEY,
+    AdminID BIGINT NOT NULL,                -- Who performed the action
+    Action ENUM('PENDING','APPROVED','REJECTED','ADDED_TO_BC') DEFAULT 'PENDING',
+    TargetType ENUM('Farmer','Processor','LabTester','Manufacturer') NOT NULL,
+    TargetID BIGINT NOT NULL,               -- ID of the farmer/processor/labtester/manufacturer
+    Timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    
+    FOREIGN KEY (AdminID) REFERENCES admins(AdminID)
+);
+
+
+-- ================================
+-- Farmer Registration Table
+-- ================================
+CREATE TABLE farmers (
+    FarmerID BIGINT AUTO_INCREMENT PRIMARY KEY,
+    FarmerName VARCHAR(100) NOT NULL,
+    FarmerPhone VARCHAR(15) UNIQUE NOT NULL,
+    District VARCHAR(100) NOT NULL,
+    Password VARCHAR(255) -- optional, if login required
+);
+
+-- ================================
+-- Processor Registration Table
+-- ================================
+CREATE TABLE processors (
+    ProcessorID BIGINT AUTO_INCREMENT PRIMARY KEY,
+    ProcessorName VARCHAR(100) NOT NULL,
+    ProcessorPhone VARCHAR(15) UNIQUE NOT NULL,
+    LicenseNo VARCHAR(50),
+    District VARCHAR(100) NOT NULL,
+    Password VARCHAR(255)
+);
+
+-- ================================
+-- Lab Tester Registration Table
+-- ================================
+CREATE TABLE labtesters (
+    LabTesterID BIGINT AUTO_INCREMENT PRIMARY KEY,
+    LabTesterName VARCHAR(100) NOT NULL,
+    LabTesterPhone VARCHAR(15) UNIQUE NOT NULL,
+    AccreditationNo VARCHAR(50),
+    District VARCHAR(100) NOT NULL,
+    Password VARCHAR(255)
+);
+
+-- ================================
+-- Manufacturer Registration Table
+-- ================================
+CREATE TABLE manufacturers (
+    ManufacturerID BIGINT AUTO_INCREMENT PRIMARY KEY,
+    ManufacturerName VARCHAR(100) NOT NULL,
+    ManufacturerPhone VARCHAR(15) UNIQUE NOT NULL,
+    LicenseNo VARCHAR(50),
+    District VARCHAR(100) NOT NULL,
+    Password VARCHAR(255)
+);
+
+-- ================================
+-- Data Collection Tables
+-- ================================
+
 -- ================================
 -- Farmer Data Collection
 -- ================================
@@ -11,7 +94,9 @@ CREATE TABLE farmer_data_collection (
     LocationAccuracy DECIMAL(5,2),
     Timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     District VARCHAR(100),
-    Photos TEXT
+    Photos TEXT,
+    Status ENUM('PENDING','APPROVED','REJECTED') DEFAULT 'PENDING',
+	ApprovedBy VARCHAR(50) -- AdminID who approved
 );
 
 -- ================================
@@ -31,6 +116,8 @@ CREATE TABLE processor_data_collection (
     District VARCHAR(100),
     Timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     Photos TEXT,
+    Status ENUM('PENDING','APPROVED','REJECTED') DEFAULT 'PENDING',
+    ApprovedBy VARCHAR(50), -- AdminID who approved
     FOREIGN KEY (LinkedFarmerBatchID) REFERENCES farmer_data_collection(FbatchID)
 );
 
@@ -52,6 +139,8 @@ CREATE TABLE labtester_data_collection (
     District VARCHAR(100),
     Timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     Photos TEXT,
+    Status ENUM('PENDING','APPROVED','REJECTED') DEFAULT 'PENDING',
+    ApprovedBy VARCHAR(50), -- AdminID who approved
     FOREIGN KEY (LinkedBatchID) REFERENCES processor_data_collection(PbatchID)
 );
 
@@ -70,6 +159,8 @@ CREATE TABLE manufacturer_data_collection (
     QRCodeID VARCHAR(100) UNIQUE,
     Location VARCHAR(100),
     District VARCHAR(100),
+    Timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     Photos TEXT,
-    Timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    Status ENUM('PENDING','APPROVED','REJECTED') DEFAULT 'PENDING',
+    ApprovedBy VARCHAR(50) -- AdminID who approved
 );
