@@ -126,6 +126,12 @@ app.get("/verify", (req, res) => {
   res.json({ valid: isValid });
 });
 
+// 5. Get total number of blocks
+app.get("/count", (req, res) => {
+  const chain = loadChain();
+  res.json({ totalBlocks: chain.length });
+});
+
 // ----------------- Server Start -----------------
 
 const PORT = 3000;

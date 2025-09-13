@@ -16,23 +16,30 @@ import {
 const Dashboard = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
-  const [counts, setCounts] = useState({ active: 0, suspended: 0 });
+  const [counts, setCounts] = useState({ active: 0, suspended: 0, blocks: 0 });
 
   const getCount = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/admins/count");
-      if (!res.ok) throw new Error("Failed to fetch counts");
-      const data = await res.json();
+      // 1. Fetch admin counts
+      const res1 = await fetch("http://localhost:5001/api/admins/count");
+      if (!res1.ok) throw new Error("Failed to fetch admin counts");
+      const data1 = await res1.json();
 
+      // 2. Fetch blockchain block count
+      const res2 = await fetch("http://localhost:3000/count");
+      if (!res2.ok) throw new Error("Failed to fetch blockchain count");
+      const data2 = await res2.json();
+
+      // 3. Update state
       setCounts({
-        active: data.active || 0,
-        suspended: data.suspended || 0,
+        active: data1.active || 0,
+        suspended: data1.suspended || 0,
+        blocks: data2.totalBlocks || 0,
       });
     } catch (err) {
       console.error("Error fetching counts:", err);
     }
   };
-
   useEffect(() => {
     const adminData = localStorage.getItem("ayushAdmin");
 
@@ -98,7 +105,7 @@ const Dashboard = () => {
     },
     {
       label: "Total Blocks",
-      value: "1,456",
+      value: counts.blocks, // Dynamic value from state
       icon: BlocksIcon,
       color: "text-blue-600",
     },
