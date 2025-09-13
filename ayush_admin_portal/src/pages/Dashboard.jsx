@@ -11,11 +11,14 @@ import {
   UserX,
   Activity,
   BlocksIcon,
+  RefreshCw,
 } from "lucide-react";
 
 const Dashboard = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
+  const [refreshCountdown, setRefreshCountdown] = useState(30);
+
   const [counts, setCounts] = useState({ active: 0, suspended: 0, blocks: 0 });
 
   const getCount = async () => {
@@ -51,11 +54,21 @@ const Dashboard = () => {
     setUser(JSON.parse(adminData));
     getCount(); // initial fetch
 
-    // ✅ Fetch counts repeatedly every 5s
-    const interval = setInterval(getCount, 30000);
+    // Auto-refresh counts every 30s
+    const interval = setInterval(() => {
+      getCount();
+      setRefreshCountdown(30); // reset countdown
+    }, 30000);
 
-    // Cleanup interval on unmount
-    return () => clearInterval(interval);
+    // Countdown timer every second
+    const countdownInterval = setInterval(() => {
+      setRefreshCountdown((prev) => (prev > 0 ? prev - 1 : 0));
+    }, 1000);
+
+    return () => {
+      clearInterval(interval);
+      clearInterval(countdownInterval);
+    };
   }, [navigate]);
 
   const handleLogout = () => {
@@ -169,9 +182,15 @@ const Dashboard = () => {
           transition={{ duration: 0.6 }}
           className="mb-8"
         >
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">
-            Welcome back, {user?.role}
-          </h2>
+          <div className="flex justify-between items-center mb-2">
+            <h2 className="text-2xl font-bold text-gray-900">
+              Welcome back, {user?.role}
+            </h2>
+            <div className="flex items-center space-x-2 text-sm text-gray-500">
+              <RefreshCw className="w-4 h-4 animate-spin" />
+              <span>{refreshCountdown}s</span>
+            </div>
+          </div>
           <p className="text-gray-600">
             Manage your administrative tasks and monitor system activities
           </p>
