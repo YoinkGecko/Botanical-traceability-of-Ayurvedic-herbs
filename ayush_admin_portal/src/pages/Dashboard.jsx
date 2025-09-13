@@ -45,10 +45,17 @@ const Dashboard = () => {
 
     if (!adminData) {
       navigate("/login");
-    } else {
-      setUser(JSON.parse(adminData));
-      getCount(); // 👈 fetch counts when page loads
+      return;
     }
+
+    setUser(JSON.parse(adminData));
+    getCount(); // initial fetch
+
+    // ✅ Fetch counts repeatedly every 5s
+    const interval = setInterval(getCount, 30000);
+
+    // Cleanup interval on unmount
+    return () => clearInterval(interval);
   }, [navigate]);
 
   const handleLogout = () => {
