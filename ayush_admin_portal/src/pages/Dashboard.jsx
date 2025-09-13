@@ -25,7 +25,7 @@ const Dashboard = () => {
       if (!res1.ok) throw new Error("Failed to fetch admin counts");
       const data1 = await res1.json();
 
-      // 2. Fetch blockchain block count
+      // 2. Fetch blockchain block count from BlockChian server
       const res2 = await fetch("http://localhost:3000/count");
       if (!res2.ok) throw new Error("Failed to fetch blockchain count");
       const data2 = await res2.json();
