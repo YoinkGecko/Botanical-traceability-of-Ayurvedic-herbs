@@ -180,8 +180,8 @@ const AdminManagement = () => {
                 <Filter size={16} className="text-gray-400" />
                 <select
                   value={filterStatus}
-                  onChange={(e) => setFilterStatus(e?.target?.value)}
-                  className="border border-gray-300 rounded-lg px-5 py-2 focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                  onChange={(e) => setFilterStatus(e.target.value)}
+                  className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-white text-gray-700"
                 >
                   <option value="all">All Status</option>
                   <option value="active">Active</option>
