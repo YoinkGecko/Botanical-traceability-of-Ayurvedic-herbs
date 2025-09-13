@@ -1,85 +1,114 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { ArrowLeft, Search, Plus, UserCheck, UserX, Trash2, Users, Filter } from 'lucide-react';
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
+import {
+  ArrowLeft,
+  Search,
+  Plus,
+  UserCheck,
+  UserX,
+  Trash2,
+  Users,
+  Filter,
+} from "lucide-react";
 
 const AdminManagement = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [admins, setAdmins] = useState([]);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filterStatus, setFilterStatus] = useState('all');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterStatus, setFilterStatus] = useState("all");
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [counts, setCounts] = useState({ active: 0, suspended: 0, blocks: 0 });
+
+  const getcount = async () => {
+    try {
+      const res1 = await fetch("http://localhost:5001/api/admins/count");
+      if (!res1.ok) throw new Error("Failed to fetch admin counts");
+      const data1 = await res1.json();
+
+      // 3. Update state
+      setCounts({
+        active: data1.active || 0,
+        suspended: data1.suspended || 0,
+      });
+    } catch (err) {
+      console.error("Error fetching counts:", err);
+    }
+  };
 
   useEffect(() => {
-    const adminData = localStorage.getItem('ayushAdmin');
+    const adminData = localStorage.getItem("ayushAdmin");
     if (!adminData) {
-      navigate('/login');
+      navigate("/login");
     } else {
-      setUser(JSON.parse(adminData));
-      // Mock data for admins
+      setUser(adminData);
+      getcount();
+      getadmindetails();
       setAdmins([
         {
           id: 1,
-          name: 'Rajesh Kumar',
-          email: 'rajesh.kumar@delhi.ayush.gov.in',
-          district: 'Delhi',
-          status: 'active',
-          role: 'District Admin',
-          lastLogin: '2 hours ago'
+          name: "Rajesh Kumar",
+          email: "rajesh.kumar@delhi.ayush.gov.in",
+          district: "Delhi",
+          status: "active",
+          role: "District Admin",
+          lastLogin: "2 hours ago",
         },
         {
           id: 2,
-          name: 'Priya Sharma',
-          email: 'priya.sharma@mumbai.ayush.gov.in',
-          district: 'Mumbai',
-          status: 'active',
-          role: 'District Admin',
-          lastLogin: '1 day ago'
+          name: "Priya Sharma",
+          email: "priya.sharma@mumbai.ayush.gov.in",
+          district: "Mumbai",
+          status: "active",
+          role: "District Admin",
+          lastLogin: "1 day ago",
         },
         {
           id: 3,
-          name: 'Amit Singh',
-          email: 'amit.singh@bangalore.ayush.gov.in',
-          district: 'Bangalore',
-          status: 'suspended',
-          role: 'District Admin',
-          lastLogin: '1 week ago'
+          name: "Amit Singh",
+          email: "amit.singh@bangalore.ayush.gov.in",
+          district: "Bangalore",
+          status: "suspended",
+          role: "District Admin",
+          lastLogin: "1 week ago",
         },
         {
           id: 4,
-          name: 'Sunita Patel',
-          email: 'sunita.patel@chennai.ayush.gov.in',
-          district: 'Chennai',
-          status: 'active',
-          role: 'District Admin',
-          lastLogin: '3 hours ago'
-        }
+          name: "Sunita Patel",
+          email: "sunita.patel@chennai.ayush.gov.in",
+          district: "Chennai",
+          status: "active",
+          role: "District Admin",
+          lastLogin: "3 hours ago",
+        },
       ]);
     }
   }, [navigate]);
 
   const handleStatusChange = (adminId, newStatus) => {
-    setAdmins(prev => 
-      prev?.map(admin => 
+    setAdmins((prev) =>
+      prev?.map((admin) =>
         admin?.id === adminId ? { ...admin, status: newStatus } : admin
       )
     );
   };
 
   const handleDeleteAdmin = (adminId) => {
-    if (window.confirm('Are you sure you want to delete this admin?')) {
-      setAdmins(prev => prev?.filter(admin => admin?.id !== adminId));
+    if (window.confirm("Are you sure you want to delete this admin?")) {
+      setAdmins((prev) => prev?.filter((admin) => admin?.id !== adminId));
     }
   };
 
-  const filteredAdmins = admins?.filter(admin => {
-    const matchesSearch = admin?.name?.toLowerCase()?.includes(searchTerm?.toLowerCase()) ||
-                         admin?.email?.toLowerCase()?.includes(searchTerm?.toLowerCase()) ||
-                         admin?.district?.toLowerCase()?.includes(searchTerm?.toLowerCase());
-    
-    const matchesFilter = filterStatus === 'all' || admin?.status === filterStatus;
-    
+  const filteredAdmins = admins?.filter((admin) => {
+    const matchesSearch =
+      admin?.name?.toLowerCase()?.includes(searchTerm?.toLowerCase()) ||
+      admin?.email?.toLowerCase()?.includes(searchTerm?.toLowerCase()) ||
+      admin?.district?.toLowerCase()?.includes(searchTerm?.toLowerCase());
+
+    const matchesFilter =
+      filterStatus === "all" || admin?.status === filterStatus;
+
     return matchesSearch && matchesFilter;
   });
 
@@ -93,14 +122,16 @@ const AdminManagement = () => {
           <div className="flex items-center justify-between py-4">
             <div className="flex items-center">
               <button
-                onClick={() => navigate('/dashboard')}
+                onClick={() => navigate("/dashboard")}
                 className="p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100 mr-2"
               >
                 <ArrowLeft size={20} />
               </button>
               <div className="flex items-center">
                 <Users className="w-6 h-6 text-orange-500 mr-2" />
-                <h1 className="text-xl font-bold text-gray-900">Admin Management</h1>
+                <h1 className="text-xl font-bold text-gray-900">
+                  Admin Management
+                </h1>
               </div>
             </div>
           </div>
@@ -117,7 +148,10 @@ const AdminManagement = () => {
           <div className="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0">
             <div className="flex-1 max-w-md">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+                <Search
+                  className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                  size={20}
+                />
                 <input
                   type="text"
                   placeholder="Search admins..."
@@ -127,30 +161,28 @@ const AdminManagement = () => {
                 />
               </div>
             </div>
-            
+
             <div className="flex items-center space-x-4">
               <div className="flex items-center space-x-2">
                 <Filter size={16} className="text-gray-400" />
                 <select
                   value={filterStatus}
                   onChange={(e) => setFilterStatus(e?.target?.value)}
-                  className="border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                  className="border border-gray-300 rounded-lg px-5 py-2 focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                 >
                   <option value="all">All Status</option>
                   <option value="active">Active</option>
                   <option value="suspended">Suspended</option>
                 </select>
               </div>
-              
-              {user?.role === 'Super Admin' && (
-                <button
-                  onClick={() => setShowCreateModal(true)}
-                  className="bg-gradient-to-r from-orange-500 to-green-600 text-white px-4 py-2 rounded-lg font-medium hover:from-orange-600 hover:to-green-700 flex items-center space-x-2"
-                >
-                  <Plus size={20} />
-                  <span>Add Admin</span>
-                </button>
-              )}
+
+              <button
+                onClick={() => setShowCreateModal(true)}
+                className="bg-gradient-to-r from-orange-500 to-green-600 text-white px-4 py-2 rounded-lg font-medium hover:from-orange-600 hover:to-green-700 flex items-center space-x-2"
+              >
+                <Plus size={20} />
+                <span>Add Admin</span>
+              </button>
             </div>
           </div>
         </motion.div>
@@ -166,30 +198,32 @@ const AdminManagement = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600">Total Admins</p>
-                <p className="text-2xl font-bold text-gray-900">{admins?.length}</p>
+                <p className="text-2xl font-bold text-gray-900">
+                  {Number(counts.active) + Number(counts.suspended)}
+                </p>
               </div>
               <Users className="w-8 h-8 text-blue-600" />
             </div>
           </div>
-          
+
           <div className="bg-white rounded-xl shadow-sm p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600">Active Admins</p>
                 <p className="text-2xl font-bold text-green-600">
-                  {admins?.filter(admin => admin?.status === 'active')?.length}
+                  {counts.active}
                 </p>
               </div>
               <UserCheck className="w-8 h-8 text-green-600" />
             </div>
           </div>
-          
+
           <div className="bg-white rounded-xl shadow-sm p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600">Suspended</p>
                 <p className="text-2xl font-bold text-red-600">
-                  {admins?.filter(admin => admin?.status === 'suspended')?.length}
+                  {counts.suspended}
                 </p>
               </div>
               <UserX className="w-8 h-8 text-red-600" />
@@ -205,9 +239,11 @@ const AdminManagement = () => {
           className="bg-white rounded-xl shadow-sm overflow-hidden"
         >
           <div className="px-6 py-4 border-b border-gray-200">
-            <h3 className="text-lg font-semibold text-gray-900">District Administrators</h3>
+            <h3 className="text-lg font-semibold text-gray-900">
+              District Administrators
+            </h3>
           </div>
-          
+
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead className="bg-gray-50">
@@ -234,17 +270,27 @@ const AdminManagement = () => {
                   <tr key={admin?.id} className="hover:bg-gray-50">
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div>
-                        <div className="text-sm font-medium text-gray-900">{admin?.name}</div>
-                        <div className="text-sm text-gray-500">{admin?.email}</div>
+                        <div className="text-sm font-medium text-gray-900">
+                          {admin?.name}
+                        </div>
+                        <div className="text-sm text-gray-500">
+                          {admin?.email}
+                        </div>
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900">{admin?.district}</div>
+                      <div className="text-sm text-gray-900">
+                        {admin?.district}
+                      </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${
-                        admin?.status === 'active' ?'bg-green-100 text-green-800' :'bg-red-100 text-red-800'
-                      }`}>
+                      <span
+                        className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${
+                          admin?.status === "active"
+                            ? "bg-green-100 text-green-800"
+                            : "bg-red-100 text-red-800"
+                        }`}
+                      >
                         {admin?.status}
                       </span>
                     </td>
@@ -252,45 +298,49 @@ const AdminManagement = () => {
                       {admin?.lastLogin}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                      {user?.role === 'Super Admin' && (
-                        <div className="flex items-center space-x-2">
-                          {admin?.status === 'active' ? (
-                            <button
-                              onClick={() => handleStatusChange(admin?.id, 'suspended')}
-                              className="text-red-600 hover:text-red-900 p-1 rounded hover:bg-red-50"
-                              title="Suspend Admin"
-                            >
-                              <UserX size={16} />
-                            </button>
-                          ) : (
-                            <button
-                              onClick={() => handleStatusChange(admin?.id, 'active')}
-                              className="text-green-600 hover:text-green-900 p-1 rounded hover:bg-green-50"
-                              title="Activate Admin"
-                            >
-                              <UserCheck size={16} />
-                            </button>
-                          )}
+                      <div className="flex items-center space-x-2">
+                        {admin?.status === "active" ? (
                           <button
-                            onClick={() => handleDeleteAdmin(admin?.id)}
+                            onClick={() =>
+                              handleStatusChange(admin?.id, "suspended")
+                            }
                             className="text-red-600 hover:text-red-900 p-1 rounded hover:bg-red-50"
-                            title="Delete Admin"
+                            title="Suspend Admin"
                           >
-                            <Trash2 size={16} />
+                            <UserX size={16} />
                           </button>
-                        </div>
-                      )}
+                        ) : (
+                          <button
+                            onClick={() =>
+                              handleStatusChange(admin?.id, "active")
+                            }
+                            className="text-green-600 hover:text-green-900 p-1 rounded hover:bg-green-50"
+                            title="Activate Admin"
+                          >
+                            <UserCheck size={16} />
+                          </button>
+                        )}
+                        <button
+                          onClick={() => handleDeleteAdmin(admin?.id)}
+                          className="text-red-600 hover:text-red-900 p-1 rounded hover:bg-red-50"
+                          title="Delete Admin"
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
-          
+
           {filteredAdmins?.length === 0 && (
             <div className="text-center py-12">
               <Users className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-              <p className="text-gray-500">No admins found matching your criteria</p>
+              <p className="text-gray-500">
+                No admins found matching your criteria
+              </p>
             </div>
           )}
         </motion.div>
