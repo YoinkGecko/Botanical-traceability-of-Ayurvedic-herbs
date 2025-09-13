@@ -15,12 +15,13 @@ import {
 const AdminManagement = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
   const [admins, setAdmins] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState("all");
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [counts, setCounts] = useState({ active: 0, suspended: 0, blocks: 0 });
-
+  const adminsPerPage = 10; // number of admins per page
   const getCount = async () => {
     try {
       const res1 = await fetch("http://localhost:5001/api/admins/count");
@@ -87,6 +88,50 @@ const AdminManagement = () => {
 
   if (!user) return null;
 
+  // Calculate pagination values
+  const indexOfLastAdmin = currentPage * adminsPerPage;
+  const indexOfFirstAdmin = indexOfLastAdmin - adminsPerPage;
+  const currentAdmins = filteredAdmins.slice(
+    indexOfFirstAdmin,
+    indexOfLastAdmin
+  );
+
+  const totalPages = Math.ceil(filteredAdmins.length / adminsPerPage);
+
+  // Helper to generate page numbers with "..."
+  const getPageNumbers = () => {
+    const pages = [];
+    const maxVisible = 5; // how many numbers to show around currentPage
+
+    if (totalPages <= maxVisible) {
+      // show all if total pages small
+      for (let i = 1; i <= totalPages; i++) {
+        pages.push(i);
+      }
+    } else {
+      // Always show first + last + neighbors
+      pages.push(1);
+
+      if (currentPage > 3) {
+        pages.push("...");
+      }
+
+      const start = Math.max(2, currentPage - 1);
+      const end = Math.min(totalPages - 1, currentPage + 1);
+
+      for (let i = start; i <= end; i++) {
+        pages.push(i);
+      }
+
+      if (currentPage < totalPages - 2) {
+        pages.push("...");
+      }
+
+      pages.push(totalPages);
+    }
+
+    return pages;
+  };
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -239,7 +284,7 @@ const AdminManagement = () => {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {filteredAdmins?.map((admin) => (
+                {currentAdmins?.map((admin) => (
                   <tr key={admin?.id} className="hover:bg-gray-50">
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div>
@@ -319,6 +364,68 @@ const AdminManagement = () => {
             </div>
           )}
         </motion.div>
+
+        {/* Pagination */}
+        {filteredAdmins.length > adminsPerPage && (
+          <div className="flex justify-between items-center px-6 py-4 border-t border-gray-200">
+            <p className="text-sm text-gray-600">
+              Showing {indexOfFirstAdmin + 1} to{" "}
+              {Math.min(indexOfLastAdmin, filteredAdmins.length)} of{" "}
+              {filteredAdmins.length} admins
+            </p>
+
+            <div className="flex items-center space-x-2">
+              {/* Prev Button */}
+              <button
+                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                disabled={currentPage === 1}
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
+                  currentPage === 1
+                    ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                    : "bg-orange-500 text-white hover:bg-orange-600"
+                }`}
+              >
+                Prev
+              </button>
+
+              {/* Page Numbers */}
+              {getPageNumbers().map((page, index) =>
+                page === "..." ? (
+                  <span key={index} className="px-3 py-1 text-gray-400">
+                    ...
+                  </span>
+                ) : (
+                  <button
+                    key={page}
+                    onClick={() => setCurrentPage(page)}
+                    className={`px-3 py-1 rounded-lg text-sm font-medium transition ${
+                      currentPage === page
+                        ? "bg-orange-500 text-white"
+                        : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                    }`}
+                  >
+                    {page}
+                  </button>
+                )
+              )}
+
+              {/* Next Button */}
+              <button
+                onClick={() =>
+                  setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                }
+                disabled={currentPage === totalPages}
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
+                  currentPage === totalPages
+                    ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                    : "bg-orange-500 text-white hover:bg-orange-600"
+                }`}
+              >
+                Next
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
