@@ -16,13 +16,31 @@ import {
 const Dashboard = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
+  const [counts, setCounts] = useState({ active: 0, suspended: 0 });
+
+  const getCount = async () => {
+    try {
+      const res = await fetch("http://localhost:5000/api/admins/count");
+      if (!res.ok) throw new Error("Failed to fetch counts");
+      const data = await res.json();
+
+      setCounts({
+        active: data.active || 0,
+        suspended: data.suspended || 0,
+      });
+    } catch (err) {
+      console.error("Error fetching counts:", err);
+    }
+  };
 
   useEffect(() => {
     const adminData = localStorage.getItem("ayushAdmin");
+
     if (!adminData) {
       navigate("/login");
     } else {
       setUser(JSON.parse(adminData));
+      getCount(); // 👈 fetch counts when page loads
     }
   }, [navigate]);
 
@@ -68,13 +86,13 @@ const Dashboard = () => {
   const stats = [
     {
       label: "Active Admins",
-      value: "24",
+      value: counts.active, // Dynamic value from state
       icon: UserCheck,
       color: "text-green-600",
     },
     {
       label: "Suspended Admins",
-      value: "3",
+      value: counts.suspended, // Dynamic value from state
       icon: UserX,
       color: "text-red-600",
     },
@@ -145,6 +163,7 @@ const Dashboard = () => {
           </p>
         </motion.div>
 
+        {/* Working on this ==========================================down===================================================================== down */}
         {/* Stats Grid */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -166,6 +185,8 @@ const Dashboard = () => {
             </div>
           ))}
         </motion.div>
+
+        {/* Working on this =====================================up========================================================================== up */}
 
         {/* Quick Actions */}
         <motion.div

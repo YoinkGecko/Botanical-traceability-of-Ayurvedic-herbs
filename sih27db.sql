@@ -10,7 +10,7 @@ CREATE TABLE admins (
     AdminPhone VARCHAR(15) UNIQUE NOT NULL,
     APass VARCHAR(255) NOT NULL,
     ARole ENUM('SuperAdmin','DistrictAdmin') NOT NULL,
-    District VARCHAR(100) NOT NULL
+    District VARCHAR(100) NOT NULL,
     status ENUM('ACTIVE','SUSPENDED') DEFAULT 'ACTIVE'
 );
 

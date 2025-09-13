@@ -24,9 +24,25 @@ db.connect((err) => {
   console.log("✅ Connected to MySQL database");
 });
 
-// Example Route
+// Test Route
 app.get("/test", (req, res) => {
   res.send("Hello from Express + MySQL!");
+});
+
+app.get("/api/admins/count", async (req, res) => {
+  try {
+    const [rows] = await db.query(`
+      SELECT 
+        SUM(CASE WHEN status = 'ACTIVE' THEN 1 ELSE 0 END) AS active,
+        SUM(CASE WHEN status = 'SUSPENDED' THEN 1 ELSE 0 END) AS suspended
+      FROM admins;
+    `);
+
+    res.json(rows[0]);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to fetch counts" });
+  }
 });
 
 
