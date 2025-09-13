@@ -309,7 +309,8 @@ const AdminManagement = () => {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                       <div className="flex items-center space-x-2">
-                        {admin?.status === "active" ? (
+                        {admin?.status?.toLowerCase() === "active" ? (
+                          // Active → red Suspend button
                           <button
                             onClick={() =>
                               handleStatusChange(admin?.id, "suspended")
@@ -320,6 +321,7 @@ const AdminManagement = () => {
                             <UserX size={16} />
                           </button>
                         ) : (
+                          // Suspended → green Activate button
                           <button
                             onClick={() =>
                               handleStatusChange(admin?.id, "active")
