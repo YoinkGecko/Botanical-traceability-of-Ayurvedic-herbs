@@ -21,19 +21,30 @@ const AdminManagement = () => {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [counts, setCounts] = useState({ active: 0, suspended: 0, blocks: 0 });
 
-  const getcount = async () => {
+  const getCount = async () => {
     try {
       const res1 = await fetch("http://localhost:5001/api/admins/count");
       if (!res1.ok) throw new Error("Failed to fetch admin counts");
       const data1 = await res1.json();
 
-      // 3. Update state
       setCounts({
-        active: data1.active || 0,
-        suspended: data1.suspended || 0,
+        active: Number(data1.active) || 0,
+        suspended: Number(data1.suspended) || 0,
+        blocks: Number(data1.blocks) || 0, // only if API gives this
       });
     } catch (err) {
       console.error("Error fetching counts:", err);
+    }
+  };
+
+  const getAdminDetails = async () => {
+    try {
+      const res = await fetch("http://localhost:5001/api/admins");
+      if (!res.ok) throw new Error("Failed to fetch admins");
+      const data = await res.json();
+      setAdmins(data || []);
+    } catch (err) {
+      console.error("Error fetching admins:", err);
     }
   };
 
@@ -42,47 +53,9 @@ const AdminManagement = () => {
     if (!adminData) {
       navigate("/login");
     } else {
-      setUser(adminData);
-      getcount();
-      getadmindetails();
-      setAdmins([
-        {
-          id: 1,
-          name: "Rajesh Kumar",
-          email: "rajesh.kumar@delhi.ayush.gov.in",
-          district: "Delhi",
-          status: "active",
-          role: "District Admin",
-          lastLogin: "2 hours ago",
-        },
-        {
-          id: 2,
-          name: "Priya Sharma",
-          email: "priya.sharma@mumbai.ayush.gov.in",
-          district: "Mumbai",
-          status: "active",
-          role: "District Admin",
-          lastLogin: "1 day ago",
-        },
-        {
-          id: 3,
-          name: "Amit Singh",
-          email: "amit.singh@bangalore.ayush.gov.in",
-          district: "Bangalore",
-          status: "suspended",
-          role: "District Admin",
-          lastLogin: "1 week ago",
-        },
-        {
-          id: 4,
-          name: "Sunita Patel",
-          email: "sunita.patel@chennai.ayush.gov.in",
-          district: "Chennai",
-          status: "active",
-          role: "District Admin",
-          lastLogin: "3 hours ago",
-        },
-      ]);
+      setUser(JSON.parse(adminData)); // ✅ parse instead of raw string
+      getCount();
+      getAdminDetails();
     }
   }, [navigate]);
 

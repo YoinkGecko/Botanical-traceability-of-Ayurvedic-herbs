@@ -41,6 +41,28 @@ app.get("/api/admins/count", async (req, res) => {
   }
 });
 
+// get admins
+app.get("/api/admins", async (req, res) => {
+  try {
+    const [rows] = await db.promise().query(`
+      SELECT 
+        AdminID AS id,
+        AdminName AS name,
+        AdminPhone AS phone,
+        ARole AS role,
+        District AS district,
+        status,
+        NOW() AS lastLogin -- 👈 for now fake last login
+      FROM admins;
+    `);
+
+    res.json(rows);
+  } catch (err) {
+    console.error("Error fetching admins:", err);
+    res.status(500).json({ error: "Failed to fetch admins" });
+  }
+});
+
 const PORT = 5001;
 app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);
