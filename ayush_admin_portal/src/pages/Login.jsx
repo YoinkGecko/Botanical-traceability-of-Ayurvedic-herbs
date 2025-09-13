@@ -5,43 +5,27 @@ import { Eye, EyeOff, LogIn } from "lucide-react";
 
 const Login = () => {
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-  });
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-
-  const handleInputChange = (e) => {
-    setFormData({
-      ...formData,
-      [e?.target?.name]: e?.target?.value,
-    });
-  };
 
   const handleSubmit = async (e) => {
     e?.preventDefault();
     setLoading(true);
     setError("");
 
-    // Simple authentication - in production, this would be proper backend auth
     const validCredentials = [
       {
         email: "admin@ayush.gov.in",
         password: "admin123",
-        role: "Super Admin",
-      },
-      {
-        email: "district@ayush.gov.in",
-        password: "district123",
-        role: "District Admin",
+        role: "Ministry Of Ayush",
       },
     ];
 
-    const user = validCredentials?.find(
-      (cred) =>
-        cred?.email === formData?.email && cred?.password === formData?.password
+    const user = validCredentials.find(
+      (cred) => cred.email === email && cred.password === password
     );
 
     setTimeout(() => {
@@ -81,8 +65,8 @@ const Login = () => {
             <input
               type="email"
               name="email"
-              value={formData?.email}
-              onChange={handleInputChange}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               required
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
               placeholder="Enter your email"
@@ -97,8 +81,8 @@ const Login = () => {
               <input
                 type={showPassword ? "text" : "password"}
                 name="password"
-                value={formData?.password}
-                onChange={handleInputChange}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 required
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent pr-12"
                 placeholder="Enter your password"
@@ -145,8 +129,6 @@ const Login = () => {
           <p>Demo Credentials:</p>
           <p className="text-xs mt-1">
             Super Admin: admin@ayush.gov.in / admin123
-            <br />
-            District Admin: district@ayush.gov.in / district123
           </p>
         </div>
       </motion.div>
