@@ -81,7 +81,8 @@ const AdminManagement = () => {
       admin?.district?.toLowerCase()?.includes(searchTerm?.toLowerCase());
 
     const matchesFilter =
-      filterStatus === "all" || admin?.status === filterStatus;
+      filterStatus === "all" ||
+      admin?.status?.toLowerCase() === filterStatus.toLowerCase();
 
     return matchesSearch && matchesFilter;
   });
