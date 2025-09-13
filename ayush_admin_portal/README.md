@@ -27,7 +27,6 @@ A modern React-based project utilizing the latest frontend technologies and tool
    # or
    yarn install
    ```
-   
 2. Start the development server:
    ```bash
    npm start
@@ -89,19 +88,11 @@ This project uses Tailwind CSS for styling. The configuration includes:
 
 The app is built with responsive design using Tailwind CSS breakpoints.
 
-
 ## 📦 Deployment
 
 Build the application for production:
 
 ```bash
 npm run build
+
 ```
-
-## 🙏 Acknowledgments
-
-- Built with [Rocket.new](https://rocket.new)
-- Powered by React and Vite
-- Styled with Tailwind CSS
-
-Built with ❤️ on Rocket.new

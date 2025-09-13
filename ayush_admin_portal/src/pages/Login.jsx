@@ -1,46 +1,55 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { Eye, EyeOff, LogIn } from 'lucide-react';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
+import { Eye, EyeOff, LogIn } from "lucide-react";
 
 const Login = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    email: '',
-    password: ''
+    email: "",
+    password: "",
   });
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   const handleInputChange = (e) => {
     setFormData({
       ...formData,
-      [e?.target?.name]: e?.target?.value
+      [e?.target?.name]: e?.target?.value,
     });
   };
 
   const handleSubmit = async (e) => {
     e?.preventDefault();
     setLoading(true);
-    setError('');
+    setError("");
 
     // Simple authentication - in production, this would be proper backend auth
     const validCredentials = [
-      { email: 'admin@ayush.gov.in', password: 'admin123', role: 'Super Admin' },
-      { email: 'district@ayush.gov.in', password: 'district123', role: 'District Admin' }
+      {
+        email: "admin@ayush.gov.in",
+        password: "admin123",
+        role: "Super Admin",
+      },
+      {
+        email: "district@ayush.gov.in",
+        password: "district123",
+        role: "District Admin",
+      },
     ];
 
     const user = validCredentials?.find(
-      cred => cred?.email === formData?.email && cred?.password === formData?.password
+      (cred) =>
+        cred?.email === formData?.email && cred?.password === formData?.password
     );
 
     setTimeout(() => {
       if (user) {
-        localStorage.setItem('ayushAdmin', JSON.stringify(user));
-        navigate('/dashboard');
+        localStorage.setItem("ayushAdmin", JSON.stringify(user));
+        navigate("/dashboard");
       } else {
-        setError('Invalid credentials');
+        setError("Invalid credentials");
       }
       setLoading(false);
     }, 1000);
@@ -58,7 +67,9 @@ const Login = () => {
           <div className="w-20 h-20 mx-auto mb-4 bg-gradient-to-r from-orange-500 to-green-600 rounded-full flex items-center justify-center">
             <span className="text-white text-2xl font-bold">MoA</span>
           </div>
-          <h1 className="text-2xl font-bold text-gray-800">Ministry of Ayush</h1>
+          <h1 className="text-2xl font-bold text-gray-800">
+            Ministry of Ayush
+          </h1>
           <p className="text-gray-600">Admin Portal</p>
         </div>
 
@@ -84,7 +95,7 @@ const Login = () => {
             </label>
             <div className="relative">
               <input
-                type={showPassword ? 'text' : 'password'}
+                type={showPassword ? "text" : "password"}
                 name="password"
                 value={formData?.password}
                 onChange={handleInputChange}
@@ -133,7 +144,8 @@ const Login = () => {
         <div className="mt-6 text-center text-sm text-gray-600">
           <p>Demo Credentials:</p>
           <p className="text-xs mt-1">
-            Super Admin: admin@ayush.gov.in / admin123<br />
+            Super Admin: admin@ayush.gov.in / admin123
+            <br />
             District Admin: district@ayush.gov.in / district123
           </p>
         </div>
