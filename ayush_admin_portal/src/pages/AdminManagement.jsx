@@ -247,7 +247,7 @@ const AdminManagement = () => {
                           {admin?.name}
                         </div>
                         <div className="text-sm text-gray-500">
-                          {admin?.email}
+                          📞 {admin?.phone}
                         </div>
                       </div>
                     </td>
@@ -258,13 +258,15 @@ const AdminManagement = () => {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span
-                        className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${
-                          admin?.status === "active"
-                            ? "bg-green-100 text-green-800"
-                            : "bg-red-100 text-red-800"
+                        className={`inline-flex px-3 py-1 text-xs font-semibold rounded-full ${
+                          admin?.status?.toLowerCase() === "active"
+                            ? "bg-green-200 text-green-900"
+                            : "bg-red-200 text-red-900"
                         }`}
                       >
-                        {admin?.status}
+                        {admin?.status?.toLowerCase() === "active"
+                          ? "Active"
+                          : "Suspended"}
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
