@@ -21,17 +21,17 @@ const AdminManagement = () => {
   const [filterStatus, setFilterStatus] = useState("all");
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [counts, setCounts] = useState({ active: 0, suspended: 0, blocks: 0 });
-  const adminsPerPage = 10; // number of admins per page
+  const adminsPerPage = 10;
+
   const getCount = async () => {
     try {
-      const res1 = await fetch("http://localhost:5001/api/admins/count");
-      if (!res1.ok) throw new Error("Failed to fetch admin counts");
-      const data1 = await res1.json();
-
+      const res = await fetch("http://localhost:5001/api/admins/count");
+      if (!res.ok) throw new Error("Failed to fetch admin counts");
+      const data = await res.json();
       setCounts({
-        active: Number(data1.active) || 0,
-        suspended: Number(data1.suspended) || 0,
-        blocks: Number(data1.blocks) || 0, // only if API gives this
+        active: Number(data.active) || 0,
+        suspended: Number(data.suspended) || 0,
+        blocks: Number(data.blocks) || 0,
       });
     } catch (err) {
       console.error("Error fetching counts:", err);
@@ -54,7 +54,7 @@ const AdminManagement = () => {
     if (!adminData) {
       navigate("/login");
     } else {
-      setUser(JSON.parse(adminData)); // ✅ parse instead of raw string
+      setUser(JSON.parse(adminData));
       getCount();
       getAdminDetails();
     }
@@ -86,9 +86,19 @@ const AdminManagement = () => {
     return matchesSearch && matchesFilter;
   });
 
-  if (!user) return null;
+  // Reset current page on filter/search change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, filterStatus, admins]);
 
-  // Calculate pagination values
+  // Pagination calculations
+  const totalPages = Math.ceil(filteredAdmins.length / adminsPerPage);
+  useEffect(() => {
+    if (currentPage > totalPages) {
+      setCurrentPage(totalPages || 1);
+    }
+  }, [currentPage, totalPages]);
+
   const indexOfLastAdmin = currentPage * adminsPerPage;
   const indexOfFirstAdmin = indexOfLastAdmin - adminsPerPage;
   const currentAdmins = filteredAdmins.slice(
@@ -96,42 +106,28 @@ const AdminManagement = () => {
     indexOfLastAdmin
   );
 
-  const totalPages = Math.ceil(filteredAdmins.length / adminsPerPage);
-
-  // Helper to generate page numbers with "..."
+  // Generate page numbers with "..." support
   const getPageNumbers = () => {
     const pages = [];
-    const maxVisible = 5; // how many numbers to show around currentPage
+    const maxVisible = 5;
 
     if (totalPages <= maxVisible) {
-      // show all if total pages small
-      for (let i = 1; i <= totalPages; i++) {
-        pages.push(i);
-      }
+      for (let i = 1; i <= totalPages; i++) pages.push(i);
     } else {
-      // Always show first + last + neighbors
       pages.push(1);
-
-      if (currentPage > 3) {
-        pages.push("...");
-      }
-
+      if (currentPage > 3) pages.push("...");
       const start = Math.max(2, currentPage - 1);
       const end = Math.min(totalPages - 1, currentPage + 1);
-
-      for (let i = start; i <= end; i++) {
-        pages.push(i);
-      }
-
-      if (currentPage < totalPages - 2) {
-        pages.push("...");
-      }
-
+      for (let i = start; i <= end; i++) pages.push(i);
+      if (currentPage < totalPages - 2) pages.push("...");
       pages.push(totalPages);
     }
 
     return pages;
   };
+
+  if (!user) return null;
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -155,8 +151,9 @@ const AdminManagement = () => {
           </div>
         </div>
       </div>
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Search and Filter Section */}
+        {/* Search & Filter */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -164,20 +161,18 @@ const AdminManagement = () => {
           className="bg-white rounded-xl shadow-sm p-6 mb-6"
         >
           <div className="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0">
-            <div className="flex-1 max-w-md">
-              <div className="relative">
-                <Search
-                  className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
-                  size={20}
-                />
-                <input
-                  type="text"
-                  placeholder="Search admins..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e?.target?.value)}
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                />
-              </div>
+            <div className="flex-1 max-w-md relative">
+              <Search
+                className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                size={20}
+              />
+              <input
+                type="text"
+                placeholder="Search admins..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e?.target?.value)}
+                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+              />
             </div>
 
             <div className="flex items-center space-x-4">
@@ -212,40 +207,34 @@ const AdminManagement = () => {
           transition={{ duration: 0.6, delay: 0.2 }}
           className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6"
         >
-          <div className="bg-white rounded-xl shadow-sm p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600">Total Admins</p>
-                <p className="text-2xl font-bold text-gray-900">
-                  {Number(counts.active) + Number(counts.suspended)}
-                </p>
-              </div>
-              <Users className="w-8 h-8 text-blue-600" />
+          <div className="bg-white rounded-xl shadow-sm p-6 flex justify-between items-center">
+            <div>
+              <p className="text-sm text-gray-600">Total Admins</p>
+              <p className="text-2xl font-bold text-gray-900">
+                {Number(counts.active) + Number(counts.suspended)}
+              </p>
             </div>
+            <Users className="w-8 h-8 text-blue-600" />
           </div>
 
-          <div className="bg-white rounded-xl shadow-sm p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600">Active Admins</p>
-                <p className="text-2xl font-bold text-green-600">
-                  {counts.active}
-                </p>
-              </div>
-              <UserCheck className="w-8 h-8 text-green-600" />
+          <div className="bg-white rounded-xl shadow-sm p-6 flex justify-between items-center">
+            <div>
+              <p className="text-sm text-gray-600">Active Admins</p>
+              <p className="text-2xl font-bold text-green-600">
+                {counts.active}
+              </p>
             </div>
+            <UserCheck className="w-8 h-8 text-green-600" />
           </div>
 
-          <div className="bg-white rounded-xl shadow-sm p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600">Suspended</p>
-                <p className="text-2xl font-bold text-red-600">
-                  {counts.suspended}
-                </p>
-              </div>
-              <UserX className="w-8 h-8 text-red-600" />
+          <div className="bg-white rounded-xl shadow-sm p-6 flex justify-between items-center">
+            <div>
+              <p className="text-sm text-gray-600">Suspended</p>
+              <p className="text-2xl font-bold text-red-600">
+                {counts.suspended}
+              </p>
             </div>
+            <UserX className="w-8 h-8 text-red-600" />
           </div>
         </motion.div>
 
@@ -375,7 +364,6 @@ const AdminManagement = () => {
             </p>
 
             <div className="flex items-center space-x-2">
-              {/* Prev Button */}
               <button
                 onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
                 disabled={currentPage === 1}
@@ -388,7 +376,6 @@ const AdminManagement = () => {
                 Prev
               </button>
 
-              {/* Page Numbers */}
               {getPageNumbers().map((page, index) =>
                 page === "..." ? (
                   <span key={index} className="px-3 py-1 text-gray-400">
@@ -409,7 +396,6 @@ const AdminManagement = () => {
                 )
               )}
 
-              {/* Next Button */}
               <button
                 onClick={() =>
                   setCurrentPage((prev) => Math.min(prev + 1, totalPages))
