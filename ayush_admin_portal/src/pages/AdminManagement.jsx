@@ -61,6 +61,7 @@ const AdminManagement = () => {
   }, [navigate]);
 
   const handleStatusChange = (adminId, newStatus) => {
+    //api to set active or suspend
     setAdmins((prev) =>
       prev?.map((admin) =>
         admin?.id === adminId ? { ...admin, status: newStatus } : admin
@@ -69,6 +70,7 @@ const AdminManagement = () => {
   };
 
   const handleDeleteAdmin = (adminId) => {
+    //api to delete the user
     if (window.confirm("Are you sure you want to delete this admin?")) {
       setAdmins((prev) => prev?.filter((admin) => admin?.id !== adminId));
     }
