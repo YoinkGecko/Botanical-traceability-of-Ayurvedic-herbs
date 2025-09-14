@@ -63,6 +63,58 @@ app.get("/api/admins", async (req, res) => {
   }
 });
 
+
+app.put("/api/admins/:id/status", async (req, res) => {
+  const { id } = req.params;
+  const { status } = req.body;
+
+  if (!["ACTIVE", "SUSPENDED"].includes(status?.toUpperCase())) {
+    return res.status(400).json({ error: "Invalid status value" });
+  }
+
+  try {
+    const [result] = await db
+      .promise()
+      .query("UPDATE admins SET status = ? WHERE AdminID = ?", [
+        status.toUpperCase(),
+        id,
+      ]);
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ error: "Admin not found" });
+    }
+
+    res.json({
+      success: true,
+      message: `Admin status updated to ${status.toUpperCase()}`,
+    });
+  } catch (err) {
+    console.error("Error updating status:", err);
+    res.status(500).json({ error: "Failed to update status" });
+  }
+});
+
+// ======================
+// Delete admin
+// ======================
+app.delete("/api/admins/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    const [result] = await db
+      .promise()
+      .query("DELETE FROM admins WHERE AdminID = ?", [id]);
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ error: "Admin not found" });
+    }
+
+    res.json({ success: true, message: "Admin deleted successfully" });
+  } catch (err) {
+    console.error("Error deleting admin:", err);
+    res.status(500).json({ error: "Failed to delete admin" });
+  }
+});
+
 const PORT = 5001;
 app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);

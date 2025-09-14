@@ -60,20 +60,61 @@ const AdminManagement = () => {
     }
   }, [navigate]);
 
-  const handleStatusChange = (adminId, newStatus) => {
-    //api to set active or suspend
-    setAdmins((prev) =>
-      prev?.map((admin) =>
-        admin?.id === adminId ? { ...admin, status: newStatus } : admin
-      )
-    );
+  const handleStatusChange = async (adminId, newStatus, adminName) => {
+    const action = newStatus === "ACTIVE" ? "activate" : "suspend";
+
+    // Confirm with user before API call
+    if (!window.confirm(`Are you sure you want to ${action} ${adminName}?`)) {
+      return;
+    }
+
+    try {
+      const res = await fetch(
+        `http://localhost:5001/api/admins/${adminId}/status`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ status: newStatus }),
+        }
+      );
+
+      if (!res.ok) {
+        throw new Error("Failed to update status");
+      }
+
+      // Update UI instantly if success
+      setAdmins((prev) =>
+        prev?.map((admin) =>
+          admin?.id === adminId ? { ...admin, status: newStatus } : admin
+        )
+      );
+    } catch (err) {
+      console.error("Error updating status:", err);
+      alert("Failed to update status. Please try again.");
+    }
+
+    getCount(); // Refresh counts
   };
 
-  const handleDeleteAdmin = (adminId) => {
-    //api to delete the user
-    if (window.confirm("Are you sure you want to delete this admin?")) {
+  const handleDeleteAdmin = async (adminId) => {
+    if (!window.confirm("Are you sure you want to delete this admin?")) return;
+
+    try {
+      const res = await fetch(`http://localhost:5001/api/admins/${adminId}`, {
+        method: "DELETE",
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to delete admin");
+      }
+
+      // Remove from UI
       setAdmins((prev) => prev?.filter((admin) => admin?.id !== adminId));
+    } catch (err) {
+      console.error("Error deleting admin:", err);
+      alert("Failed to delete admin. Please try again.");
     }
+    getCount(); // Refresh counts
   };
 
   const filteredAdmins = admins?.filter((admin) => {
@@ -309,13 +350,18 @@ const AdminManagement = () => {
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       {admin?.lastLogin}
                     </td>
+                    {/*active or susped usertick and userX*/}
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                       <div className="flex items-center space-x-2">
                         {admin?.status?.toLowerCase() === "active" ? (
                           // Active → red Suspend button
                           <button
                             onClick={() =>
-                              handleStatusChange(admin?.id, "suspended")
+                              handleStatusChange(
+                                admin?.id,
+                                "SUSPENDED",
+                                admin?.name
+                              )
                             }
                             className="text-red-600 hover:text-red-900 p-1 rounded hover:bg-red-50"
                             title="Suspend Admin"
@@ -326,7 +372,11 @@ const AdminManagement = () => {
                           // Suspended → green Activate button
                           <button
                             onClick={() =>
-                              handleStatusChange(admin?.id, "active")
+                              handleStatusChange(
+                                admin?.id,
+                                "ACTIVE",
+                                admin?.name
+                              )
                             }
                             className="text-green-600 hover:text-green-900 p-1 rounded hover:bg-green-50"
                             title="Activate Admin"
