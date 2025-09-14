@@ -1,22 +1,23 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
+import ayushLogo from "../assets/ayushLogo.png";
 
 const LoadingScreen = () => {
   const navigate = useNavigate();
-  const [loadingText, setLoadingText] = useState('Ministry of Ayush');
+  const [loadingText, setLoadingText] = useState("Ministry of Ayush");
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      navigate('/login');
-    }, 3000);
+      navigate("/login");
+    }, 5000);
 
     const textAnimation = setInterval(() => {
-      setLoadingText(prev => {
-        if (prev === 'Ministry of Ayush') return 'Ministry of Ayush.';
-        if (prev === 'Ministry of Ayush.') return 'Ministry of Ayush..';
-        if (prev === 'Ministry of Ayush..') return 'Ministry of Ayush...';
-        return 'Ministry of Ayush';
+      setLoadingText((prev) => {
+        if (prev === "Loading") return "Loading.";
+        if (prev === "Loading.") return "Loading..";
+        if (prev === "Loading..") return "Loading...";
+        return "Loading";
       });
     }, 500);
 
@@ -35,11 +36,13 @@ const LoadingScreen = () => {
           transition={{ duration: 1 }}
           className="mb-8"
         >
-          <div className="w-32 h-32 mx-auto mb-6 bg-gradient-to-r from-orange-500 to-green-600 rounded-full flex items-center justify-center">
-            <span className="text-white text-4xl font-bold">MoA</span>
-          </div>
+          <img
+            src={ayushLogo}
+            alt="Ministry of Ayush Logo"
+            className="w-45 mx-auto mb-6 object-contain"
+          />
         </motion.div>
-        
+
         <motion.h1
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
@@ -48,7 +51,7 @@ const LoadingScreen = () => {
         >
           {loadingText}
         </motion.h1>
-        
+
         <motion.p
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
