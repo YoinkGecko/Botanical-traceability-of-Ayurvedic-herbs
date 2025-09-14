@@ -115,6 +115,31 @@ app.delete("/api/admins/:id", async (req, res) => {
   }
 });
 
+
+// Create new admin
+app.post("/api/admins", async (req, res) => {
+  try {
+    const { AdminName, AdminPhone, APass, ARole, District } = req.body;
+
+    if (!AdminName || !AdminPhone || !APass || !ARole || !District) {
+      return res.status(400).json({ error: "All fields are required" });
+    }
+
+    const [result] = await db
+      .promise()
+      .query(
+        `INSERT INTO admins (AdminName, AdminPhone, APass, ARole, District, status)
+         VALUES (?, ?, ?, ?, ?, 'ACTIVE')`,
+        [AdminName, AdminPhone, APass, ARole, District]
+      );
+
+    res.status(201).json({ id: result.insertId, message: "Admin created" });
+  } catch (err) {
+    console.error("Error creating admin:", err);
+    res.status(500).json({ error: "Failed to create admin" });
+  }
+});
+
 const PORT = 5001;
 app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);

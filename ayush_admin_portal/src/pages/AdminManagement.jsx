@@ -471,6 +471,101 @@ const AdminManagement = () => {
           </div>
         )}
       </div>
+
+      {/* Create Admin Modal */}
+      {showCreateModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl shadow-lg p-6 w-full max-w-md">
+            <h2 className="text-xl font-bold mb-4">Add New Admin</h2>
+            <form
+              onSubmit={async (e) => {
+                e.preventDefault();
+                const formData = new FormData(e.target);
+                const newAdmin = {
+                  AdminName: formData.get("name"),
+                  AdminPhone: formData.get("phone"),
+                  APass: formData.get("password"),
+                  ARole: formData.get("role"),
+                  District: formData.get("district"),
+                };
+
+                try {
+                  const res = await fetch("http://localhost:5001/api/admins", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(newAdmin),
+                  });
+
+                  if (!res.ok) throw new Error("Failed to create admin");
+
+                  await getAdminDetails(); // refresh list
+                  await getCount(); // refresh counts
+                  setShowCreateModal(false); // close modal
+                  alert("Admin created successfully!");
+                } catch (err) {
+                  console.error("Error creating admin:", err);
+                  alert("Failed to create admin");
+                }
+              }}
+              className="space-y-4"
+            >
+              <input
+                type="text"
+                name="name"
+                placeholder="Admin Name"
+                required
+                className="w-full border border-gray-300 rounded-lg px-4 py-2"
+              />
+              <input
+                type="text"
+                name="phone"
+                placeholder="Phone Number"
+                required
+                className="w-full border border-gray-300 rounded-lg px-4 py-2"
+              />
+              <input
+                type="password"
+                name="password"
+                placeholder="Password"
+                required
+                className="w-full border border-gray-300 rounded-lg px-4 py-2"
+              />
+              <select
+                name="role"
+                required
+                className="w-full border border-gray-300 rounded-lg px-4 py-2"
+              >
+                <option value="">Select Role</option>
+                <option value="SuperAdmin">SuperAdmin</option>
+                <option value="DistrictAdmin">DistrictAdmin</option>
+              </select>
+              <input
+                type="text"
+                name="district"
+                placeholder="District"
+                required
+                className="w-full border border-gray-300 rounded-lg px-4 py-2"
+              />
+
+              <div className="flex justify-end space-x-3">
+                <button
+                  type="button"
+                  onClick={() => setShowCreateModal(false)}
+                  className="px-4 py-2 rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-100"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 rounded-lg bg-orange-500 text-white hover:bg-orange-600"
+                >
+                  Save
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
