@@ -96,8 +96,9 @@ const AdminManagement = () => {
     getCount(); // Refresh counts
   };
 
-  const handleDeleteAdmin = async (adminId) => {
-    if (!window.confirm("Are you sure you want to delete this admin?")) return;
+  const handleDeleteAdmin = async (adminId, adminName) => {
+    if (!window.confirm(`Are you sure you want to delete ${adminName}?`))
+      return;
 
     try {
       const res = await fetch(`http://localhost:5001/api/admins/${adminId}`, {
@@ -385,7 +386,9 @@ const AdminManagement = () => {
                           </button>
                         )}
                         <button
-                          onClick={() => handleDeleteAdmin(admin?.id)}
+                          onClick={() =>
+                            handleDeleteAdmin(admin?.id, admin?.name)
+                          }
                           className="text-red-600 hover:text-red-900 p-1 rounded hover:bg-red-50"
                           title="Delete Admin"
                         >
