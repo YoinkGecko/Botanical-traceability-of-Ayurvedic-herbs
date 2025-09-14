@@ -100,7 +100,7 @@ const Dashboard = () => {
       description: "Monitor system health",
       icon: Activity,
       color: "from-orange-500 to-orange-600",
-      onClick: () => {},
+      onClick: () => navigate("/system-status"),
     },
     {
       title: "Security Settings",

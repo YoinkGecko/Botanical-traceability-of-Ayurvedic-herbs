@@ -8,6 +8,7 @@ import Dashboard from "pages/Dashboard";
 import AdminManagement from "pages/AdminManagement";
 import BlockchainExplorer from "pages/BlockchainExplorer";
 import NotFound from "pages/NotFound";
+import SystemStatus from "pages/SystemStatus";
 
 const Routes = () => {
   return (
@@ -20,6 +21,7 @@ const Routes = () => {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/admin-management" element={<AdminManagement />} />
           <Route path="/blockchain-explorer" element={<BlockchainExplorer />} />
+          <Route path="/system-status" element={<SystemStatus />} />
           <Route path="*" element={<NotFound />} />
         </RouterRoutes>
       </ErrorBoundary>
