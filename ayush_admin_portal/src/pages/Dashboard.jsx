@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import nationallogo from "../assets/national-emblem-front.png";
 import {
   Users,
   Settings,
@@ -144,9 +145,16 @@ const Dashboard = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
             <div className="flex items-center">
-              <div className="w-10 h-10 bg-gradient-to-r from-orange-500 to-green-600 rounded-lg flex items-center justify-center mr-3">
-                <span className="text-white font-bold">MoA</span>
+              {/* National Emblem */}
+              <div className="w-[70px] mr-3">
+                <img
+                  src={nationallogo}
+                  alt="National Emblem"
+                  className="w-full h-full object-contain"
+                />
               </div>
+
+              {/* Text */}
               <div>
                 <h1 className="text-xl font-bold text-gray-900">
                   Ministry of Ayush
