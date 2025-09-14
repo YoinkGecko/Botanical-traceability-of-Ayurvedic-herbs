@@ -107,7 +107,7 @@ const Dashboard = () => {
       description: "Configure security policies",
       icon: Shield,
       color: "from-purple-500 to-purple-600",
-      onClick: () => {},
+      onClick: () => navigate("/security-settings"),
     },
   ];
 
@@ -132,7 +132,7 @@ const Dashboard = () => {
     },
     {
       label: "System Alerts",
-      value: "5",
+      value: "2",
       icon: Shield,
       color: "text-orange-600",
     },
