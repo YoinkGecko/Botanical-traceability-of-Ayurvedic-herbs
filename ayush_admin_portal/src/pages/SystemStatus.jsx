@@ -60,6 +60,16 @@ const SystemStatus = () => {
 
   const [refreshing, setRefreshing] = useState(false);
 
+  const [countdown, setCountdown] = useState(30); // 30 sec countdown
+
+  // Countdown logic
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCountdown((prev) => (prev > 1 ? prev - 1 : 30)); // reset to 30 when reaching 0
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
   // Auto-refresh every 30 sec
   useEffect(() => {
     const interval = setInterval(() => {
@@ -171,10 +181,9 @@ const SystemStatus = () => {
         className="flex justify-between items-center mb-6"
       >
         <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-          🖥️ System Status
-          {refreshing && (
-            <RefreshCw className="w-6 h-6 animate-spin text-blue-500" />
-          )}
+          <Server className="w-6 h-6 text-gray-900" /> System Status
+          <span className="text-sm text-gray-500">({countdown}s)</span>
+          <RefreshCw className="w-4 h-6 animate-spin text-gray-500" />
         </h1>
         <button
           onClick={() => navigate("/dashboard")}
