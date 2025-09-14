@@ -5,25 +5,14 @@ import ayushLogo from "../assets/ayushLogo.png";
 
 const LoadingScreen = () => {
   const navigate = useNavigate();
-  const [loadingText, setLoadingText] = useState("Ministry of Ayush");
 
   useEffect(() => {
     const timer = setTimeout(() => {
       navigate("/login");
-    }, 5000);
-
-    const textAnimation = setInterval(() => {
-      setLoadingText((prev) => {
-        if (prev === "Loading") return "Loading.";
-        if (prev === "Loading.") return "Loading..";
-        if (prev === "Loading..") return "Loading...";
-        return "Loading";
-      });
-    }, 500);
+    }, 10000);
 
     return () => {
       clearTimeout(timer);
-      clearInterval(textAnimation);
     };
   }, [navigate]);
 
@@ -39,7 +28,7 @@ const LoadingScreen = () => {
           <img
             src={ayushLogo}
             alt="Ministry of Ayush Logo"
-            className="w-45 mx-auto mb-6 object-contain"
+            className="w-[400px] mx-auto mb-6 object-contain"
           />
         </motion.div>
 
@@ -48,9 +37,7 @@ const LoadingScreen = () => {
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 1, delay: 0.5 }}
           className="text-4xl font-bold text-gray-800 mb-4"
-        >
-          {loadingText}
-        </motion.h1>
+        ></motion.h1>
 
         <motion.p
           initial={{ y: 20, opacity: 0 }}

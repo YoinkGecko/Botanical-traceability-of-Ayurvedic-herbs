@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Eye, EyeOff, LogIn } from "lucide-react";
 
+import nationallogo from "../assets/national-emblem-front.png";
+
 const Login = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
@@ -48,8 +50,12 @@ const Login = () => {
         className="bg-white rounded-xl shadow-2xl p-8 w-full max-w-md"
       >
         <div className="text-center mb-8">
-          <div className="w-20 h-20 mx-auto mb-4 bg-gradient-to-r from-orange-500 to-green-600 rounded-full flex items-center justify-center">
-            <span className="text-white text-2xl font-bold">MoA</span>
+          <div className="w-[170px]  mx-auto mb-4">
+            <img
+              src={nationallogo}
+              alt="National Emblem"
+              className="w-full h-full object-contain"
+            />
           </div>
           <h1 className="text-2xl font-bold text-gray-800">
             Ministry of Ayush
