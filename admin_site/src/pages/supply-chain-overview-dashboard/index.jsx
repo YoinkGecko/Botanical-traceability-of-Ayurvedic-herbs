@@ -31,6 +31,7 @@ const SupplyChainOverviewDashboard = () => {
 
   const verificationFunnelData = [
     { name: "Submissions", value: funneldata.Submissions },
+    { name: "Inital review", value: 2 },
     { name: "Lab Testing", value: funneldata.labTesting },
     { name: "Processing", value: funneldata.Processing },
     { name: "Approved", value: funneldata.Approved },

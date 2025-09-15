@@ -375,6 +375,29 @@ app.get("/api/admin/district/:phone", async (req, res) => {
 });
 
 
+app.get("/api/admin/getphanddistrict", (req, res) => {
+  const { phone } = req.query;
+
+  if (!phone) {
+    return res.status(400).json({ error: "Phone number is required" });
+  }
+
+  const query = "SELECT AdminName AS name, District AS district FROM admins WHERE AdminPhone = ?";
+  
+  db.query(query, [phone], (err, results) => {
+    if (err) {
+      console.error("Database error:", err);
+      return res.status(500).json({ error: "Database error" });
+    }
+
+    if (results.length === 0) {
+      return res.status(404).json({ error: "Admin not found" });
+    }
+
+    res.json(results[0]); // returns { name: "John Doe", district: "District X" }
+  });
+});
+
 const PORT = 5001;
 app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);

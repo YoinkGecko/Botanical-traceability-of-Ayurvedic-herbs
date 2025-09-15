@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import Icon from "../AppIcon";
 import Button from "./Button";
@@ -6,6 +6,11 @@ import Button from "./Button";
 const Header = () => {
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [adminInfo, setAdminInfo] = useState({
+    phone: "",
+    name: "",
+    district: "",
+  });
 
   const navigationItems = [
     {
@@ -35,6 +40,26 @@ const Header = () => {
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
+
+  useEffect(() => {
+    const storedPhone = localStorage.getItem("phonenumber") || "";
+    setAdminInfo((prev) => ({ ...prev, phone: storedPhone }));
+
+    if (storedPhone) {
+      fetch(
+        `http://localhost:5001/api/admin/getphanddistrict?phone=${storedPhone}`
+      )
+        .then((res) => res.json())
+        .then((data) => {
+          setAdminInfo((prev) => ({
+            ...prev,
+            name: data.name,
+            district: data.district,
+          }));
+        })
+        .catch((err) => console.error("Error fetching admin info:", err));
+    }
+  }, []);
 
   return (
     <>
@@ -93,10 +118,10 @@ const Header = () => {
             <div className="flex items-center space-x-2">
               <div className="hidden sm:flex flex-col items-end">
                 <span className="text-sm font-medium text-foreground">
-                  Admin User
+                  {adminInfo.name || "Admin"}
                 </span>
                 <span className="text-xs text-muted-foreground">
-                  Administrator
+                  {adminInfo.district || ""}
                 </span>
               </div>
               <Button
