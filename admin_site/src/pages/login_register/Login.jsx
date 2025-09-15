@@ -27,6 +27,7 @@ const Login = () => {
       }
 
       // ✅ login success
+      localStorage.setItem("phonenumber", phonenumber);
       navigate("/supply-chain-overview-dashboard");
     } catch (err) {
       console.error("Login error:", err);
