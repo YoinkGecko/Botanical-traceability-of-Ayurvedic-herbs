@@ -5,7 +5,7 @@ USE sih27;
 -- Admin Registration Table
 -- ================================
 CREATE TABLE admins (
-    AdminID BIGINT AUTO_INCREMENT PRIMARY KEY,
+    AdminID VARCHAR(150) PRIMARY KEY,
     AdminName VARCHAR(100) NOT NULL,
     AdminPhone VARCHAR(15) UNIQUE NOT NULL,
     APass VARCHAR(255) NOT NULL,
@@ -18,11 +18,11 @@ CREATE TABLE admins (
 -- Admin Functions (Audit Log)
 -- ================================
 CREATE TABLE admin_functions (
-    ActionID BIGINT AUTO_INCREMENT PRIMARY KEY,
-    AdminID BIGINT NOT NULL, -- Who performed the action
+    ActionID VARCHAR(150) AUTO_INCREMENT PRIMARY KEY,
+    AdminID VARCHAR(150) NOT NULL, -- Who performed the action
     Action ENUM('PENDING','APPROVED','REJECTED','ADDED_TO_BC') DEFAULT 'PENDING',
     TargetType ENUM('Farmer','Processor','LabTester','Manufacturer') NOT NULL,
-    TargetID BIGINT NOT NULL, -- ID of the farmer/processor/labtester/manufacturer
+    TargetID VARCHAR(150) NOT NULL, -- ID of the farmer/processor/labtester/manufacturer
     Timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (AdminID) REFERENCES admins(AdminID)
 );
@@ -31,7 +31,7 @@ CREATE TABLE admin_functions (
 -- Farmer Registration Table
 -- ================================
 CREATE TABLE farmers (
-    FarmerID BIGINT AUTO_INCREMENT PRIMARY KEY,
+    FarmerID VARCHAR(150) AUTO_INCREMENT PRIMARY KEY,
     FarmerName VARCHAR(100) NOT NULL,
     FarmerPhone VARCHAR(15) UNIQUE NOT NULL,
     District VARCHAR(100) NOT NULL,
@@ -42,7 +42,7 @@ CREATE TABLE farmers (
 -- Processor Registration Table
 -- ================================
 CREATE TABLE processors (
-    ProcessorID BIGINT AUTO_INCREMENT PRIMARY KEY,
+    ProcessorID VARCHAR(150) AUTO_INCREMENT PRIMARY KEY,
     ProcessorName VARCHAR(100) NOT NULL,
     ProcessorPhone VARCHAR(15) UNIQUE NOT NULL,
     LicenseNo VARCHAR(50),
@@ -54,7 +54,7 @@ CREATE TABLE processors (
 -- Lab Tester Registration Table
 -- ================================
 CREATE TABLE labtesters (
-    LabTesterID BIGINT AUTO_INCREMENT PRIMARY KEY,
+    LabTesterID VARCHAR(150) AUTO_INCREMENT PRIMARY KEY,
     LabTesterName VARCHAR(100) NOT NULL,
     LabTesterPhone VARCHAR(15) UNIQUE NOT NULL,
     AccreditationNo VARCHAR(50),
@@ -66,7 +66,7 @@ CREATE TABLE labtesters (
 -- Manufacturer Registration Table
 -- ================================
 CREATE TABLE manufacturers (
-    ManufacturerID BIGINT AUTO_INCREMENT PRIMARY KEY,
+    ManufacturerID VARCHAR(150) AUTO_INCREMENT PRIMARY KEY,
     ManufacturerName VARCHAR(100) NOT NULL,
     ManufacturerPhone VARCHAR(15) UNIQUE NOT NULL,
     LicenseNo VARCHAR(50),
@@ -82,8 +82,8 @@ CREATE TABLE manufacturers (
 -- Farmer Data Collection
 -- ================================
 CREATE TABLE farmer_data_collection (
-    FbatchID BIGINT AUTO_INCREMENT PRIMARY KEY,
-    Fid BIGINT NOT NULL,
+    FbatchID VARCHAR(150) AUTO_INCREMENT PRIMARY KEY,
+    Fid VARCHAR(150) NOT NULL,
     TypeOfHerb VARCHAR(100) NOT NULL,
     HarvestedBy ENUM('Manual','Mechanical') DEFAULT 'Manual',
     Quantity DECIMAL(10,2) NOT NULL,
@@ -93,7 +93,7 @@ CREATE TABLE farmer_data_collection (
     District VARCHAR(100),
     Photos TEXT,
     Status ENUM('PENDING','APPROVED','REJECTED') DEFAULT 'PENDING',
-    ApprovedBy BIGINT,
+    ApprovedBy VARCHAR(150),
     FOREIGN KEY (Fid) REFERENCES farmers(FarmerID),
     FOREIGN KEY (ApprovedBy) REFERENCES admins(AdminID)
 );
@@ -102,9 +102,9 @@ CREATE TABLE farmer_data_collection (
 -- Processor Data Collection
 -- ================================
 CREATE TABLE processor_data_collection (
-    PbatchID BIGINT AUTO_INCREMENT PRIMARY KEY,
-    Pid BIGINT NOT NULL,
-    LinkedFarmerBatchID BIGINT NOT NULL,
+    PbatchID VARCHAR(150) AUTO_INCREMENT PRIMARY KEY,
+    Pid VARCHAR(150) NOT NULL,
+    LinkedFarmerBatchID VARCHAR(150) NOT NULL,
     ProcessingStep ENUM('Drying','Grinding','Extraction','Storage','Other') NOT NULL,
     WeightGivenByFarmer DECIMAL(10,2),
     WeightBeforeProc DECIMAL(10,2),
@@ -116,7 +116,7 @@ CREATE TABLE processor_data_collection (
     Timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     Photos TEXT,
     Status ENUM('PENDING','APPROVED','REJECTED') DEFAULT 'PENDING',
-    ApprovedBy BIGINT,
+    ApprovedBy VARCHAR(150),
     FOREIGN KEY (Pid) REFERENCES processors(ProcessorID),
     FOREIGN KEY (LinkedFarmerBatchID) REFERENCES farmer_data_collection(FbatchID),
     FOREIGN KEY (ApprovedBy) REFERENCES admins(AdminID)
@@ -126,9 +126,9 @@ CREATE TABLE processor_data_collection (
 -- Lab Tester Data Collection
 -- ================================
 CREATE TABLE labtester_data_collection (
-    LbatchID BIGINT AUTO_INCREMENT PRIMARY KEY,
-    LabID BIGINT NOT NULL,
-    LinkedBatchID BIGINT NOT NULL, -- from processor_data_collection
+    LbatchID VARCHAR(150) AUTO_INCREMENT PRIMARY KEY,
+    LabID VARCHAR(150) NOT NULL,
+    LinkedBatchID VARCHAR(150) NOT NULL, -- from processor_data_collection
     TestType ENUM('Moisture','Pesticide','DNA','Other') NOT NULL,
     TestResults TEXT,
     PassFailStatus ENUM('PASS','FAIL','PENDING') DEFAULT 'PENDING',
@@ -139,7 +139,7 @@ CREATE TABLE labtester_data_collection (
     Timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     Photos TEXT,
     Status ENUM('PENDING','APPROVED','REJECTED') DEFAULT 'PENDING',
-    ApprovedBy BIGINT,
+    ApprovedBy VARCHAR(150),
     FOREIGN KEY (LabID) REFERENCES labtesters(LabTesterID),
     FOREIGN KEY (LinkedBatchID) REFERENCES processor_data_collection(PbatchID),
     FOREIGN KEY (ApprovedBy) REFERENCES admins(AdminID)
@@ -149,8 +149,8 @@ CREATE TABLE labtester_data_collection (
 -- Manufacturer Data Collection
 -- ================================
 CREATE TABLE manufacturer_data_collection (
-    MbatchID BIGINT AUTO_INCREMENT PRIMARY KEY,
-    ManufacturerID BIGINT NOT NULL,
+    MbatchID VARCHAR(150) AUTO_INCREMENT PRIMARY KEY,
+    ManufacturerID VARCHAR(150) NOT NULL,
     ProductName VARCHAR(150) NOT NULL,
     ProductForm ENUM('Tablet','Powder','Oil','Capsule','Other') NOT NULL,
     Ingredients TEXT,
@@ -162,7 +162,7 @@ CREATE TABLE manufacturer_data_collection (
     Timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     Photos TEXT,
     Status ENUM('PENDING','APPROVED','REJECTED') DEFAULT 'PENDING',
-    ApprovedBy BIGINT,
+    ApprovedBy VARCHAR(150),
     FOREIGN KEY (ManufacturerID) REFERENCES manufacturers(ManufacturerID),
     FOREIGN KEY (ApprovedBy) REFERENCES admins(AdminID)
 );
@@ -171,8 +171,8 @@ CREATE TABLE manufacturer_data_collection (
 -- Junction Table for Manufacturer ↔ LabTester Batches
 -- ================================
 CREATE TABLE manufacturer_labtester_link (
-    MbatchID BIGINT,
-    LbatchID BIGINT,
+    MbatchID VARCHAR(150),
+    LbatchID VARCHAR(150),
     PRIMARY KEY (MbatchID, LbatchID),
     FOREIGN KEY (MbatchID) REFERENCES manufacturer_data_collection(MbatchID),
     FOREIGN KEY (LbatchID) REFERENCES labtester_data_collection(LbatchID)
