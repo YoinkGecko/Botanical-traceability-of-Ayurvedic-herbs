@@ -30,11 +30,11 @@ const SupplyChainOverviewDashboard = () => {
   };
 
   const verificationFunnelData = [
-    { name: "Submissions", value: funneldata.Submissions || 0 },
-    { name: "Inital review", value: 2 },
-    { name: "Lab Testing", value: funneldata.labTesting || 0 },
-    { name: "Processing", value: funneldata.Processing || 0 },
-    { name: "Approved", value: funneldata.Approved || 0 },
+    { name: "Submissions", value: funneldata.Submissions || 1 },
+    { name: "Inital review", value: 1 },
+    { name: "Lab Testing", value: funneldata.labTesting || 1 },
+    { name: "Processing", value: funneldata.Processing || 1 },
+    { name: "Approved", value: funneldata.Approved || 1 },
   ];
 
   // Enhanced mock data with location coordinates for comprehensive view
