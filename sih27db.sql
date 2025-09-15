@@ -93,7 +93,7 @@ CREATE TABLE farmer_data_collection (
     District VARCHAR(100),
     Photos TEXT,
     Status ENUM('PENDING','APPROVED','REJECTED') DEFAULT 'PENDING',
-    ApprovedBy BIGINT,
+    ApprovedBy BIGINT DEFAULT NULL,
     FOREIGN KEY (Fid) REFERENCES farmers(FarmerID),
     FOREIGN KEY (ApprovedBy) REFERENCES admins(AdminID)
 );
@@ -116,7 +116,7 @@ CREATE TABLE processor_data_collection (
     Timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     Photos TEXT,
     Status ENUM('PENDING','APPROVED','REJECTED') DEFAULT 'PENDING',
-    ApprovedBy BIGINT,
+    ApprovedBy BIGINT DEFAULT NULL,
     FOREIGN KEY (Pid) REFERENCES processors(ProcessorID),
     FOREIGN KEY (LinkedFarmerBatchID) REFERENCES farmer_data_collection(FbatchID),
     FOREIGN KEY (ApprovedBy) REFERENCES admins(AdminID)
@@ -139,7 +139,7 @@ CREATE TABLE labtester_data_collection (
     Timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     Photos TEXT,
     Status ENUM('PENDING','APPROVED','REJECTED') DEFAULT 'PENDING',
-    ApprovedBy BIGINT,
+    ApprovedBy BIGINT DEFAULT NULL,
     FOREIGN KEY (LabID) REFERENCES labtesters(LabTesterID),
     FOREIGN KEY (LinkedBatchID) REFERENCES processor_data_collection(PbatchID),
     FOREIGN KEY (ApprovedBy) REFERENCES admins(AdminID)
@@ -162,7 +162,7 @@ CREATE TABLE manufacturer_data_collection (
     Timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     Photos TEXT,
     Status ENUM('PENDING','APPROVED','REJECTED') DEFAULT 'PENDING',
-    ApprovedBy BIGINT,
+    ApprovedBy BIGINT DEFAULT NULL,
     FOREIGN KEY (ManufacturerID) REFERENCES manufacturers(ManufacturerID),
     FOREIGN KEY (ApprovedBy) REFERENCES admins(AdminID)
 );
