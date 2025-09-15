@@ -249,7 +249,7 @@ app.get("/api/dashboard/funneldata", async (req, res) => {
 
     res.json({
       Submissions: totalSubmissions,
-      labTesting,
+      labTesting : labTesting,
       Processing: processing,
       Approved: approved,
     });
@@ -394,7 +394,7 @@ app.get("/api/admin/getphanddistrict", (req, res) => {
       return res.status(404).json({ error: "Admin not found" });
     }
 
-    res.json(results[0]); // returns { name: "John Doe", district: "District X" }
+    res.json(results[0]); 
   });
 });
 
