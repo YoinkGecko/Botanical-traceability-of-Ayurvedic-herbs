@@ -2,24 +2,146 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, CheckCircle2, XCircle, UserPlus } from "lucide-react";
 
+// Individual form component
+const MemberForm = ({ type, district, onSubmit }) => {
+  const [formData, setFormData] = useState({
+    name: "",
+    phone: "",
+    password: "",
+    licenseNo: "",
+    accreditationNo: "",
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    onSubmit(type, formData);
+    // Reset form after submit
+    setFormData({
+      name: "",
+      phone: "",
+      password: "",
+      licenseNo: "",
+      accreditationNo: "",
+    });
+  };
+
+  return (
+    <form
+      onSubmit={handleSubmit}
+      className="bg-white shadow-lg rounded-2xl p-6 w-full max-w-md"
+    >
+      <h3 className="text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2">
+        <UserPlus className="w-5 h-5 text-indigo-500" />
+        {type === "farmer"
+          ? "Add New Farmer"
+          : type === "processor"
+          ? "Add New Processor"
+          : type === "lab"
+          ? "Add New Lab Tester"
+          : "Add New Manufacturer"}
+      </h3>
+
+      {/* Fields for each member type */}
+      {(type === "farmer" ||
+        type === "processor" ||
+        type === "lab" ||
+        type === "manufacturer") && (
+        <>
+          <input
+            type="text"
+            name="name"
+            value={formData.name}
+            onChange={handleChange}
+            placeholder={
+              type === "farmer"
+                ? "Farmer Name"
+                : type === "processor"
+                ? "Processor Name"
+                : type === "lab"
+                ? "Lab Tester Name"
+                : "Manufacturer Name"
+            }
+            className="input w-full mb-3 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400"
+          />
+          <input
+            type="text"
+            name="phone"
+            value={formData.phone}
+            onChange={handleChange}
+            placeholder="Phone Number"
+            className="input w-full mb-3 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400"
+          />
+        </>
+      )}
+
+      {type === "processor" || type === "manufacturer" ? (
+        <input
+          type="text"
+          name="licenseNo"
+          value={formData.licenseNo}
+          onChange={handleChange}
+          placeholder="License Number"
+          className="input w-full mb-3 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400"
+        />
+      ) : null}
+
+      {type === "lab" ? (
+        <input
+          type="text"
+          name="accreditationNo"
+          value={formData.accreditationNo}
+          onChange={handleChange}
+          placeholder="Accreditation Number"
+          className="input w-full mb-3 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400"
+        />
+      ) : null}
+
+      <input
+        type="password"
+        name="password"
+        value={formData.password}
+        onChange={handleChange}
+        placeholder="Password"
+        className="input w-full mb-3 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400"
+      />
+
+      <p className="text-sm text-gray-600 mb-3">
+        District: <b>{district}</b>
+      </p>
+
+      <button
+        type="submit"
+        className={`w-full py-2 px-4 rounded-lg text-white font-medium transition ${
+          type === "farmer"
+            ? "bg-green-500 hover:bg-green-600"
+            : type === "processor"
+            ? "bg-blue-500 hover:bg-blue-600"
+            : type === "lab"
+            ? "bg-purple-500 hover:bg-purple-600"
+            : "bg-orange-500 hover:bg-orange-600"
+        }`}
+      >
+        {type === "farmer"
+          ? "Save Farmer"
+          : type === "processor"
+          ? "Save Processor"
+          : type === "lab"
+          ? "Save Lab Tester"
+          : "Save Manufacturer"}
+      </button>
+    </form>
+  );
+};
+
 const Registernewmember = () => {
   const [whoisnewmember, setWhoisnewmember] = useState("");
-  const [formData, setFormData] = useState({
-    farmerName: "",
-    farmerPhone: "",
-    password: "",
-    processorName: "",
-    processorPhone: "",
-    licenseNo: "",
-    labTesterName: "",
-    labTesterPhone: "",
-    accreditationNo: "",
-    manufacturerName: "",
-    manufacturerPhone: "",
-    district: "",
-  });
-  const [statusMessage, setStatusMessage] = useState(null);
   const [district, setDistrict] = useState("");
+  const [statusMessage, setStatusMessage] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -28,64 +150,51 @@ const Registernewmember = () => {
       fetch(`http://localhost:5001/api/admin/district/${phone}`)
         .then((res) => res.json())
         .then((data) => {
-          if (data.district) {
-            setDistrict(data.district);
-            setFormData((prev) => ({ ...prev, district: data.district }));
-          }
+          if (data.district) setDistrict(data.district);
         })
         .catch((err) => console.error("Error fetching district:", err));
     }
   }, []);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
+  const handleFormSubmit = async (type, data) => {
     try {
       let url = "";
       let payload = {};
 
-      if (whoisnewmember === "farmer") {
+      if (type === "farmer") {
         url = "http://localhost:5001/api/farmers";
         payload = {
-          FarmerName: formData.farmerName,
-          FarmerPhone: formData.farmerPhone,
+          FarmerName: data.name,
+          FarmerPhone: data.phone,
           District: district,
-          Password: formData.password,
+          Password: data.password,
         };
-      } else if (whoisnewmember === "processor") {
+      } else if (type === "processor") {
         url = "http://localhost:5001/api/processors";
         payload = {
-          ProcessorName: formData.processorName,
-          ProcessorPhone: formData.processorPhone,
+          ProcessorName: data.name,
+          ProcessorPhone: data.phone,
           District: district,
-          LicenseNo: formData.licenseNo,
-          Password: formData.password,
+          LicenseNo: data.licenseNo,
+          Password: data.password,
         };
-      } else if (whoisnewmember === "lab") {
+      } else if (type === "lab") {
         url = "http://localhost:5001/api/labtesters";
         payload = {
-          LabTesterName: formData.labTesterName,
-          LabTesterPhone: formData.labTesterPhone,
+          LabTesterName: data.name,
+          LabTesterPhone: data.phone,
           District: district,
-          AccreditationNo: formData.accreditationNo,
-          Password: formData.password,
+          AccreditationNo: data.accreditationNo,
+          Password: data.password,
         };
-      } else if (whoisnewmember === "manufacturer") {
+      } else if (type === "manufacturer") {
         url = "http://localhost:5001/api/manufacturers";
         payload = {
-          ManufacturerName: formData.manufacturerName,
-          ManufacturerPhone: formData.manufacturerPhone,
+          ManufacturerName: data.name,
+          ManufacturerPhone: data.phone,
           District: district,
-          LicenseNo: formData.licenseNo,
-          Password: formData.password,
+          LicenseNo: data.licenseNo,
+          Password: data.password,
         };
       }
 
@@ -99,56 +208,15 @@ const Registernewmember = () => {
 
       setStatusMessage({
         type: "success",
-        text: `${whoisnewmember} registered successfully!`,
-      });
-
-      setFormData((prev) => {
-        const resetData = { district };
-        Object.keys(prev).forEach((key) => {
-          if (key !== "district") resetData[key] = "";
-        });
-        return resetData;
+        text: `${type} registered successfully!`,
       });
     } catch (err) {
       console.error(err);
-      setStatusMessage({ type: "error", text: " Failed to register member" });
+      setStatusMessage({ type: "error", text: "Failed to register member" });
     }
 
     setTimeout(() => setStatusMessage(null), 4000);
   };
-
-  const InputField = ({ type, name, placeholder }) => (
-    <input
-      type={type}
-      name={name}
-      value={formData[name] || ""}
-      onChange={handleChange}
-      placeholder={placeholder}
-      className="input w-full mb-3 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400"
-    />
-  );
-
-  const FormWrapper = ({ title, children, buttonText, buttonColor }) => (
-    <form
-      onSubmit={handleSubmit}
-      className="bg-white shadow-lg rounded-2xl p-6 w-full max-w-md"
-    >
-      <h3 className="text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2">
-        <UserPlus className="w-5 h-5 text-indigo-500" />
-        {title}
-      </h3>
-      {children}
-      <p className="text-sm text-gray-600 mb-3">
-        District: <b>{district}</b>
-      </p>
-      <button
-        type="submit"
-        className={`w-full py-2 px-4 rounded-lg text-white font-medium transition ${buttonColor}`}
-      >
-        {buttonText}
-      </button>
-    </form>
-  );
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-indigo-50 to-gray-100 font-sans px-4 relative">
@@ -176,134 +244,13 @@ const Registernewmember = () => {
         <option value="manufacturer">Manufacturer</option>
       </select>
 
-      <FormWrapper
-        title={
-          whoisnewmember === "farmer"
-            ? "Add New Farmer"
-            : whoisnewmember === "processor"
-            ? "Add New Processor"
-            : whoisnewmember === "lab"
-            ? "Add New Lab Tester"
-            : whoisnewmember === "manufacturer"
-            ? "Add New Manufacturer"
-            : "Select Member Type"
-        }
-        buttonText={
-          whoisnewmember === "farmer"
-            ? "Save Farmer"
-            : whoisnewmember === "processor"
-            ? "Save Processor"
-            : whoisnewmember === "lab"
-            ? "Save Lab Tester"
-            : whoisnewmember === "manufacturer"
-            ? "Save Manufacturer"
-            : "Submit"
-        }
-        buttonColor={
-          whoisnewmember === "farmer"
-            ? "bg-green-500 hover:bg-green-600"
-            : whoisnewmember === "processor"
-            ? "bg-blue-500 hover:bg-blue-600"
-            : whoisnewmember === "lab"
-            ? "bg-purple-500 hover:bg-purple-600"
-            : whoisnewmember === "manufacturer"
-            ? "bg-orange-500 hover:bg-orange-600"
-            : "bg-gray-400 cursor-not-allowed"
-        }
-      >
-        {/* Only inputs change conditionally */}
-        {whoisnewmember === "farmer" && (
-          <>
-            <InputField
-              type="text"
-              name="farmerName"
-              placeholder="Farmer Name"
-            />
-            <InputField
-              type="text"
-              name="farmerPhone"
-              placeholder="Phone Number"
-            />
-            <InputField
-              type="password"
-              name="farmerPassword"
-              placeholder="Password"
-            />
-          </>
-        )}
-        {whoisnewmember === "processor" && (
-          <>
-            <InputField
-              type="text"
-              name="processorName"
-              placeholder="Processor Name"
-            />
-            <InputField
-              type="text"
-              name="processorPhone"
-              placeholder="Phone Number"
-            />
-            <InputField
-              type="text"
-              name="licenseNo"
-              placeholder="License Number"
-            />
-            <InputField
-              type="password"
-              name="password"
-              placeholder="Password"
-            />
-          </>
-        )}
-        {whoisnewmember === "lab" && (
-          <>
-            <InputField
-              type="text"
-              name="labTesterName"
-              placeholder="Lab Tester Name"
-            />
-            <InputField
-              type="text"
-              name="labTesterPhone"
-              placeholder="Phone Number"
-            />
-            <InputField
-              type="text"
-              name="accreditationNo"
-              placeholder="Accreditation Number"
-            />
-            <InputField
-              type="password"
-              name="password"
-              placeholder="Password"
-            />
-          </>
-        )}
-        {whoisnewmember === "manufacturer" && (
-          <>
-            <InputField
-              type="text"
-              name="manufacturerName"
-              placeholder="Manufacturer Name"
-            />
-            <InputField
-              type="text"
-              name="manufacturerPhone"
-              placeholder="Phone Number"
-            />
-            <InputField
-              type="text"
-              name="licenseNo"
-              placeholder="License Number"
-            />
-            <InputField
-              type="password"
-              name="password"
-              placeholder="Password"
-            />
-          </>
-        )}
-      </FormWrapper>
+      {whoisnewmember && (
+        <MemberForm
+          type={whoisnewmember}
+          district={district}
+          onSubmit={handleFormSubmit}
+        />
+      )}
 
       {statusMessage && (
         <div
