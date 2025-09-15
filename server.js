@@ -259,6 +259,101 @@ app.get("/api/dashboard/funneldata", async (req, res) => {
   }
 });
 
+
+app.post("/api/farmers", async (req, res) => {
+  try {
+    const { FarmerName, FarmerPhone, District, Password } = req.body;
+    if (!FarmerName || !FarmerPhone || !District || !Password) {
+      return res.status(400).json({ error: "All fields are required" });
+    }
+
+    const [result] = await db
+      .promise()
+      .query(
+        "INSERT INTO farmers (FarmerName, FarmerPhone, District, Password) VALUES (?, ?, ?, ?)",
+        [FarmerName, FarmerPhone, District, Password]
+      );
+
+    res.status(201).json({ id: result.insertId, message: "Farmer registered successfully" });
+  } catch (err) {
+    console.error("Error creating farmer:", err);
+    res.status(500).json({ error: "Failed to register farmer" });
+  }
+});
+
+// ================================
+// Processor Registration
+// ================================
+app.post("/api/processors", async (req, res) => {
+  try {
+    const { ProcessorName, ProcessorPhone, District, LicenseNo, Password } = req.body;
+    if (!ProcessorName || !ProcessorPhone || !District || !Password) {
+      return res.status(400).json({ error: "All fields are required" });
+    }
+
+    const [result] = await db
+      .promise()
+      .query(
+        "INSERT INTO processors (ProcessorName, ProcessorPhone, District, LicenseNo, Password) VALUES (?, ?, ?, ?, ?)",
+        [ProcessorName, ProcessorPhone, District, LicenseNo || null, Password]
+      );
+
+    res.status(201).json({ id: result.insertId, message: "Processor registered successfully" });
+  } catch (err) {
+    console.error("Error creating processor:", err);
+    res.status(500).json({ error: "Failed to register processor" });
+  }
+});
+
+// ================================
+// Lab Tester Registration
+// ================================
+app.post("/api/labtesters", async (req, res) => {
+  try {
+    const { LabTesterName, LabTesterPhone, District, AccreditationNo, Password } = req.body;
+    if (!LabTesterName || !LabTesterPhone || !District || !Password) {
+      return res.status(400).json({ error: "All fields are required" });
+    }
+
+    const [result] = await db
+      .promise()
+      .query(
+        "INSERT INTO labtesters (LabTesterName, LabTesterPhone, District, AccreditationNo, Password) VALUES (?, ?, ?, ?, ?)",
+        [LabTesterName, LabTesterPhone, District, AccreditationNo || null, Password]
+      );
+
+    res.status(201).json({ id: result.insertId, message: "Lab Tester registered successfully" });
+  } catch (err) {
+    console.error("Error creating labtester:", err);
+    res.status(500).json({ error: "Failed to register labtester" });
+  }
+});
+
+// ================================
+// Manufacturer Registration
+// ================================
+app.post("/api/manufacturers", async (req, res) => {
+  try {
+    const { ManufacturerName, ManufacturerPhone, District, LicenseNo, Password } = req.body;
+    if (!ManufacturerName || !ManufacturerPhone || !District || !Password) {
+      return res.status(400).json({ error: "All fields are required" });
+    }
+
+    const [result] = await db
+      .promise()
+      .query(
+        "INSERT INTO manufacturers (ManufacturerName, ManufacturerPhone, District, LicenseNo, Password) VALUES (?, ?, ?, ?, ?)",
+        [ManufacturerName, ManufacturerPhone, District, LicenseNo || null, Password]
+      );
+
+    res.status(201).json({ id: result.insertId, message: "Manufacturer registered successfully" });
+  } catch (err) {
+    console.error("Error creating manufacturer:", err);
+    res.status(500).json({ error: "Failed to register manufacturer" });
+  }
+});
+
+
 const PORT = 5001;
 app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);
