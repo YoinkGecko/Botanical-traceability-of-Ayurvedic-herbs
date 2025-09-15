@@ -179,6 +179,27 @@ app.post("/api/admins/login", async (req, res) => {
   }
 });
 
+
+// GET counts for dashboard KPIs
+app.get("/api/dashboard/kpis", async (req, res) => {
+  try {
+    const [farmerCount] = await db.promise().query("SELECT COUNT(*) AS count FROM farmers");
+    const [labTesterCount] = await db.promise().query("SELECT COUNT(*) AS count FROM labtesters");
+    const [processorCount] = await db.promise().query("SELECT COUNT(*) AS count FROM processors");
+    const [manufacturerCount] = await db.promise().query("SELECT COUNT(*) AS count FROM manufacturers");
+
+    res.json({
+      farmers: farmerCount[0].count,
+      labTesters: labTesterCount[0].count,
+      processors: processorCount[0].count,
+      manufacturers: manufacturerCount[0].count,
+    });
+  } catch (err) {
+    console.error("Error fetching dashboard KPIs:", err);
+    res.status(500).json({ error: "Failed to fetch KPI counts" });
+  }
+});
+
 const PORT = 5001;
 app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);

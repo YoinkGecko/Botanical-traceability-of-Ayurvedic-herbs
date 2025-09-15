@@ -13,46 +13,6 @@ const SupplyChainOverviewDashboard = () => {
   const [lastUpdated, setLastUpdated] = useState(new Date());
   const [showAllDataView, setShowAllDataView] = useState(false);
 
-  // Mock data for KPI cards
-  const stakeholderKPIs = [
-    {
-      title: "Active Farmers",
-      count: 2847,
-      trend: "up",
-      trendPercentage: 12.5,
-      icon: "Wheat",
-      iconColor: "white",
-      bgColor: "bg-success",
-    },
-    {
-      title: "Lab Testers",
-      count: 156,
-      trend: "up",
-      trendPercentage: 8.3,
-      icon: "FlaskConical",
-      iconColor: "white",
-      bgColor: "bg-primary",
-    },
-    {
-      title: "Processors",
-      count: 89,
-      trend: "down",
-      trendPercentage: 3.2,
-      icon: "Factory",
-      iconColor: "white",
-      bgColor: "bg-secondary",
-    },
-    {
-      title: "Manufacturers",
-      count: 34,
-      trend: "up",
-      trendPercentage: 15.7,
-      icon: "Building2",
-      iconColor: "white",
-      bgColor: "bg-accent",
-    },
-  ];
-
   // Mock data for verification funnel
   const verificationFunnelData = [
     { name: "Submissions", value: 3126, rate: 100 },
@@ -617,20 +577,75 @@ const SupplyChainOverviewDashboard = () => {
     },
   ];
 
-  // Auto-refresh data every 5 minutes
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setLastUpdated(new Date());
-    }, 300000); // 5 minutes
+  const [kpis, setKpis] = useState({
+    farmers: 0,
+    labTesters: 0,
+    processors: 0,
+    manufacturers: 0,
+  });
 
-    return () => clearInterval(interval);
+  const fetchKpis = async () => {
+    try {
+      const res = await fetch("http://localhost:5001/api/dashboard/kpis");
+      const data = await res.json();
+      setKpis(data);
+      setLastUpdated(new Date());
+    } catch (err) {
+      console.error("Failed to fetch KPIs:", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchKpis(); // fetch immediately
+    const interval = setInterval(fetchKpis, 30000); // every 30 sec
+    return () => clearInterval(interval); // cleanup
   }, []);
+
+  const stakeholderKPIs = [
+    {
+      title: "Active Farmers",
+      count: kpis.farmers,
+      trend: "up",
+      trendPercentage: 12.5,
+      icon: "Wheat",
+      iconColor: "white",
+      bgColor: "bg-success",
+    },
+    {
+      title: "Lab Testers",
+      count: kpis.labTesters,
+      trend: "up",
+      trendPercentage: 8.3,
+      icon: "FlaskConical",
+      iconColor: "white",
+      bgColor: "bg-primary",
+    },
+    {
+      title: "Processors",
+      count: kpis.processors,
+      trend: "down",
+      trendPercentage: 3.2,
+      icon: "Factory",
+      iconColor: "white",
+      bgColor: "bg-secondary",
+    },
+    {
+      title: "Manufacturers",
+      count: kpis.manufacturers,
+      trend: "up",
+      trendPercentage: 15.7,
+      icon: "Building2",
+      iconColor: "white",
+      bgColor: "bg-accent",
+    },
+  ];
 
   const formatLastUpdated = (date) => {
     return date?.toLocaleTimeString("en-US", {
       hour: "2-digit",
       minute: "2-digit",
       second: "2-digit",
+      hour12: false,
     });
   };
 
