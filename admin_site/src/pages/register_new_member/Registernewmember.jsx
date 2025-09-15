@@ -1,12 +1,29 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, CheckCircle2 } from "lucide-react";
+import { ArrowLeft, CheckCircle2, XCircle, UserPlus } from "lucide-react";
 
 const Registernewmember = () => {
   const [whoisnewmember, setWhoisnewmember] = useState("");
   const [formData, setFormData] = useState({});
-  const [successMessage, setSuccessMessage] = useState("");
+  const [statusMessage, setStatusMessage] = useState(null);
+  const [district, setDistrict] = useState("");
   const navigate = useNavigate();
+
+  // 🔹 Fetch admin district on load
+  useEffect(() => {
+    const phone = localStorage.getItem("phonenumber");
+    if (phone) {
+      fetch(`http://localhost:5001/api/admin/district/${phone}`)
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.district) {
+            setDistrict(data.district);
+            setFormData((prev) => ({ ...prev, district: data.district }));
+          }
+        })
+        .catch((err) => console.error("Error fetching district:", err));
+    }
+  }, []);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -24,7 +41,7 @@ const Registernewmember = () => {
         payload = {
           FarmerName: formData.farmerName,
           FarmerPhone: formData.farmerPhone,
-          District: formData.district,
+          District: district,
           Password: formData.password,
         };
       } else if (whoisnewmember === "processor") {
@@ -32,7 +49,7 @@ const Registernewmember = () => {
         payload = {
           ProcessorName: formData.processorName,
           ProcessorPhone: formData.processorPhone,
-          District: formData.district,
+          District: district,
           LicenseNo: formData.licenseNo,
           Password: formData.password,
         };
@@ -41,7 +58,7 @@ const Registernewmember = () => {
         payload = {
           LabTesterName: formData.labTesterName,
           LabTesterPhone: formData.labTesterPhone,
-          District: formData.district,
+          District: district,
           AccreditationNo: formData.accreditationNo,
           Password: formData.password,
         };
@@ -50,7 +67,7 @@ const Registernewmember = () => {
         payload = {
           ManufacturerName: formData.manufacturerName,
           ManufacturerPhone: formData.manufacturerPhone,
-          District: formData.district,
+          District: district,
           LicenseNo: formData.licenseNo,
           Password: formData.password,
         };
@@ -64,214 +81,169 @@ const Registernewmember = () => {
 
       if (!res.ok) throw new Error("Failed to register");
 
-      const data = await res.json();
-      setSuccessMessage(`✅ ${whoisnewmember} registered successfully!`);
-      setFormData({});
+      setStatusMessage({
+        type: "success",
+        text: `✅ ${whoisnewmember} registered successfully!`,
+      });
+      setFormData({ district });
     } catch (err) {
       console.error(err);
-      setSuccessMessage("❌ Failed to register member");
+      setStatusMessage({ type: "error", text: "❌ Failed to register member" });
     }
 
-    setTimeout(() => setSuccessMessage(""), 3000);
+    setTimeout(() => setStatusMessage(null), 4000);
   };
+
+  // 🔹 Reusable Input
+  const InputField = ({ type, name, placeholder }) => (
+    <input
+      type={type}
+      name={name}
+      value={formData[name] || ""}
+      onChange={handleChange}
+      placeholder={placeholder}
+      className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-400 focus:outline-none transition mb-3"
+    />
+  );
+
+  const FormWrapper = ({ title, children, buttonText, buttonColor }) => (
+    <form
+      onSubmit={handleSubmit}
+      className="bg-white shadow-lg rounded-2xl p-6 w-full max-w-md animate-fadeIn"
+    >
+      <h3 className="text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2">
+        <UserPlus className="w-5 h-5 text-indigo-500" />
+        {title}
+      </h3>
+      {children}
+      <p className="text-sm text-gray-600 mb-3">
+        District: <b>{district}</b>
+      </p>
+      <button
+        type="submit"
+        className={`w-full py-2 px-4 rounded-lg text-white font-medium transition ${buttonColor}`}
+      >
+        {buttonText}
+      </button>
+    </form>
+  );
 
   const renderForm = () => {
     switch (whoisnewmember) {
       case "farmer":
         return (
-          <form onSubmit={handleSubmit} className="form-box">
-            <h3 className="form-title">Add New Farmer</h3>
-            <input
+          <FormWrapper
+            title="Add New Farmer"
+            buttonText="Save Farmer"
+            buttonColor="bg-green-500 hover:bg-green-600"
+          >
+            <InputField
               type="text"
               name="farmerName"
-              value={formData.farmerName || ""}
-              onChange={handleChange}
               placeholder="Farmer Name"
-              className="input"
             />
-            <input
+            <InputField
               type="text"
               name="farmerPhone"
-              value={formData.farmerPhone || ""}
-              onChange={handleChange}
               placeholder="Phone Number"
-              className="input"
             />
-            <input
-              type="text"
-              name="district"
-              value={formData.district || ""}
-              onChange={handleChange}
-              placeholder="District"
-              className="input"
-            />
-            <input
+            <InputField
               type="password"
               name="password"
-              value={formData.password || ""}
-              onChange={handleChange}
               placeholder="Password"
-              className="input"
             />
-            <button type="submit" className="btn-green">
-              Save Farmer
-            </button>
-          </form>
+          </FormWrapper>
         );
-
       case "processor":
         return (
-          <form onSubmit={handleSubmit} className="form-box">
-            <h3 className="form-title">Add New Processor</h3>
-            <input
+          <FormWrapper
+            title="Add New Processor"
+            buttonText="Save Processor"
+            buttonColor="bg-blue-500 hover:bg-blue-600"
+          >
+            <InputField
               type="text"
               name="processorName"
-              value={formData.processorName || ""}
-              onChange={handleChange}
               placeholder="Processor Name"
-              className="input"
             />
-            <input
+            <InputField
               type="text"
               name="processorPhone"
-              value={formData.processorPhone || ""}
-              onChange={handleChange}
               placeholder="Phone Number"
-              className="input"
             />
-            <input
-              type="text"
-              name="district"
-              value={formData.district || ""}
-              onChange={handleChange}
-              placeholder="District"
-              className="input"
-            />
-            <input
+            <InputField
               type="text"
               name="licenseNo"
-              value={formData.licenseNo || ""}
-              onChange={handleChange}
               placeholder="License Number"
-              className="input"
             />
-            <input
+            <InputField
               type="password"
               name="password"
-              value={formData.password || ""}
-              onChange={handleChange}
               placeholder="Password"
-              className="input"
             />
-            <button type="submit" className="btn-blue">
-              Save Processor
-            </button>
-          </form>
+          </FormWrapper>
         );
-
       case "lab":
         return (
-          <form onSubmit={handleSubmit} className="form-box">
-            <h3 className="form-title">Add New Lab Tester</h3>
-            <input
+          <FormWrapper
+            title="Add New Lab Tester"
+            buttonText="Save Lab Tester"
+            buttonColor="bg-purple-500 hover:bg-purple-600"
+          >
+            <InputField
               type="text"
               name="labTesterName"
-              value={formData.labTesterName || ""}
-              onChange={handleChange}
               placeholder="Lab Tester Name"
-              className="input"
             />
-            <input
+            <InputField
               type="text"
               name="labTesterPhone"
-              value={formData.labTesterPhone || ""}
-              onChange={handleChange}
               placeholder="Phone Number"
-              className="input"
             />
-            <input
-              type="text"
-              name="district"
-              value={formData.district || ""}
-              onChange={handleChange}
-              placeholder="District"
-              className="input"
-            />
-            <input
+            <InputField
               type="text"
               name="accreditationNo"
-              value={formData.accreditationNo || ""}
-              onChange={handleChange}
               placeholder="Accreditation Number"
-              className="input"
             />
-            <input
+            <InputField
               type="password"
               name="password"
-              value={formData.password || ""}
-              onChange={handleChange}
               placeholder="Password"
-              className="input"
             />
-            <button type="submit" className="btn-purple">
-              Save Lab Tester
-            </button>
-          </form>
+          </FormWrapper>
         );
-
       case "manufacturer":
         return (
-          <form onSubmit={handleSubmit} className="form-box">
-            <h3 className="form-title">Add New Manufacturer</h3>
-            <input
+          <FormWrapper
+            title="Add New Manufacturer"
+            buttonText="Save Manufacturer"
+            buttonColor="bg-orange-500 hover:bg-orange-600"
+          >
+            <InputField
               type="text"
               name="manufacturerName"
-              value={formData.manufacturerName || ""}
-              onChange={handleChange}
               placeholder="Manufacturer Name"
-              className="input"
             />
-            <input
+            <InputField
               type="text"
               name="manufacturerPhone"
-              value={formData.manufacturerPhone || ""}
-              onChange={handleChange}
               placeholder="Phone Number"
-              className="input"
             />
-            <input
-              type="text"
-              name="district"
-              value={formData.district || ""}
-              onChange={handleChange}
-              placeholder="District"
-              className="input"
-            />
-            <input
+            <InputField
               type="text"
               name="licenseNo"
-              value={formData.licenseNo || ""}
-              onChange={handleChange}
               placeholder="License Number"
-              className="input"
             />
-            <input
+            <InputField
               type="password"
               name="password"
-              value={formData.password || ""}
-              onChange={handleChange}
               placeholder="Password"
-              className="input"
             />
-            <button type="submit" className="btn-orange">
-              Save Manufacturer
-            </button>
-          </form>
+          </FormWrapper>
         );
-
       default:
         return (
-          <p className="text-gray-500 italic mt-6">
+          <p className="text-gray-500 italic mt-6 text-center">
             Select a member type from the dropdown above.
           </p>
         );
@@ -279,7 +251,8 @@ const Registernewmember = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 font-sans px-4 relative">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-indigo-50 to-gray-100 font-sans px-4 relative">
+      {/* Back button */}
       <button
         onClick={() => navigate("/supply-chain-overview-dashboard")}
         className="absolute top-6 left-6 flex items-center gap-2 text-gray-700 hover:text-gray-900 transition"
@@ -288,14 +261,16 @@ const Registernewmember = () => {
         <span className="font-medium">Back</span>
       </button>
 
+      {/* Title */}
       <h2 className="text-3xl font-bold text-gray-800 mb-6">
         Register New Member
       </h2>
 
+      {/* Dropdown */}
       <select
         value={whoisnewmember}
         onChange={(e) => setWhoisnewmember(e.target.value)}
-        className="bg-white border border-gray-300 text-gray-700 rounded-md px-4 py-2 shadow-md focus:outline-none focus:ring-2 focus:ring-indigo-400"
+        className="bg-white border border-gray-300 text-gray-700 rounded-lg px-4 py-2 shadow-md focus:outline-none focus:ring-2 focus:ring-indigo-400 mb-6"
       >
         <option value="">-- Select Member Type --</option>
         <option value="farmer">Farmer</option>
@@ -304,12 +279,25 @@ const Registernewmember = () => {
         <option value="manufacturer">Manufacturer</option>
       </select>
 
+      {/* Form render */}
       {renderForm()}
 
-      {successMessage && (
-        <div className="mt-6 flex items-center gap-2 text-green-600 bg-green-100 border border-green-300 px-4 py-2 rounded-md shadow-sm">
-          <CheckCircle2 className="w-5 h-5" />
-          <span>{successMessage}</span>
+      {/* Success/Error Toast */}
+      {statusMessage && (
+        <div
+          className={`fixed bottom-6 right-6 flex items-center gap-2 px-4 py-3 rounded-lg shadow-lg animate-fadeIn 
+          ${
+            statusMessage.type === "success"
+              ? "bg-green-100 text-green-700 border border-green-300"
+              : "bg-red-100 text-red-700 border border-red-300"
+          }`}
+        >
+          {statusMessage.type === "success" ? (
+            <CheckCircle2 className="w-5 h-5" />
+          ) : (
+            <XCircle className="w-5 h-5" />
+          )}
+          <span className="font-medium">{statusMessage.text}</span>
         </div>
       )}
     </div>

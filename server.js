@@ -353,6 +353,27 @@ app.post("/api/manufacturers", async (req, res) => {
   }
 });
 
+// Get Admin District by Phone
+app.get("/api/admin/district/:phone", async (req, res) => {
+  try {
+    const phone = req.params.phone;
+
+    const [rows] = await db.promise().query(
+      "SELECT District FROM admins WHERE AdminPhone = ? LIMIT 1",
+      [phone]
+    );
+
+    if (rows.length === 0) {
+      return res.status(404).json({ error: "Admin not found" });
+    }
+
+    res.json({ district: rows[0].District });
+  } catch (err) {
+    console.error("Error fetching admin district:", err);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
 
 const PORT = 5001;
 app.listen(PORT, () => {
