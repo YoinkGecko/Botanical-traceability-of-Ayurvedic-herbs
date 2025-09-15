@@ -200,6 +200,65 @@ app.get("/api/dashboard/kpis", async (req, res) => {
   }
 });
 
+
+app.get("/api/dashboard/funneldata", async (req, res) => {
+  try {
+    // Count submissions from all tables
+    const [[{ count: farmerSubmissions }]] = await db
+      .promise()
+      .query("SELECT COUNT(*) AS count FROM farmer_data_collection");
+
+    const [[{ count: processorSubmissions }]] = await db
+      .promise()
+      .query("SELECT COUNT(*) AS count FROM processor_data_collection");
+
+    const [[{ count: labTesterSubmissions }]] = await db
+      .promise()
+      .query("SELECT COUNT(*) AS count FROM labtester_data_collection");
+
+    const [[{ count: manufacturerSubmissions }]] = await db
+      .promise()
+      .query("SELECT COUNT(*) AS count FROM manufacturer_data_collection");
+
+    const totalSubmissions =
+      farmerSubmissions +
+      processorSubmissions +
+      labTesterSubmissions +
+      manufacturerSubmissions;
+
+    // Count labTesting → from labtester_data_collection with any status (or PENDING)
+    const [[{ count: labTesting }]] = await db
+      .promise()
+      .query(
+        "SELECT COUNT(*) AS count FROM labtester_data_collection WHERE Status = 'PENDING' OR Status = 'APPROVED'"
+      );
+
+    // Count Processing → from processor_data_collection with Status not REJECTED
+    const [[{ count: processing }]] = await db
+      .promise()
+      .query(
+        "SELECT COUNT(*) AS count FROM processor_data_collection WHERE Status != 'REJECTED'"
+      );
+
+    // Count Approved → all approved in manufacturer_data_collection
+    const [[{ count: approved }]] = await db
+      .promise()
+      .query(
+        "SELECT COUNT(*) AS count FROM manufacturer_data_collection WHERE Status = 'APPROVED'"
+      );
+
+    res.json({
+      Submissions: totalSubmissions,
+      labTesting,
+      Processing: processing,
+      Approved: approved,
+    });
+  } catch (err) {
+    console.error("Error fetching funnel data:", err);
+    res.status(500).json({ error: "Failed to fetch funnel data" });
+  }
+});
+
 const PORT = 5001;
 app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);

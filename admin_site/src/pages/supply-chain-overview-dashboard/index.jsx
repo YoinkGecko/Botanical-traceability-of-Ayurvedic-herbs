@@ -12,14 +12,28 @@ const SupplyChainOverviewDashboard = () => {
   const [isHeatMapVisible, setIsHeatMapVisible] = useState(false);
   const [lastUpdated, setLastUpdated] = useState(new Date());
   const [showAllDataView, setShowAllDataView] = useState(false);
+  const [funneldata, setFunneldata] = useState({
+    Submissions: 0,
+    labTesting: 0,
+    Processing: 0,
+    Approved: 0,
+  });
 
-  // Mock data for verification funnel
+  const fetchfunneldata = async () => {
+    try {
+      const res = await fetch("http://localhost:5001/api/dashboard/funneldata");
+      const data = await res.json();
+      setFunneldata(data);
+    } catch (err) {
+      console.error("Failed to fetch KPIs:", err);
+    }
+  };
+
   const verificationFunnelData = [
-    { name: "Submissions", value: 3126, rate: 100 },
-    { name: "Initial Review", value: 2894, rate: 92.6 },
-    { name: "Lab Testing", value: 2567, rate: 82.1 },
-    { name: "Processing", value: 2234, rate: 71.5 },
-    { name: "Approved", value: 2089, rate: 66.8 },
+    { name: "Submissions", value: funneldata.Submissions },
+    { name: "Lab Testing", value: funneldata.labTesting },
+    { name: "Processing", value: funneldata.Processing },
+    { name: "Approved", value: funneldata.Approved },
   ];
 
   // Enhanced mock data with location coordinates for comprehensive view
@@ -596,9 +610,15 @@ const SupplyChainOverviewDashboard = () => {
   };
 
   useEffect(() => {
-    fetchKpis(); // fetch immediately
-    const interval = setInterval(fetchKpis, 30000); // every 30 sec
-    return () => clearInterval(interval); // cleanup
+    const fetchAll = async () => {
+      await fetchKpis(); // KPI counts
+      await fetchfunneldata(); // Funnel counts
+      setLastUpdated(new Date());
+    };
+
+    fetchAll();
+    const interval = setInterval(fetchAll, 30000); // every 30 sec
+    return () => clearInterval(interval);
   }, []);
 
   const stakeholderKPIs = [
