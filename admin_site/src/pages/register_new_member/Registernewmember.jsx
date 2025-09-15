@@ -4,12 +4,24 @@ import { ArrowLeft, CheckCircle2, XCircle, UserPlus } from "lucide-react";
 
 const Registernewmember = () => {
   const [whoisnewmember, setWhoisnewmember] = useState("");
-  const [formData, setFormData] = useState({});
+  const [formData, setFormData] = useState({
+    farmerName: "",
+    farmerPhone: "",
+    password: "",
+    processorName: "",
+    processorPhone: "",
+    licenseNo: "",
+    labTesterName: "",
+    labTesterPhone: "",
+    accreditationNo: "",
+    manufacturerName: "",
+    manufacturerPhone: "",
+    district: "",
+  });
   const [statusMessage, setStatusMessage] = useState(null);
   const [district, setDistrict] = useState("");
   const navigate = useNavigate();
 
-  // 🔹 Fetch admin district on load
   useEffect(() => {
     const phone = localStorage.getItem("phonenumber");
     if (phone) {
@@ -89,7 +101,14 @@ const Registernewmember = () => {
         type: "success",
         text: `${whoisnewmember} registered successfully!`,
       });
-      setFormData({ district });
+
+      setFormData((prev) => {
+        const resetData = { district };
+        Object.keys(prev).forEach((key) => {
+          if (key !== "district") resetData[key] = "";
+        });
+        return resetData;
+      });
     } catch (err) {
       console.error(err);
       setStatusMessage({ type: "error", text: " Failed to register member" });
@@ -112,7 +131,7 @@ const Registernewmember = () => {
   const FormWrapper = ({ title, children, buttonText, buttonColor }) => (
     <form
       onSubmit={handleSubmit}
-      className="bg-white shadow-lg rounded-2xl p-6 w-full max-w-md animate-fadeIn"
+      className="bg-white shadow-lg rounded-2xl p-6 w-full max-w-md"
     >
       <h3 className="text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2">
         <UserPlus className="w-5 h-5 text-indigo-500" />
@@ -131,39 +150,89 @@ const Registernewmember = () => {
     </form>
   );
 
-  const renderForm = () => {
-    switch (whoisnewmember) {
-      case "farmer":
-        return (
-          <FormWrapper
-            title="Add New Farmer"
-            buttonText="Save Farmer"
-            buttonColor="bg-green-500 hover:bg-green-600"
-          >
+  return (
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-indigo-50 to-gray-100 font-sans px-4 relative">
+      <button
+        onClick={() => navigate("/supply-chain-overview-dashboard")}
+        className="absolute top-6 left-6 flex items-center gap-2 text-gray-700 hover:text-gray-900 transition"
+      >
+        <ArrowLeft className="w-5 h-5" />
+        <span className="font-medium">Back</span>
+      </button>
+
+      <h2 className="text-3xl font-bold text-gray-800 mb-6">
+        Register New Member
+      </h2>
+
+      <select
+        value={whoisnewmember}
+        onChange={(e) => setWhoisnewmember(e.target.value)}
+        className="bg-white border border-gray-300 text-gray-700 rounded-lg px-4 py-2 shadow-md focus:outline-none focus:ring-2 focus:ring-indigo-400 mb-6"
+      >
+        <option value="">-- Select Member Type --</option>
+        <option value="farmer">Farmer</option>
+        <option value="processor">Processor</option>
+        <option value="lab">Lab Tester</option>
+        <option value="manufacturer">Manufacturer</option>
+      </select>
+
+      <FormWrapper
+        title={
+          whoisnewmember === "farmer"
+            ? "Add New Farmer"
+            : whoisnewmember === "processor"
+            ? "Add New Processor"
+            : whoisnewmember === "lab"
+            ? "Add New Lab Tester"
+            : whoisnewmember === "manufacturer"
+            ? "Add New Manufacturer"
+            : "Select Member Type"
+        }
+        buttonText={
+          whoisnewmember === "farmer"
+            ? "Save Farmer"
+            : whoisnewmember === "processor"
+            ? "Save Processor"
+            : whoisnewmember === "lab"
+            ? "Save Lab Tester"
+            : whoisnewmember === "manufacturer"
+            ? "Save Manufacturer"
+            : "Submit"
+        }
+        buttonColor={
+          whoisnewmember === "farmer"
+            ? "bg-green-500 hover:bg-green-600"
+            : whoisnewmember === "processor"
+            ? "bg-blue-500 hover:bg-blue-600"
+            : whoisnewmember === "lab"
+            ? "bg-purple-500 hover:bg-purple-600"
+            : whoisnewmember === "manufacturer"
+            ? "bg-orange-500 hover:bg-orange-600"
+            : "bg-gray-400 cursor-not-allowed"
+        }
+      >
+        {/* Only inputs change conditionally */}
+        {whoisnewmember === "farmer" && (
+          <>
             <InputField
               type="text"
               name="farmerName"
               placeholder="Farmer Name"
-            />{" "}
+            />
             <InputField
               type="text"
               name="farmerPhone"
               placeholder="Phone Number"
-            />{" "}
+            />
             <InputField
               type="password"
-              name="password"
+              name="farmerPassword"
               placeholder="Password"
-            />{" "}
-          </FormWrapper>
-        );
-      case "processor":
-        return (
-          <FormWrapper
-            title="Add New Processor"
-            buttonText="Save Processor"
-            buttonColor="bg-blue-500 hover:bg-blue-600"
-          >
+            />
+          </>
+        )}
+        {whoisnewmember === "processor" && (
+          <>
             <InputField
               type="text"
               name="processorName"
@@ -184,15 +253,10 @@ const Registernewmember = () => {
               name="password"
               placeholder="Password"
             />
-          </FormWrapper>
-        );
-      case "lab":
-        return (
-          <FormWrapper
-            title="Add New Lab Tester"
-            buttonText="Save Lab Tester"
-            buttonColor="bg-purple-500 hover:bg-purple-600"
-          >
+          </>
+        )}
+        {whoisnewmember === "lab" && (
+          <>
             <InputField
               type="text"
               name="labTesterName"
@@ -213,15 +277,10 @@ const Registernewmember = () => {
               name="password"
               placeholder="Password"
             />
-          </FormWrapper>
-        );
-      case "manufacturer":
-        return (
-          <FormWrapper
-            title="Add New Manufacturer"
-            buttonText="Save Manufacturer"
-            buttonColor="bg-orange-500 hover:bg-orange-600"
-          >
+          </>
+        )}
+        {whoisnewmember === "manufacturer" && (
+          <>
             <InputField
               type="text"
               name="manufacturerName"
@@ -242,50 +301,10 @@ const Registernewmember = () => {
               name="password"
               placeholder="Password"
             />
-          </FormWrapper>
-        );
-      default:
-        return (
-          <p className="text-gray-500 italic mt-6 text-center">
-            Select a member type from the dropdown above.
-          </p>
-        );
-    }
-  };
+          </>
+        )}
+      </FormWrapper>
 
-  return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-indigo-50 to-gray-100 font-sans px-4 relative">
-      {/* Back button */}
-      <button
-        onClick={() => navigate("/supply-chain-overview-dashboard")}
-        className="absolute top-6 left-6 flex items-center gap-2 text-gray-700 hover:text-gray-900 transition"
-      >
-        <ArrowLeft className="w-5 h-5" />
-        <span className="font-medium">Back</span>
-      </button>
-
-      {/* Title */}
-      <h2 className="text-3xl font-bold text-gray-800 mb-6">
-        Register New Member
-      </h2>
-
-      {/* Dropdown */}
-      <select
-        value={whoisnewmember}
-        onChange={(e) => setWhoisnewmember(e.target.value)}
-        className="bg-white border border-gray-300 text-gray-700 rounded-lg px-4 py-2 shadow-md focus:outline-none focus:ring-2 focus:ring-indigo-400 mb-6"
-      >
-        <option value="">-- Select Member Type --</option>
-        <option value="farmer">Farmer</option>
-        <option value="processor">Processor</option>
-        <option value="lab">Lab Tester</option>
-        <option value="manufacturer">Manufacturer</option>
-      </select>
-
-      {/* Form render */}
-      {renderForm()}
-
-      {/* Success/Error Toast */}
       {statusMessage && (
         <div
           className={`fixed bottom-6 right-6 flex items-center gap-2 px-4 py-3 rounded-lg shadow-lg animate-fadeIn 
