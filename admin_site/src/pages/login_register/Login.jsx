@@ -4,16 +4,33 @@ import { motion } from "framer-motion";
 
 const Login = () => {
   const navigate = useNavigate();
-  const [username, setUsername] = useState("");
+  const [phonenumber, setphonenumber] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    // Simple authentication logic (for demo purposes only)
-    if (username === "admin" && password === "password") {
+
+    try {
+      const res = await fetch("http://localhost:5001/api/admins/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ phonenumber, password }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        alert(data.error);
+        setPassword("");
+        setphonenumber("");
+        return;
+      }
+
+      // ✅ login success
       navigate("/supply-chain-overview-dashboard");
-    } else {
-      alert("Invalid credentials");
+    } catch (err) {
+      console.error("Login error:", err);
+      alert("Server error, try again later.");
     }
   };
 
@@ -41,18 +58,18 @@ const Login = () => {
         </h2>
 
         <form onSubmit={handleLogin} className="space-y-5">
-          {/* Username */}
+          {/* phonenumber */}
           <div>
-            <label className="block text-gray-700 mb-2" htmlFor="username">
-              Username
+            <label className="block text-gray-700 mb-2" htmlFor="phonenumber">
+              Phone number
             </label>
             <input
               type="text"
-              id="username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              id="phonenumber"
+              value={phonenumber}
+              onChange={(e) => setphonenumber(e.target.value)}
               className="w-full px-4 py-2 rounded-lg bg-gray-50 border border-gray-300 text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-400 transition"
-              placeholder="Enter your username"
+              placeholder="Enter your phone number"
               required
             />
           </div>

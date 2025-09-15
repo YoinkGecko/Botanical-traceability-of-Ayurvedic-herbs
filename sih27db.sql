@@ -11,7 +11,7 @@ CREATE TABLE admins (
     APass VARCHAR(255) NOT NULL,
     ARole ENUM('SuperAdmin','DistrictAdmin') NOT NULL,
     District VARCHAR(100) NOT NULL,
-    status ENUM('ACTIVE','SUSPENDED') DEFAULT 'ACTIVE'
+    status ENUM('ACTIVE','SUSPENDED') DEFAULT 'ACTIVE' 
 );
 
 -- ================================

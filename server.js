@@ -140,6 +140,45 @@ app.post("/api/admins", async (req, res) => {
   }
 });
 
+// Login route
+app.post("/api/admins/login", async (req, res) => {
+  const { phonenumber, password } = req.body; // 👈 changed here
+
+  try {
+    const [rows] = await db
+      .promise()
+      .query(
+        "SELECT AdminID, AdminName, APass, status FROM admins WHERE AdminPhone = ?",
+        [phonenumber]   // 👈 changed here
+      );
+
+    if (rows.length === 0) {
+      return res.status(401).json({ error: "Invalid credentials" });
+    }
+
+    const admin = rows[0];
+
+    if (admin.status === "SUSPENDED") {
+      return res
+        .status(403)
+        .json({ error: "Account suspended. Contact MOA." });
+    }
+
+    if (admin.APass !== password) {
+      return res.status(401).json({ error: "Invalid credentials" });
+    }
+
+    res.json({
+      success: true,
+      message: "Login successful",
+      admin: { id: admin.AdminID, name: admin.AdminName },
+    });
+  } catch (err) {
+    console.error("Login error:", err);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
 const PORT = 5001;
 app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);
