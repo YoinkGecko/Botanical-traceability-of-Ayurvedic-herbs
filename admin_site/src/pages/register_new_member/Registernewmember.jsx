@@ -26,7 +26,11 @@ const Registernewmember = () => {
   }, []);
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   const handleSubmit = async (e) => {
@@ -95,15 +99,18 @@ const Registernewmember = () => {
   };
 
   // 🔹 Reusable Input
-  const InputField = ({ type, name, placeholder }) => (
-    <input
-      type={type}
-      name={name}
-      value={formData[name] || ""}
-      onChange={handleChange}
-      placeholder={placeholder}
-      className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-400 focus:outline-none transition mb-3"
-    />
+  const InputField = ({ type, name, placeholder, value, onChange }) => (
+    <>
+      <input
+        type={type}
+        name={name}
+        value={value}
+        onChange={onChange}
+        placeholder={placeholder}
+        className="input"
+      />
+      <br />
+    </>
   );
 
   const FormWrapper = ({ title, children, buttonText, buttonColor }) => (
@@ -141,17 +148,17 @@ const Registernewmember = () => {
               type="text"
               name="farmerName"
               placeholder="Farmer Name"
-            />
+            />{" "}
             <InputField
               type="text"
               name="farmerPhone"
               placeholder="Phone Number"
-            />
+            />{" "}
             <InputField
               type="password"
               name="password"
               placeholder="Password"
-            />
+            />{" "}
           </FormWrapper>
         );
       case "processor":
