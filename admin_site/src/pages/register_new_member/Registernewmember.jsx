@@ -87,30 +87,26 @@ const Registernewmember = () => {
 
       setStatusMessage({
         type: "success",
-        text: `✅ ${whoisnewmember} registered successfully!`,
+        text: `${whoisnewmember} registered successfully!`,
       });
       setFormData({ district });
     } catch (err) {
       console.error(err);
-      setStatusMessage({ type: "error", text: "❌ Failed to register member" });
+      setStatusMessage({ type: "error", text: " Failed to register member" });
     }
 
     setTimeout(() => setStatusMessage(null), 4000);
   };
 
-  // 🔹 Reusable Input
-  const InputField = ({ type, name, placeholder, value, onChange }) => (
-    <>
-      <input
-        type={type}
-        name={name}
-        value={value}
-        onChange={onChange}
-        placeholder={placeholder}
-        className="input"
-      />
-      <br />
-    </>
+  const InputField = ({ type, name, placeholder }) => (
+    <input
+      type={type}
+      name={name}
+      value={formData[name] || ""}
+      onChange={handleChange}
+      placeholder={placeholder}
+      className="input w-full mb-3 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400"
+    />
   );
 
   const FormWrapper = ({ title, children, buttonText, buttonColor }) => (
