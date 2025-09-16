@@ -694,7 +694,7 @@ const SupplyChainOverviewDashboard = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <Header />
+      {isHeatMapVisible ? <></> : <Header />}
       {/* Main Content */}
       <main className="pt-32 pb-8">
         <div className="container mx-auto px-6">
