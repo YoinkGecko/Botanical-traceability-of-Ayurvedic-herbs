@@ -1,73 +1,73 @@
-import React, { useState } from 'react';
-import Icon from '../../../components/AppIcon';
-import Button from '../../../components/ui/Button';
+import React, { useEffect, useState } from "react";
+import Icon from "../../../components/AppIcon";
+import Button from "../../../components/ui/Button";
 
 const RecentSubmissionsTable = ({ submissions }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
   const totalPages = Math.ceil(submissions?.length / itemsPerPage);
-  
+
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   const currentSubmissions = submissions?.slice(startIndex, endIndex);
 
   const getStatusConfig = (status) => {
     switch (status?.toLowerCase()) {
-      case 'approved':
+      case "approved":
         return {
-          bgColor: 'bg-success/10',
-          textColor: 'text-success',
-          icon: 'CheckCircle'
+          bgColor: "bg-success/10",
+          textColor: "text-success",
+          icon: "CheckCircle",
         };
-      case 'pending':
+      case "pending":
         return {
-          bgColor: 'bg-warning/10',
-          textColor: 'text-warning',
-          icon: 'Clock'
+          bgColor: "bg-warning/10",
+          textColor: "text-warning",
+          icon: "Clock",
         };
-      case 'rejected':
+      case "rejected":
         return {
-          bgColor: 'bg-error/10',
-          textColor: 'text-error',
-          icon: 'XCircle'
+          bgColor: "bg-error/10",
+          textColor: "text-error",
+          icon: "XCircle",
         };
-      case 'in review':
+      case "in review":
         return {
-          bgColor: 'bg-primary/10',
-          textColor: 'text-primary',
-          icon: 'Eye'
+          bgColor: "bg-primary/10",
+          textColor: "text-primary",
+          icon: "Eye",
         };
       default:
         return {
-          bgColor: 'bg-muted/10',
-          textColor: 'text-muted-foreground',
-          icon: 'Circle'
+          bgColor: "bg-muted/10",
+          textColor: "text-muted-foreground",
+          icon: "Circle",
         };
     }
   };
 
   const getStakeholderIcon = (type) => {
     switch (type?.toLowerCase()) {
-      case 'farmer':
-        return 'Wheat';
-      case 'lab tester':
-        return 'FlaskConical';
-      case 'processor':
-        return 'Factory';
-      case 'manufacturer':
-        return 'Building2';
+      case "farmer":
+        return "Wheat";
+      case "lab tester":
+        return "FlaskConical";
+      case "processor":
+        return "Factory";
+      case "manufacturer":
+        return "Building2";
       default:
-        return 'User';
+        return "User";
     }
   };
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
-    return date?.toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
+    return date?.toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
     });
   };
 
@@ -103,7 +103,7 @@ const RecentSubmissionsTable = ({ submissions }) => {
                 Stakeholder
               </th>
               <th className="text-left p-4 text-sm font-medium text-muted-foreground">
-                Submission ID
+                ID
               </th>
               <th className="text-left p-4 text-sm font-medium text-muted-foreground">
                 Type
@@ -115,21 +115,30 @@ const RecentSubmissionsTable = ({ submissions }) => {
                 Submitted
               </th>
               <th className="text-left p-4 text-sm font-medium text-muted-foreground">
-                Actions
+                View Location
               </th>
             </tr>
           </thead>
           <tbody className="divide-y divide-border">
             {currentSubmissions?.map((submission) => {
               const statusConfig = getStatusConfig(submission?.status);
-              const stakeholderIcon = getStakeholderIcon(submission?.stakeholderType);
-              
+              const stakeholderIcon = getStakeholderIcon(
+                submission?.stakeholderType
+              );
+
               return (
-                <tr key={submission?.id} className="hover:bg-muted/30 transition-smooth">
+                <tr
+                  key={submission?.id}
+                  className="hover:bg-muted/30 transition-smooth"
+                >
                   <td className="p-4">
                     <div className="flex items-center space-x-3">
                       <div className="flex items-center justify-center w-8 h-8 bg-primary/10 rounded-full">
-                        <Icon name={stakeholderIcon} size={16} className="text-primary" />
+                        <Icon
+                          name={stakeholderIcon}
+                          size={16}
+                          className="text-primary"
+                        />
                       </div>
                       <div>
                         <p className="text-sm font-medium text-foreground">
@@ -152,9 +161,17 @@ const RecentSubmissionsTable = ({ submissions }) => {
                     </span>
                   </td>
                   <td className="p-4">
-                    <div className={`inline-flex items-center space-x-1 px-2 py-1 rounded-full ${statusConfig?.bgColor}`}>
-                      <Icon name={statusConfig?.icon} size={12} className={statusConfig?.textColor} />
-                      <span className={`text-xs font-medium ${statusConfig?.textColor}`}>
+                    <div
+                      className={`inline-flex items-center space-x-1 px-2 py-1 rounded-full ${statusConfig?.bgColor}`}
+                    >
+                      <Icon
+                        name={statusConfig?.icon}
+                        size={12}
+                        className={statusConfig?.textColor}
+                      />
+                      <span
+                        className={`text-xs font-medium ${statusConfig?.textColor}`}
+                      >
                         {submission?.status}
                       </span>
                     </div>
@@ -169,12 +186,6 @@ const RecentSubmissionsTable = ({ submissions }) => {
                       <Button variant="ghost" size="sm">
                         <Icon name="Eye" size={14} />
                       </Button>
-                      <Button variant="ghost" size="sm">
-                        <Icon name="Edit" size={14} />
-                      </Button>
-                      <Button variant="ghost" size="sm">
-                        <Icon name="MoreHorizontal" size={14} />
-                      </Button>
                     </div>
                   </td>
                 </tr>
@@ -187,7 +198,9 @@ const RecentSubmissionsTable = ({ submissions }) => {
         <div className="p-4 border-t border-border">
           <div className="flex items-center justify-between">
             <div className="text-sm text-muted-foreground">
-              Showing {startIndex + 1} to {Math.min(endIndex, submissions?.length)} of {submissions?.length} entries
+              Showing {startIndex + 1} to{" "}
+              {Math.min(endIndex, submissions?.length)} of {submissions?.length}{" "}
+              entries
             </div>
             <div className="flex items-center space-x-2">
               <Button
