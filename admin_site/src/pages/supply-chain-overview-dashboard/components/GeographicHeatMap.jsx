@@ -2,31 +2,7 @@ import React, { useState } from "react";
 import Icon from "../../../components/AppIcon";
 import Button from "../../../components/ui/Button";
 
-const GeographicHeatMap = ({ isVisible, onToggle, regionData }) => {
-  const [selectedRegion, setSelectedRegion] = useState(null);
-
-  const getActivityLevel = (count) => {
-    if (count >= 100) return "high";
-    if (count >= 50) return "medium";
-    if (count >= 20) return "low";
-    return "minimal";
-  };
-
-  const getActivityColor = (level) => {
-    switch (level) {
-      case "high":
-        return "bg-success text-success-foreground";
-      case "medium":
-        return "bg-warning text-warning-foreground";
-      case "low":
-        return "bg-primary text-primary-foreground";
-      case "minimal":
-        return "bg-muted text-muted-foreground";
-      default:
-        return "bg-muted text-muted-foreground";
-    }
-  };
-
+const GeographicHeatMap = ({ isVisible, onToggle }) => {
   if (!isVisible) return null;
 
   return (
@@ -99,10 +75,10 @@ const GeographicHeatMap = ({ isVisible, onToggle, regionData }) => {
 
       // Markers
       var locations = [
-        { name: "🌿 Ashwagandha Farm", coords: [28.6139, 77.2090] },
-        { name: "🌿 Aloe Vera Field", coords: [28.6189, 77.2150] },
-        { name: "🌿 Tulsi Plantation", coords: [28.6089, 77.2000] },
-        { name: "🌿 Neem Garden", coords: [28.6200, 77.2200] }
+        { name: "Ramesh", coords: [28.6139, 77.2090] },
+        { name: "suresh", coords: [28.6189, 77.2150] },
+        { name: "kuresh", coords: [28.6089, 77.2000] },
+        { name: "puresh", coords: [28.6200, 77.2200] }
       ];
       locations.forEach(function (loc) {
         var marker = L.marker(loc.coords).addTo(map);
