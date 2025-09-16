@@ -115,7 +115,7 @@ const RecentSubmissionsTable = ({ submissions }) => {
                 Submitted
               </th>
               <th className="text-left p-4 text-sm font-medium text-muted-foreground">
-                View Location
+                Location
               </th>
             </tr>
           </thead>
