@@ -611,6 +611,16 @@ const SupplyChainOverviewDashboard = () => {
   };
 
   useEffect(() => {
+    const phone = localStorage.getItem("phonenumber");
+    if (phone) {
+      fetch(`http://localhost:5001/api/admin/district/${phone}`)
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.district) localStorage.setItem("district", data.district);
+        })
+        .catch((err) => console.error("Error fetching district:", err));
+    }
+
     const fetchAll = async () => {
       await fetchKpis(); // KPI counts
       await fetchfunneldata(); // Funnel counts
