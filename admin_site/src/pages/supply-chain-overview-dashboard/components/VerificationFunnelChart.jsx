@@ -1,8 +1,15 @@
-import React from 'react';
-import { FunnelChart, Funnel, Cell, ResponsiveContainer, Tooltip, LabelList } from 'recharts';
+import React from "react";
+import {
+  FunnelChart,
+  Funnel,
+  Cell,
+  ResponsiveContainer,
+  Tooltip,
+  LabelList,
+} from "recharts";
 
 const VerificationFunnelChart = ({ data }) => {
-  const COLORS = ['#2D5016', '#8B4513', '#FF8C00', '#228B22', '#DAA520'];
+  const COLORS = ["#2D5016", "#8B4513", "#FF8C00", "#228B22", "#DAA520"];
 
   const CustomTooltip = ({ active, payload }) => {
     if (active && payload && payload?.length) {
@@ -11,10 +18,14 @@ const VerificationFunnelChart = ({ data }) => {
         <div className="bg-card border border-border rounded-lg p-3 shadow-modal">
           <p className="font-medium text-foreground">{data?.name}</p>
           <p className="text-sm text-muted-foreground">
-            Count: <span className="font-medium text-foreground">{data?.value?.toLocaleString()}</span>
+            Count:{" "}
+            <span className="font-medium text-foreground">
+              {data?.value?.toLocaleString()}
+            </span>
           </p>
           <p className="text-sm text-muted-foreground">
-            Rate: <span className="font-medium text-foreground">{data?.rate}%</span>
+            Rate:{" "}
+            <span className="font-medium text-foreground">{data?.rate}%</span>
           </p>
         </div>
       );
@@ -49,12 +60,15 @@ const VerificationFunnelChart = ({ data }) => {
               animationDuration={800}
             >
               {data?.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={COLORS?.[index % COLORS?.length]} />
+                <Cell
+                  key={`cell-${index}`}
+                  fill={COLORS?.[index % COLORS?.length]}
+                />
               ))}
-              <LabelList 
-                position="center" 
-                fill="#fff" 
-                stroke="none" 
+              <LabelList
+                position="center"
+                fill="#fff"
+                stroke="none"
                 fontSize={14}
                 fontWeight="600"
               />
@@ -65,7 +79,7 @@ const VerificationFunnelChart = ({ data }) => {
       <div className="mt-6 grid grid-cols-2 lg:grid-cols-5 gap-4">
         {data?.map((stage, index) => (
           <div key={stage?.name} className="text-center">
-            <div 
+            <div
               className="w-4 h-4 rounded-full mx-auto mb-2"
               style={{ backgroundColor: COLORS?.[index % COLORS?.length] }}
             ></div>
