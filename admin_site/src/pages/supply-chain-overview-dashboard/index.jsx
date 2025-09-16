@@ -779,7 +779,9 @@ const SupplyChainOverviewDashboard = () => {
 
               {/* Recent Submissions Table */}
               <div className="mb-8">
-                <RecentSubmissionsTable submissions={recentSubmissions} />
+                <RecentSubmissionsTable
+                  district={localStorage.getItem("district")}
+                />
               </div>
             </>
           )}

@@ -430,6 +430,83 @@ app.get("/api/admin/getphanddistrict", (req, res) => {
   });
 });
 
+// ✅ Recent Submissions Route
+// ✅ Recent Submissions Route (fixed for mysql2)
+app.get("/api/admin/dashboard/recentsubmissions", async (req, res) => {
+  try {
+    const { district } = req.query;
+
+    const [rows] = await db
+      .promise()
+      .query(
+        `
+        SELECT 
+          FbatchID AS id,
+          CONCAT('FARM-', FbatchID) AS submissionId,
+          f.FarmerName AS stakeholderName,
+          'Farmer' AS stakeholderType,
+          'Crop Data' AS submissionType,
+          Status AS status,
+          Timestamp AS timestamp
+        FROM farmer_data_collection fdc
+        JOIN farmers f ON f.FarmerID = fdc.Fid
+        WHERE fdc.District = ?
+
+        UNION ALL
+
+        SELECT 
+          PbatchID AS id,
+          CONCAT('PROC-', PbatchID) AS submissionId,
+          p.ProcessorName AS stakeholderName,
+          'Processor' AS stakeholderType,
+          ProcessingStep AS submissionType,
+          Status AS status,
+          Timestamp AS timestamp
+        FROM processor_data_collection pdc
+        JOIN processors p ON p.ProcessorID = pdc.Pid
+        WHERE pdc.District = ?
+
+        UNION ALL
+
+        SELECT 
+          LbatchID AS id,
+          CONCAT('LAB-', LbatchID) AS submissionId,
+          l.LabTesterName AS stakeholderName,
+          'Lab Tester' AS stakeholderType,
+          TestType AS submissionType,
+          Status AS status,
+          Timestamp AS timestamp
+        FROM labtester_data_collection ldc
+        JOIN labtesters l ON l.LabTesterID = ldc.LabID
+        WHERE ldc.District = ?
+
+        UNION ALL
+
+        SELECT 
+          MbatchID AS id,
+          CONCAT('MFG-', MbatchID) AS submissionId,
+          m.ManufacturerName AS stakeholderName,
+          'Manufacturer' AS stakeholderType,
+          ProductName AS submissionType,
+          Status AS status,
+          Timestamp AS timestamp
+        FROM manufacturer_data_collection mdc
+        JOIN manufacturers m ON m.ManufacturerID = mdc.ManufacturerID
+        WHERE mdc.District = ?
+
+        ORDER BY timestamp DESC
+        LIMIT 50
+        `,
+        [district, district, district, district]
+      );
+
+    res.json(rows);
+  } catch (err) {
+    console.error("❌ Query failed:", err);
+    res.status(500).json({ error: "Failed to fetch recent submissions" });
+  }
+});
+
 const PORT = 5001;
 app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);

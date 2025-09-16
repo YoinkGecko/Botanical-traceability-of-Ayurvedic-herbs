@@ -2,15 +2,39 @@ import React, { useEffect, useState } from "react";
 import Icon from "../../../components/AppIcon";
 import Button from "../../../components/ui/Button";
 
-const RecentSubmissionsTable = ({ submissions }) => {
+const RecentSubmissionsTable = ({ district }) => {
+  const [submissions, setSubmissions] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
-  const totalPages = Math.ceil(submissions?.length / itemsPerPage);
 
+  useEffect(() => {
+    const fetchSubmissions = async () => {
+      setLoading(true);
+      try {
+        const res = await fetch(
+          `http://localhost:5001/api/admin/dashboard/recentsubmissions?district=${district}`
+        );
+        if (!res.ok) throw new Error("Failed to fetch submissions");
+        const data = await res.json();
+        setSubmissions(data);
+      } catch (err) {
+        console.error("Failed to fetch recent submissions:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSubmissions();
+  }, [district]);
+
+  // Pagination
+  const totalPages = Math.ceil(submissions.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-  const currentSubmissions = submissions?.slice(startIndex, endIndex);
+  const currentSubmissions = submissions.slice(startIndex, endIndex);
 
+  // Status and icon helpers remain unchanged
   const getStatusConfig = (status) => {
     switch (status?.toLowerCase()) {
       case "approved":
@@ -63,13 +87,15 @@ const RecentSubmissionsTable = ({ submissions }) => {
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
-    return date?.toLocaleDateString("en-US", {
+    return date.toLocaleDateString("en-US", {
       month: "short",
       day: "numeric",
       hour: "2-digit",
       minute: "2-digit",
     });
   };
+
+  if (loading) return <div className="p-4 text-center">Loading...</div>;
 
   return (
     <div className="bg-card rounded-lg border border-border shadow-card">
