@@ -21,7 +21,14 @@ const SupplyChainOverviewDashboard = () => {
 
   const fetchfunneldata = async () => {
     try {
-      const res = await fetch("http://localhost:5001/api/dashboard/funneldata");
+      const district = localStorage.getItem("district");
+
+      const res = await fetch(
+        `http://localhost:5001/api/dashboard/funneldata?district=${encodeURIComponent(
+          district
+        )}`
+      );
+
       const data = await res.json();
       setFunneldata(data);
     } catch (err) {
