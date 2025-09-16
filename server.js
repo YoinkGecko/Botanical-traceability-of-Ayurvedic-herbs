@@ -203,23 +203,35 @@ app.get("/api/dashboard/kpis", async (req, res) => {
 
 app.get("/api/dashboard/funneldata", async (req, res) => {
   try {
-    // Count submissions from all tables
     const { district } = req.query;
+
     const [[{ count: farmerSubmissions }]] = await db
       .promise()
-      .query("SELECT COUNT(*) AS count FROM farmer_data_collection WHERE District = ?");
+      .query(
+        "SELECT COUNT(*) AS count FROM farmer_data_collection WHERE District = ?",
+        [district]
+      );
 
     const [[{ count: processorSubmissions }]] = await db
       .promise()
-      .query("SELECT COUNT(*) AS count FROM processor_data_collection WHERE District = ?");
+      .query(
+        "SELECT COUNT(*) AS count FROM processor_data_collection WHERE District = ?",
+        [district]
+      );
 
     const [[{ count: labTesterSubmissions }]] = await db
       .promise()
-      .query("SELECT COUNT(*) AS count FROM labtester_data_collection WHERE District = ?");
+      .query(
+        "SELECT COUNT(*) AS count FROM labtester_data_collection WHERE District = ?",
+        [district]
+      );
 
     const [[{ count: manufacturerSubmissions }]] = await db
       .promise()
-      .query("SELECT COUNT(*) AS count FROM manufacturer_data_collection WHERE District = ?");
+      .query(
+        "SELECT COUNT(*) AS count FROM manufacturer_data_collection WHERE District = ?",
+        [district]
+      );
 
     const totalSubmissions =
       farmerSubmissions +
@@ -227,30 +239,33 @@ app.get("/api/dashboard/funneldata", async (req, res) => {
       labTesterSubmissions +
       manufacturerSubmissions;
 
-    // Count labTesting → from labtester_data_collection with any status (or PENDING)
+    // Count labTesting → with status filter
     const [[{ count: labTesting }]] = await db
       .promise()
       .query(
-        "SELECT COUNT(*) AS count FROM labtester_data_collection WHERE Status = 'PENDING' OR Status = 'APPROVED'"
+        "SELECT COUNT(*) AS count FROM labtester_data_collection WHERE (Status = 'PENDING' OR Status = 'APPROVED') AND District = ?",
+        [district]
       );
 
-    // Count Processing → from processor_data_collection with Status not REJECTED
+    // Count Processing → status not rejected
     const [[{ count: processing }]] = await db
       .promise()
       .query(
-        "SELECT COUNT(*) AS count FROM processor_data_collection WHERE Status != 'REJECTED'"
+        "SELECT COUNT(*) AS count FROM processor_data_collection WHERE Status != 'REJECTED' AND District = ?",
+        [district]
       );
 
-    // Count Approved → all approved in manufacturer_data_collection
+    // Count Approved → manufacturer approved
     const [[{ count: approved }]] = await db
       .promise()
       .query(
-        "SELECT COUNT(*) AS count FROM manufacturer_data_collection WHERE Status = 'APPROVED'"
+        "SELECT COUNT(*) AS count FROM manufacturer_data_collection WHERE Status = 'APPROVED' AND District = ?",
+        [district]
       );
 
     res.json({
       Submissions: totalSubmissions,
-      labTesting : labTesting,
+      labTesting,
       Processing: processing,
       Approved: approved,
     });

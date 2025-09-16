@@ -24,9 +24,7 @@ const SupplyChainOverviewDashboard = () => {
       const district = localStorage.getItem("district");
 
       const res = await fetch(
-        `http://localhost:5001/api/dashboard/funneldata?district=${encodeURIComponent(
-          district
-        )}`
+        `http://localhost:5001/api/dashboard/funneldata?district=${district}`
       );
 
       const data = await res.json();
