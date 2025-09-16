@@ -606,7 +606,14 @@ const SupplyChainOverviewDashboard = () => {
 
   const fetchKpis = async () => {
     try {
-      const res = await fetch("http://localhost:5001/api/dashboard/kpis");
+      const district = localStorage.getItem("district");
+
+      const res = await fetch(
+        `http://localhost:5001/api/dashboard/kpis?district=${encodeURIComponent(
+          district
+        )}`
+      );
+
       const data = await res.json();
       setKpis(data);
       setLastUpdated(new Date());

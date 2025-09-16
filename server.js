@@ -180,19 +180,35 @@ app.post("/api/admins/login", async (req, res) => {
 });
 
 
-// GET counts for dashboard KPIs
 app.get("/api/dashboard/kpis", async (req, res) => {
   try {
-    const [farmerCount] = await db.promise().query("SELECT COUNT(*) AS count FROM farmers");
-    const [labTesterCount] = await db.promise().query("SELECT COUNT(*) AS count FROM labtesters");
-    const [processorCount] = await db.promise().query("SELECT COUNT(*) AS count FROM processors");
-    const [manufacturerCount] = await db.promise().query("SELECT COUNT(*) AS count FROM manufacturers");
+    const { district } = req.query;
+
+    if (!district) {
+      return res.status(400).json({ error: "District is required" });
+    }
+
+    const [[farmerCount]] = await db
+      .promise()
+      .query("SELECT COUNT(*) AS count FROM farmers WHERE District = ?", [district]);
+
+    const [[labTesterCount]] = await db
+      .promise()
+      .query("SELECT COUNT(*) AS count FROM labtesters WHERE District = ?", [district]);
+
+    const [[processorCount]] = await db
+      .promise()
+      .query("SELECT COUNT(*) AS count FROM processors WHERE District = ?", [district]);
+
+    const [[manufacturerCount]] = await db
+      .promise()
+      .query("SELECT COUNT(*) AS count FROM manufacturers WHERE District = ?", [district]);
 
     res.json({
-      farmers: farmerCount[0].count,
-      labTesters: labTesterCount[0].count,
-      processors: processorCount[0].count,
-      manufacturers: manufacturerCount[0].count,
+      farmers: farmerCount.count,
+      labTesters: labTesterCount.count,
+      processors: processorCount.count,
+      manufacturers: manufacturerCount.count,
     });
   } catch (err) {
     console.error("Error fetching dashboard KPIs:", err);
