@@ -54,7 +54,7 @@ const GeographicHeatMap = ({ isVisible, onToggle, regionData }) => {
           <div className="flex-1 p-6">
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 h-full">
               {/* Map Area */}
-              <div className="lg:col-span-3 bg-muted/30 rounded-lg p-6 relative">
+              <div className="lg:col-span-4 bg-muted/30 rounded-lg p-6 relative">
                 <div className="absolute inset-0 flex items-center justify-center">
                   {/* ⬇️ Leaflet map via srcDoc */}
                   <iframe
@@ -114,24 +114,6 @@ const GeographicHeatMap = ({ isVisible, onToggle, regionData }) => {
   </body>
 </html>`}
                   />
-                </div>
-
-                {/* Activity Overlay Points */}
-                <div className="absolute inset-0 pointer-events-none">
-                  {regionData?.map((region, index) => (
-                    <div
-                      key={region?.id}
-                      className={`absolute w-4 h-4 rounded-full ${getActivityColor(
-                        getActivityLevel(region?.activityCount)
-                      )} opacity-80 animate-pulse pointer-events-auto cursor-pointer`}
-                      style={{
-                        left: `${20 + ((index * 15) % 60)}%`,
-                        top: `${30 + ((index * 10) % 40)}%`,
-                      }}
-                      onClick={() => setSelectedRegion(region)}
-                      title={`${region?.name}: ${region?.activityCount} activities`}
-                    />
-                  ))}
                 </div>
               </div>
             </div>
