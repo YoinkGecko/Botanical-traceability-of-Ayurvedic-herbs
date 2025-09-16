@@ -12,6 +12,7 @@ const SupplyChainOverviewDashboard = () => {
   const [isHeatMapVisible, setIsHeatMapVisible] = useState(false);
   const [lastUpdated, setLastUpdated] = useState(new Date());
   const [showAllDataView, setShowAllDataView] = useState(false);
+  const [dis, setdis] = useState("");
   const [funneldata, setFunneldata] = useState({
     Submissions: 0,
     labTesting: 0,
@@ -623,6 +624,7 @@ const SupplyChainOverviewDashboard = () => {
   };
 
   useEffect(() => {
+    setdis(localStorage.getItem("district"));
     const phone = localStorage.getItem("phonenumber");
     if (phone) {
       fetch(`http://localhost:5001/api/admin/district/${phone}`)
@@ -788,6 +790,7 @@ const SupplyChainOverviewDashboard = () => {
         isVisible={isHeatMapVisible}
         onToggle={() => setIsHeatMapVisible(!isHeatMapVisible)}
         regionData={regionData}
+        district={dis}
       />
     </div>
   );

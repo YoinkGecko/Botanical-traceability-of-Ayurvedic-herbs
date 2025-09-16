@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Icon from "../../../components/AppIcon";
 import Button from "../../../components/ui/Button";
 
-const GeographicHeatMap = ({ isVisible, onToggle }) => {
+const GeographicHeatMap = ({ isVisible, onToggle, district }) => {
   if (!isVisible) return null;
 
   return (
@@ -14,7 +14,7 @@ const GeographicHeatMap = ({ isVisible, onToggle }) => {
             <div className="flex items-center justify-between">
               <div>
                 <h2 className="text-xl font-heading font-semibold text-foreground">
-                  Geographic Activity Heat Map
+                  Geographic Activity Heat Map of {district}
                 </h2>
                 <p className="text-sm text-muted-foreground">
                   Regional distribution of stakeholder activities
