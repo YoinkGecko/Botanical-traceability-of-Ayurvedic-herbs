@@ -3,8 +3,15 @@ import Icon from "../../../components/AppIcon";
 import Button from "../../../components/ui/Button";
 import Input from "../../../components/ui/Input";
 import Select from "../../../components/ui/Select";
+import { useEffect } from "react";
 
 const StakeholderVerificationTable = ({ activeTab, data = [] }) => {
+  const [mockData, setMockData] = useState({
+    farmers: [],
+    "lab-testers": [],
+    processors: [],
+    manufacturers: [],
+  });
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("pending");
@@ -16,252 +23,80 @@ const StakeholderVerificationTable = ({ activeTab, data = [] }) => {
 
   const itemsPerPage = 15;
 
-  // Mock data for different stakeholder types
-  const mockData = {
-    farmers: [
-      {
-        id: "FRM-001",
-        name: "John Smith",
-        email: "john.smith@farm.com",
-        phone: "+1-555-0123",
-        location: "Iowa, USA",
-        registrationDate: "2024-01-15T08:30:00Z",
-        status: "pending",
-        farmSize: "150 acres",
-        cropType: "Corn, Soybean",
-      },
-      {
-        id: "FRM-002",
-        name: "Maria Garcia",
-        email: "maria.garcia@agri.com",
-        phone: "+1-555-0124",
-        location: "California, USA",
-        registrationDate: "2024-01-16T10:15:00Z",
-        status: "pending",
-        farmSize: "200 acres",
-        cropType: "Wheat, Barley",
-      },
-      {
-        id: "FRM-003",
-        name: "David Chen",
-        email: "david.chen@organic.com",
-        phone: "+1-555-0125",
-        location: "Oregon, USA",
-        registrationDate: "2024-01-17T14:20:00Z",
-        status: "approved",
-        farmSize: "80 acres",
-        cropType: "Organic Vegetables",
-      },
-      {
-        id: "FRM-004",
-        name: "Sarah Johnson",
-        email: "sarah.j@ranch.com",
-        phone: "+1-555-0126",
-        location: "Texas, USA",
-        registrationDate: "2024-01-18T09:45:00Z",
-        status: "rejected",
-        farmSize: "300 acres",
-        cropType: "Cotton, Rice",
-      },
-      {
-        id: "FRM-009",
-        name: "Ahmed Hassan",
-        email: "ahmed.hassan@field.com",
-        phone: "+1-555-0127",
-        location: "Arizona, USA",
-        registrationDate: "2024-01-19T11:30:00Z",
-        status: "pending",
-        farmSize: "120 acres",
-        cropType: "Citrus Fruits",
-      },
-    ],
-    "lab-testers": [
-      {
-        id: "LAB-001",
-        name: "Dr. Emily Watson",
-        email: "emily.watson@labtech.com",
-        phone: "+1-555-0201",
-        location: "Chicago, IL",
-        registrationDate: "2024-01-15T09:00:00Z",
-        status: "pending",
-        certification: "ISO 17025",
-        specialization: "Soil Analysis",
-        experience: "8 years",
-      },
-      {
-        id: "LAB-002",
-        name: "Dr. Robert Kim",
-        email: "robert.kim@agrilab.com",
-        phone: "+1-555-0202",
-        location: "Denver, CO",
-        registrationDate: "2024-01-16T13:30:00Z",
-        status: "pending",
-        certification: "AOAC Certified",
-        specialization: "Pesticide Residue",
-        experience: "12 years",
-      },
-      {
-        id: "LAB-003",
-        name: "Dr. Lisa Brown",
-        email: "lisa.brown@testlab.com",
-        phone: "+1-555-0203",
-        location: "Atlanta, GA",
-        registrationDate: "2024-01-17T15:45:00Z",
-        status: "approved",
-        certification: "FDA Certified",
-        specialization: "Microbiology",
-        experience: "10 years",
-      },
-      {
-        id: "LAB-004",
-        name: "Dr. Michael Davis",
-        email: "michael.davis@qualab.com",
-        phone: "+1-555-0204",
-        location: "Seattle, WA",
-        registrationDate: "2024-01-18T08:15:00Z",
-        status: "rejected",
-        certification: "ISO 17025",
-        specialization: "Heavy Metals",
-        experience: "6 years",
-      },
-      {
-        id: "LAB-005",
-        name: "Dr. Anna Rodriguez",
-        email: "anna.rodriguez@precisionlab.com",
-        phone: "+1-555-0205",
-        location: "Miami, FL",
-        registrationDate: "2024-01-19T12:20:00Z",
-        status: "pending",
-        certification: "USDA Certified",
-        specialization: "Nutritional Analysis",
-        experience: "15 years",
-      },
-    ],
-    processors: [
-      {
-        id: "PRC-001",
-        name: "Green Valley Processing LLC",
-        email: "contact@greenvalley.com",
-        phone: "+1-555-0301",
-        location: "Nebraska, USA",
-        registrationDate: "2024-01-15T10:30:00Z",
-        status: "pending",
-        capacity: "5000 tons/month",
-        processingType: "Grain Processing",
-        certifications: "HACCP, SQF",
-      },
-      {
-        id: "PRC-002",
-        name: "Organic Foods Processing Co.",
-        email: "info@organicfoods.com",
-        phone: "+1-555-0302",
-        location: "Kansas, USA",
-        registrationDate: "2024-01-16T14:45:00Z",
-        status: "pending",
-        capacity: "2500 tons/month",
-        processingType: "Organic Processing",
-        certifications: "USDA Organic, Non-GMO",
-      },
-      {
-        id: "PRC-003",
-        name: "Fresh Produce Partners",
-        email: "operations@freshproduce.com",
-        phone: "+1-555-0303",
-        location: "Florida, USA",
-        registrationDate: "2024-01-17T11:15:00Z",
-        status: "approved",
-        capacity: "8000 tons/month",
-        processingType: "Fruit & Vegetable",
-        certifications: "FDA, GlobalGAP",
-      },
-      {
-        id: "PRC-004",
-        name: "Premium Grain Mills",
-        email: "admin@premiumgrain.com",
-        phone: "+1-555-0304",
-        location: "Minnesota, USA",
-        registrationDate: "2024-01-18T16:00:00Z",
-        status: "rejected",
-        capacity: "3500 tons/month",
-        processingType: "Specialty Grains",
-        certifications: "SQF, BRC",
-      },
-      {
-        id: "PRC-005",
-        name: "Sustainable Processing Inc.",
-        email: "hello@sustainable.com",
-        phone: "+1-555-0305",
-        location: "Wisconsin, USA",
-        registrationDate: "2024-01-19T09:30:00Z",
-        status: "pending",
-        capacity: "4200 tons/month",
-        processingType: "Dairy Processing",
-        certifications: "HACCP, Organic",
-      },
-    ],
-    manufacturers: [
-      {
-        id: "MFG-001",
-        name: "NutriSnack Industries",
-        email: "partnerships@nutrisnack.com",
-        phone: "+1-555-0401",
-        location: "New Jersey, USA",
-        registrationDate: "2024-01-15T12:00:00Z",
-        status: "pending",
-        productType: "Health Snacks",
-        capacity: "10000 units/day",
-        certifications: "FDA, USDA",
-      },
-      {
-        id: "MFG-002",
-        name: "Farm Fresh Beverages",
-        email: "sourcing@farmfreshbev.com",
-        phone: "+1-555-0402",
-        location: "Georgia, USA",
-        registrationDate: "2024-01-16T15:30:00Z",
-        status: "pending",
-        productType: "Organic Juices",
-        capacity: "25000 bottles/day",
-        certifications: "Organic, Non-GMO",
-      },
-      {
-        id: "MFG-003",
-        name: "Wholesome Foods Corp",
-        email: "supply@wholesomefoods.com",
-        phone: "+1-555-0403",
-        location: "Ohio, USA",
-        registrationDate: "2024-01-17T13:45:00Z",
-        status: "approved",
-        productType: "Frozen Foods",
-        capacity: "15000 packages/day",
-        certifications: "SQF, BRC",
-      },
-      {
-        id: "MFG-004",
-        name: "Artisan Bakery Solutions",
-        email: "procurement@artisanbakery.com",
-        phone: "+1-555-0404",
-        location: "New York, USA",
-        registrationDate: "2024-01-18T10:20:00Z",
-        status: "rejected",
-        productType: "Premium Baked Goods",
-        capacity: "8000 items/day",
-        certifications: "Kosher, Halal",
-      },
-      {
-        id: "MFG-005",
-        name: "Clean Label Manufacturing",
-        email: "partnerships@cleanlabel.com",
-        phone: "+1-555-0405",
-        location: "Colorado, USA",
-        registrationDate: "2024-01-19T14:15:00Z",
-        status: "pending",
-        productType: "Natural Supplements",
-        capacity: "50000 capsules/day",
-        certifications: "GMP, NSF",
-      },
-    ],
-  };
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [farmersRes, labsRes, processorsRes, manufacturersRes] =
+          await Promise.all([
+            fetch("http://localhost:5001/api/farmers").then((res) =>
+              res.json()
+            ),
+            fetch("http://localhost:5001/api/lab-testers").then((res) =>
+              res.json()
+            ),
+            fetch("http://localhost:5001/api/processors").then((res) =>
+              res.json()
+            ),
+            fetch("http://localhost:5001/api/manufacturers").then((res) =>
+              res.json()
+            ),
+          ]);
+
+        setMockData({
+          farmers: farmersRes.map((f) => ({
+            id: f.id,
+            name: f.name,
+            phone: f.phone,
+            typeOfHerb: f.TypeOfHerb,
+            quantity: f.Quantity,
+            location: f.Location,
+            status: f.Status,
+            registrationDate: f.Timestamp,
+          })),
+          "lab-testers": labsRes.map((l) => ({
+            id: l.Lid,
+            name: l.LabName,
+            phone: l.LabPhone,
+            email: l.LabEmail,
+            location: l.District,
+            status: l.status,
+            registrationDate: l.created_at,
+            certification: l.Certification,
+            specialization: l.Specialization,
+            experience: l.Experience,
+          })),
+          processors: processorsRes.map((p) => ({
+            id: p.Pid,
+            name: p.ProcessorName,
+            phone: p.ProcessorPhone,
+            email: p.ProcessorEmail,
+            location: p.District,
+            status: p.status,
+            registrationDate: p.created_at,
+            capacity: p.Capacity,
+            processingType: p.Type,
+            certifications: p.Certifications,
+          })),
+          manufacturers: manufacturersRes.map((m) => ({
+            id: m.Mid,
+            name: m.ManufacturerName,
+            phone: m.ManufacturerPhone,
+            email: m.ManufacturerEmail,
+            location: m.District,
+            status: m.status,
+            registrationDate: m.created_at,
+            capacity: m.Capacity,
+            productType: m.ProductType,
+            certifications: m.Certifications,
+          })),
+        });
+      } catch (err) {
+        console.error("Error fetching:", err);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   // Get data for current tab
   const currentData = data?.length ? data : mockData?.[activeTab] || [];
@@ -461,16 +296,9 @@ const StakeholderVerificationTable = ({ activeTab, data = [] }) => {
       case "farmers":
         return (
           <>
-            <td className="p-4">
-              <div className="text-sm">
-                <div className="font-medium text-foreground">
-                  {item?.farmSize}
-                </div>
-                <div className="text-xs text-muted-foreground">
-                  {item?.cropType}
-                </div>
-              </div>
-            </td>
+            <td className="p-4">{item?.typeOfHerb || "-"}</td>
+            <td className="p-4">{item?.quantity || "-"}</td>
+            <td className="p-4">{item?.location || "-"}</td>
           </>
         );
       case "lab-testers":
@@ -570,9 +398,17 @@ const StakeholderVerificationTable = ({ activeTab, data = [] }) => {
 
     const specificHeaders = {
       farmers: (
-        <th className="text-left p-4 text-sm font-medium text-muted-foreground">
-          Type of Herb
-        </th>
+        <>
+          <th className="text-left p-4 text-sm font-medium text-muted-foreground">
+            Type of Herb
+          </th>
+          <th className="text-left p-4 text-sm font-medium text-muted-foreground">
+            Quantity
+          </th>
+          <th className="text-left p-4 text-sm font-medium text-muted-foreground">
+            Location
+          </th>
+        </>
       ),
       "lab-testers": (
         <>

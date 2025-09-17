@@ -607,6 +607,79 @@ GROUP BY mdc.MbatchID
   }
 });
 
+// ===== Farmers =====
+app.get("/api/farmers", (req, res) => {
+  const query = `
+    SELECT f.FarmerID AS id, f.FarmerName AS name, f.FarmerPhone AS phone,
+           d.TypeOfHerb, d.Quantity, d.Location, d.Status, d.Timestamp
+    FROM farmers f
+    LEFT JOIN farmer_data_collection d ON f.FarmerID = d.Fid
+  `;
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error("❌ Farmers fetch error:", err);
+      return res.status(500).json({ error: "DB error" });
+    }
+    console.log("✅ Farmers results:", results); 
+    res.json(results);
+  });
+});
+
+// ===== Lab Testers =====
+app.get("/api/lab-testers", (req, res) => {
+  const query = `
+    SELECT l.LabTesterID AS id, l.LabTesterName AS name, l.LabTesterPhone AS phone,
+           d.TestType, d.TestResults, d.PassFailStatus, d.Status, d.Timestamp
+    FROM labtesters l
+    LEFT JOIN labtester_data_collection d ON l.LabTesterID = d.LabID
+  `;
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error("❌ LabTesters fetch error:", err);
+      return res.status(500).json({ error: "DB error" });
+    }
+    res.json(results);
+    console.log("✅ labtester results:", results); 
+  });
+});
+
+// ===== Processors =====
+app.get("/api/processors", (req, res) => {
+  const query = `
+    SELECT p.ProcessorID AS id, p.ProcessorName AS name, p.ProcessorPhone AS phone,
+           d.ProcessingStep, d.WeightAfterProcessing, d.Location, d.Status, d.Timestamp
+    FROM processors p
+    LEFT JOIN processor_data_collection d ON p.ProcessorID = d.Pid
+  `;
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error("❌ Processors fetch error:", err);
+      return res.status(500).json({ error: "DB error" });
+    }
+    res.json(results);
+    console.log("✅ processor results:", results); 
+  });
+});
+
+// ===== Manufacturers =====
+app.get("/api/manufacturers", (req, res) => {
+  const query = `
+    SELECT m.ManufacturerID AS id, m.ManufacturerName AS name, m.ManufacturerPhone AS phone,
+           d.ProductName, d.ProductForm, d.WeightFinal, d.Status, d.Timestamp
+    FROM manufacturers m
+    LEFT JOIN manufacturer_data_collection d ON m.ManufacturerID = d.ManufacturerID
+  `;
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error("❌ Manufacturers fetch error:", err);
+      return res.status(500).json({ error: "DB error" });
+    }
+    res.json(results);
+    console.log("✅ manu results:", results); 
+  });
+});
+
+
 const PORT = 5001;
 app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);
