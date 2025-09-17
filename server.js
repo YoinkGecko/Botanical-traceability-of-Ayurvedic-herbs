@@ -683,7 +683,7 @@ app.get("/api/manufacturers", (req, res) => {
 
 // 1️⃣ Farmers
 app.get("/api/farmers", (req, res) => {
-  db.query("SELECT * FROM farmer_data_collection", (err, results) => {
+  db.query("SELECT * FROM farmer_data_collection where Status != 'APPROVED'", (err, results) => {
     if (err) return res.status(500).json({ error: err.message });
     res.json(results);
   });
@@ -691,7 +691,7 @@ app.get("/api/farmers", (req, res) => {
 
 // 2️⃣ Processor data
 app.get("/api/processor-data", (req, res) => {
-  db.query("SELECT * FROM processor_data_collection", (err, results) => {
+  db.query("SELECT * FROM processor_data_collection where Status != 'APPROVED'", (err, results) => {
     if (err) return res.status(500).json({ error: err.message });
     res.json(results);
   });
@@ -699,7 +699,7 @@ app.get("/api/processor-data", (req, res) => {
 
 // 3️⃣ Lab tester data
 app.get("/api/labtester-data", (req, res) => {
-  db.query("SELECT * FROM labtester_data_collection", (err, results) => {
+  db.query("SELECT * FROM labtester_data_collection where Status != 'APPROVED'", (err, results) => {
     if (err) return res.status(500).json({ error: err.message });
     res.json(results);
   });
@@ -707,7 +707,7 @@ app.get("/api/labtester-data", (req, res) => {
 
 // 4️⃣ Manufacturer data
 app.get("/api/manufacturer-data", (req, res) => {
-  db.query("SELECT * FROM manufacturer_data_collection", (err, results) => {
+  db.query("SELECT * FROM manufacturer_data_collection where Status != 'APPROVED' ", (err, results) => {
     if (err) return res.status(500).json({ error: err.message });
     res.json(results);
   });
