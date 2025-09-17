@@ -3,6 +3,8 @@ import Icon from "../../../components/AppIcon";
 import Button from "../../../components/ui/Button";
 
 const RecentSubmissionsTable = ({ district }) => {
+  const [selectedSubmission, setSelectedSubmission] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [submissions, setSubmissions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
@@ -55,12 +57,7 @@ const RecentSubmissionsTable = ({ district }) => {
           textColor: "text-error",
           icon: "XCircle",
         };
-      case "in review":
-        return {
-          bgColor: "bg-primary/10",
-          textColor: "text-primary",
-          icon: "Eye",
-        };
+
       default:
         return {
           bgColor: "bg-muted/10",
@@ -96,6 +93,20 @@ const RecentSubmissionsTable = ({ district }) => {
   };
 
   if (loading) return <div className="p-4 text-center">Loading...</div>;
+
+  const showldetails = async (submission) => {
+    try {
+      const res = await fetch(
+        `http://localhost:5001/api/admin/dashboard/submissiondetails/${submission.submissionId}`
+      );
+      if (!res.ok) throw new Error("Failed to fetch details");
+      const data = await res.json();
+      setSelectedSubmission(data);
+      setIsModalOpen(true);
+    } catch (err) {
+      console.error("Failed to fetch submission details:", err);
+    }
+  };
 
   return (
     <div className="bg-card rounded-lg border border-border shadow-card">
@@ -154,7 +165,7 @@ const RecentSubmissionsTable = ({ district }) => {
 
               return (
                 <tr
-                  key={submission?.id}
+                  key={submission?.submissionId}
                   className="hover:bg-muted/30 transition-smooth"
                 >
                   <td className="p-4">
@@ -209,7 +220,11 @@ const RecentSubmissionsTable = ({ district }) => {
                   </td>
                   <td className="p-4">
                     <div className="flex items-center space-x-2">
-                      <Button variant="ghost" size="sm">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => showldetails(submission)}
+                      >
                         <Icon name="Eye" size={14} />
                       </Button>
                     </div>
@@ -248,6 +263,23 @@ const RecentSubmissionsTable = ({ district }) => {
               >
                 <Icon name="ChevronRight" size={16} />
               </Button>
+            </div>
+          </div>
+        </div>
+      )}
+      {isModalOpen && selectedSubmission && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className="bg-white rounded-xl shadow-lg w-full max-w-lg p-6 overflow-y-auto max-h-[80vh]">
+            <h2 className="text-lg font-semibold mb-4">Submission Details</h2>
+            <div className="space-y-2 text-sm">
+              {Object.entries(selectedSubmission).map(([key, value]) => (
+                <p key={key}>
+                  <strong>{key}:</strong> {value?.toString() || "-"}
+                </p>
+              ))}
+            </div>
+            <div className="mt-6 flex justify-end">
+              <Button onClick={() => setIsModalOpen(false)}>Close</Button>
             </div>
           </div>
         </div>

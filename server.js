@@ -521,6 +521,43 @@ app.get("/api/admin/dashboard/recentsubmissions", async (req, res) => {
     res.status(500).json({ error: "Failed to fetch recent submissions" });
   }
 });
+
+app.get("/api/admin/dashboard/submissiondetails/:submissionId", async (req, res) => {
+  try {
+    const { submissionId } = req.params;
+    const [prefix, idStr] = submissionId.split("-");
+    const id = parseInt(idStr);
+
+    let query = "";
+    let params = [id];
+
+    switch (prefix) {
+      case "FARM":
+        query = "SELECT fdc.*, f.FarmerName, f.FarmerPhone, f.District FROM farmer_data_collection fdc JOIN farmers f ON f.FarmerID = fdc.Fid WHERE fdc.FbatchID = ?";
+        break;
+      case "PROC":
+        query = "SELECT pdc.*, p.ProcessorName, p.ProcessorPhone, p.District FROM processor_data_collection pdc JOIN processors p ON p.ProcessorID = pdc.Pid WHERE pdc.PbatchID = ?";
+        break;
+      case "LAB":
+        query = "SELECT ldc.*, l.LabTesterName, l.LabTesterPhone, l.District FROM labtester_data_collection ldc JOIN labtesters l ON l.LabTesterID = ldc.LabID WHERE ldc.LbatchID = ?";
+        break;
+      case "MFG":
+        query = "SELECT mdc.*, m.ManufacturerName, m.ManufacturerPhone, m.District FROM manufacturer_data_collection mdc JOIN manufacturers m ON m.ManufacturerID = mdc.ManufacturerID WHERE mdc.MbatchID = ?";
+        break;
+      default:
+        return res.status(400).json({ error: "Invalid submission ID" });
+    }
+
+    const [rows] = await db.promise().query(query, params);
+    if (!rows.length) return res.status(404).json({ error: "Submission not found" });
+
+    res.json(rows[0]);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
 const PORT = 5001;
 app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);
