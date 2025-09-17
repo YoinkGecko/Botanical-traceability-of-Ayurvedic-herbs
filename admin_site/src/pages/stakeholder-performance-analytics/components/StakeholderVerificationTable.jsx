@@ -58,12 +58,13 @@ const StakeholderVerificationTable = ({ activeTab, data = [] }) => {
           "lab-testers": labsRes.map((l) => ({
             id: l.LbatchID,
             labId: l.LabID,
-            linkedBatchId: l.LinkedBatchID,
+            linkedBatchId: l.LinkedBatchID, // processor batch
             testType: l.TestType,
             testResults: l.TestResults,
             passFail: l.PassFailStatus,
             certificate: l.CertificateFile,
             location: l.Location,
+            locationAccuracy: l.LocationAccuracy, // ✅ add this
             district: l.District,
             photos: l.Photos,
             status: l.Status,
@@ -301,10 +302,19 @@ const StakeholderVerificationTable = ({ activeTab, data = [] }) => {
       case "lab-testers":
         return (
           <>
+            <td className="p-4">{item?.labId || "-"}</td>
+            <td className="p-4">{item?.linkedBatchId || "-"}</td>
             <td className="p-4">{item?.testType || "-"}</td>
             <td className="p-4">{item?.testResults || "-"}</td>
             <td className="p-4">{item?.passFail || "-"}</td>
             <td className="p-4">{item?.certificate || "-"}</td>
+            <td className="p-4">{item?.location || "-"}</td>
+            <td className="p-4">{item?.locationAccuracy || "-"}</td>
+            <td className="p-4">{item?.district || "-"}</td>
+            <td className="p-4">{item?.photos || "-"}</td>
+            <td className="p-4">{item?.status || "-"}</td>
+            <td className="p-4">{item?.approvedBy || "-"}</td>
+            <td className="p-4">{formatDate(item?.registrationDate)}</td>
           </>
         );
       case "processors":
@@ -329,11 +339,19 @@ const StakeholderVerificationTable = ({ activeTab, data = [] }) => {
       case "manufacturers":
         return (
           <>
+            <td className="p-4">{item?.manufacturerId || "-"}</td>
             <td className="p-4">{item?.productName || "-"}</td>
             <td className="p-4">{item?.form || "-"}</td>
             <td className="p-4">{item?.weightFinal || "-"}</td>
             <td className="p-4">{item?.ingredients || "-"}</td>
+            <td className="p-4">{item?.packaging || "-"}</td>
             <td className="p-4">{item?.qrCode || "-"}</td>
+            <td className="p-4">{item?.location || "-"}</td>
+            <td className="p-4">{item?.district || "-"}</td>
+            <td className="p-4">{item?.photos || "-"}</td>
+            <td className="p-4">{item?.status || "-"}</td>
+            <td className="p-4">{item?.approvedBy || "-"}</td>
+            <td className="p-4">{formatDate(item?.registrationDate)}</td>
           </>
         );
       default:
@@ -410,10 +428,43 @@ const StakeholderVerificationTable = ({ activeTab, data = [] }) => {
       "lab-testers": (
         <>
           <th className="text-left p-4 text-sm font-medium text-muted-foreground">
+            Lab Tester ID
+          </th>
+          <th className="text-left p-4 text-sm font-medium text-muted-foreground">
+            Linked Processor Batch
+          </th>
+          <th className="text-left p-4 text-sm font-medium text-muted-foreground">
+            Test Type
+          </th>
+          <th className="text-left p-4 text-sm font-medium text-muted-foreground">
             Test Results
           </th>
           <th className="text-left p-4 text-sm font-medium text-muted-foreground">
-            Experience
+            Pass/Fail
+          </th>
+          <th className="text-left p-4 text-sm font-medium text-muted-foreground">
+            Certificate
+          </th>
+          <th className="text-left p-4 text-sm font-medium text-muted-foreground">
+            Location
+          </th>
+          <th className="text-left p-4 text-sm font-medium text-muted-foreground">
+            Location Accuracy
+          </th>
+          <th className="text-left p-4 text-sm font-medium text-muted-foreground">
+            District
+          </th>
+          <th className="text-left p-4 text-sm font-medium text-muted-foreground">
+            Photos
+          </th>
+          <th className="text-left p-4 text-sm font-medium text-muted-foreground">
+            Status
+          </th>
+          <th className="text-left p-4 text-sm font-medium text-muted-foreground">
+            Approved By
+          </th>
+          <th className="text-left p-4 text-sm font-medium text-muted-foreground">
+            Registration Date
           </th>
         </>
       ),
@@ -466,10 +517,43 @@ const StakeholderVerificationTable = ({ activeTab, data = [] }) => {
       manufacturers: (
         <>
           <th className="text-left p-4 text-sm font-medium text-muted-foreground">
-            Production
+            Manufacturer ID
           </th>
           <th className="text-left p-4 text-sm font-medium text-muted-foreground">
-            Certifications
+            Product Name
+          </th>
+          <th className="text-left p-4 text-sm font-medium text-muted-foreground">
+            Form
+          </th>
+          <th className="text-left p-4 text-sm font-medium text-muted-foreground">
+            Weight Final
+          </th>
+          <th className="text-left p-4 text-sm font-medium text-muted-foreground">
+            Ingredients
+          </th>
+          <th className="text-left p-4 text-sm font-medium text-muted-foreground">
+            Packaging
+          </th>
+          <th className="text-left p-4 text-sm font-medium text-muted-foreground">
+            QR Code
+          </th>
+          <th className="text-left p-4 text-sm font-medium text-muted-foreground">
+            Location
+          </th>
+          <th className="text-left p-4 text-sm font-medium text-muted-foreground">
+            District
+          </th>
+          <th className="text-left p-4 text-sm font-medium text-muted-foreground">
+            Photos
+          </th>
+          <th className="text-left p-4 text-sm font-medium text-muted-foreground">
+            Status
+          </th>
+          <th className="text-left p-4 text-sm font-medium text-muted-foreground">
+            Approved By
+          </th>
+          <th className="text-left p-4 text-sm font-medium text-muted-foreground">
+            Registration Date
           </th>
         </>
       ),
