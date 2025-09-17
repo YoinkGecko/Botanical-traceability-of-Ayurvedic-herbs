@@ -80,6 +80,7 @@ const StakeholderVerificationTable = ({ activeTab, data = [] }) => {
             weightAfter: p.WeightAfterProcessing,
             parameters: p.Parameters,
             location: p.Location,
+            locationAccuracy: p.LocationAccuracy,
             district: p.District,
             photos: p.Photos,
             status: p.Status,
@@ -309,11 +310,20 @@ const StakeholderVerificationTable = ({ activeTab, data = [] }) => {
       case "processors":
         return (
           <>
+            <td className="p-4">{item?.processorId || "-"}</td>
+            <td className="p-4">{item?.linkedFarmerBatchId || "-"}</td>
             <td className="p-4">{item?.step || "-"}</td>
             <td className="p-4">{item?.weightGiven || "-"}</td>
             <td className="p-4">{item?.weightBefore || "-"}</td>
             <td className="p-4">{item?.weightAfter || "-"}</td>
             <td className="p-4">{item?.parameters || "-"}</td>
+            <td className="p-4">{item?.location || "-"}</td>
+            <td className="p-4">{item?.locationAccuracy || "-"}</td>
+            <td className="p-4">{item?.district || "-"}</td>
+            <td className="p-4">{item?.photos || "-"}</td>
+            <td className="p-4">{item?.status || "-"}</td>
+            <td className="p-4">{item?.approvedBy || "-"}</td>
+            <td className="p-4">{formatDate(item?.registrationDate)}</td>
           </>
         );
       case "manufacturers":
@@ -410,10 +420,46 @@ const StakeholderVerificationTable = ({ activeTab, data = [] }) => {
       processors: (
         <>
           <th className="text-left p-4 text-sm font-medium text-muted-foreground">
-            Capacity
+            Processor ID
           </th>
           <th className="text-left p-4 text-sm font-medium text-muted-foreground">
-            Certifications
+            Linked Farmer Batch ID
+          </th>
+          <th className="text-left p-4 text-sm font-medium text-muted-foreground">
+            Processing Step
+          </th>
+          <th className="text-left p-4 text-sm font-medium text-muted-foreground">
+            Weight Given
+          </th>
+          <th className="text-left p-4 text-sm font-medium text-muted-foreground">
+            Weight Before
+          </th>
+          <th className="text-left p-4 text-sm font-medium text-muted-foreground">
+            Weight After
+          </th>
+          <th className="text-left p-4 text-sm font-medium text-muted-foreground">
+            Parameters
+          </th>
+          <th className="text-left p-4 text-sm font-medium text-muted-foreground">
+            Location
+          </th>
+          <th className="text-left p-4 text-sm font-medium text-muted-foreground">
+            Location Accuracy
+          </th>
+          <th className="text-left p-4 text-sm font-medium text-muted-foreground">
+            District
+          </th>
+          <th className="text-left p-4 text-sm font-medium text-muted-foreground">
+            Photos
+          </th>
+          <th className="text-left p-4 text-sm font-medium text-muted-foreground">
+            Status
+          </th>
+          <th className="text-left p-4 text-sm font-medium text-muted-foreground">
+            Approved By
+          </th>
+          <th className="text-left p-4 text-sm font-medium text-muted-foreground">
+            Registration Date
           </th>
         </>
       ),
