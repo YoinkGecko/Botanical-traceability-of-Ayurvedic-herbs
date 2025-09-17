@@ -259,17 +259,26 @@ const RecentSubmissionsTable = ({ district }) => {
       {/* Modal */}
       {isModalOpen && selectedSubmission && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <div className="bg-white rounded-xl shadow-lg w-full max-w-lg p-6 overflow-y-auto max-h-[80vh]">
-            <h2 className="text-lg font-semibold mb-4">Submission Details</h2>
-            <div className="space-y-2 text-sm">
+          <div className="bg-white rounded-xl shadow-2xl w-full max-w-lg p-6 overflow-y-auto max-h-[80vh]">
+            <h2 className="text-2xl font-bold mb-4 text-center text-primary">
+              Submission Details
+            </h2>
+
+            <div className="space-y-4">
               {Object.entries(selectedSubmission).map(([key, value]) => (
-                <p key={key}>
-                  <strong>{key}:</strong> {value?.toString() || "-"}
-                </p>
+                <div key={key} className="p-3 border rounded-lg bg-gray-50">
+                  <p className="text-sm text-muted-foreground mb-1">{key}</p>
+                  <p className="text-base font-medium text-foreground">
+                    {value?.toString() || "-"}
+                  </p>
+                </div>
               ))}
             </div>
+
             <div className="mt-6 flex justify-end">
-              <Button onClick={() => setIsModalOpen(false)}>Close</Button>
+              <Button onClick={() => setIsModalOpen(false)} variant="secondary">
+                Close
+              </Button>
             </div>
           </div>
         </div>
