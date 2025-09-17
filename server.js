@@ -440,62 +440,77 @@ app.get("/api/admin/dashboard/recentsubmissions", async (req, res) => {
       .promise()
       .query(
         `
-        SELECT 
-          FbatchID AS id,
-          CONCAT('FARM-', FbatchID) AS submissionId,
-          f.FarmerName AS stakeholderName,
-          'Farmer' AS stakeholderType,
-          'Crop Data' AS submissionType,
-          Status AS status,
-          Timestamp AS timestamp
-        FROM farmer_data_collection fdc
-        JOIN farmers f ON f.FarmerID = fdc.Fid
-        WHERE fdc.District = ?
+        SELECT * FROM (
+          SELECT 
+            fdc.FbatchID AS id,
+            CONCAT('FARM-', fdc.FbatchID) AS submissionId,
+            f.FarmerName AS stakeholderName,
+            'Farmer' AS stakeholderType,
+            fdc.TypeOfHerb AS submissionType,
+            fdc.Status AS status,
+            fdc.Timestamp AS timestamp
+          FROM farmer_data_collection fdc
+          JOIN farmers f ON f.FarmerID = fdc.Fid
+          WHERE fdc.District = ?
+          ORDER BY fdc.Timestamp DESC
+          LIMIT 2
+        ) farmer
 
         UNION ALL
 
-        SELECT 
-          PbatchID AS id,
-          CONCAT('PROC-', PbatchID) AS submissionId,
-          p.ProcessorName AS stakeholderName,
-          'Processor' AS stakeholderType,
-          ProcessingStep AS submissionType,
-          Status AS status,
-          Timestamp AS timestamp
-        FROM processor_data_collection pdc
-        JOIN processors p ON p.ProcessorID = pdc.Pid
-        WHERE pdc.District = ?
+        SELECT * FROM (
+          SELECT 
+            pdc.PbatchID AS id,
+            CONCAT('PROC-', pdc.PbatchID) AS submissionId,
+            p.ProcessorName AS stakeholderName,
+            'Processor' AS stakeholderType,
+            pdc.ProcessingStep AS submissionType,
+            pdc.Status AS status,
+            pdc.Timestamp AS timestamp
+          FROM processor_data_collection pdc
+          JOIN processors p ON p.ProcessorID = pdc.Pid
+          WHERE pdc.District = ?
+          ORDER BY pdc.Timestamp DESC
+          LIMIT 2
+        ) processor
 
         UNION ALL
 
-        SELECT 
-          LbatchID AS id,
-          CONCAT('LAB-', LbatchID) AS submissionId,
-          l.LabTesterName AS stakeholderName,
-          'Lab Tester' AS stakeholderType,
-          TestType AS submissionType,
-          Status AS status,
-          Timestamp AS timestamp
-        FROM labtester_data_collection ldc
-        JOIN labtesters l ON l.LabTesterID = ldc.LabID
-        WHERE ldc.District = ?
+        SELECT * FROM (
+          SELECT 
+            ldc.LbatchID AS id,
+            CONCAT('LAB-', ldc.LbatchID) AS submissionId,
+            l.LabTesterName AS stakeholderName,
+            'Lab Tester' AS stakeholderType,
+            ldc.TestType AS submissionType,
+            ldc.Status AS status,
+            ldc.Timestamp AS timestamp
+          FROM labtester_data_collection ldc
+          JOIN labtesters l ON l.LabTesterID = ldc.LabID
+          WHERE ldc.District = ?
+          ORDER BY ldc.Timestamp DESC
+          LIMIT 2
+        ) lab
 
         UNION ALL
 
-        SELECT 
-          MbatchID AS id,
-          CONCAT('MFG-', MbatchID) AS submissionId,
-          m.ManufacturerName AS stakeholderName,
-          'Manufacturer' AS stakeholderType,
-          ProductName AS submissionType,
-          Status AS status,
-          Timestamp AS timestamp
-        FROM manufacturer_data_collection mdc
-        JOIN manufacturers m ON m.ManufacturerID = mdc.ManufacturerID
-        WHERE mdc.District = ?
+        SELECT * FROM (
+          SELECT 
+            mdc.MbatchID AS id,
+            CONCAT('MFG-', mdc.MbatchID) AS submissionId,
+            m.ManufacturerName AS stakeholderName,
+            'Manufacturer' AS stakeholderType,
+            mdc.ProductName AS submissionType,
+            mdc.Status AS status,
+            mdc.Timestamp AS timestamp
+          FROM manufacturer_data_collection mdc
+          JOIN manufacturers m ON m.ManufacturerID = mdc.ManufacturerID
+          WHERE mdc.District = ?
+          ORDER BY mdc.Timestamp DESC
+          LIMIT 2
+        ) manufacturer
 
         ORDER BY timestamp DESC
-        LIMIT 50
         `,
         [district, district, district, district]
       );
@@ -506,7 +521,6 @@ app.get("/api/admin/dashboard/recentsubmissions", async (req, res) => {
     res.status(500).json({ error: "Failed to fetch recent submissions" });
   }
 });
-
 const PORT = 5001;
 app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);
