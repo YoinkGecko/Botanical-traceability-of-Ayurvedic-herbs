@@ -522,28 +522,72 @@ app.get("/api/admin/dashboard/recentsubmissions", async (req, res) => {
   }
 });
 
-app.get("/api/admin/dashboard/submissiondetails/:submissionId", async (req, res) => {
+app.get("/api/admin/dashboard/submission/:submissionId", async (req, res) => {
   try {
     const { submissionId } = req.params;
-    const [prefix, idStr] = submissionId.split("-");
-    const id = parseInt(idStr);
+    const [prefix, id] = submissionId.split("-"); // e.g., PROC-4 -> ['PROC', '4']
 
     let query = "";
     let params = [id];
 
     switch (prefix) {
       case "FARM":
-        query = "SELECT fdc.*, f.FarmerName, f.FarmerPhone, f.District FROM farmer_data_collection fdc JOIN farmers f ON f.FarmerID = fdc.Fid WHERE fdc.FbatchID = ?";
+        query = `
+          SELECT fdc.*, f.FarmerName, f.FarmerPhone,
+                 a.AdminName AS approvedByName, a.ARole AS approvedByRole
+          FROM farmer_data_collection fdc
+          JOIN farmers f ON f.FarmerID = fdc.Fid
+          LEFT JOIN admins a ON fdc.ApprovedBy = a.AdminID
+          WHERE fdc.FbatchID = ?
+        `;
         break;
+
       case "PROC":
-        query = "SELECT pdc.*, p.ProcessorName, p.ProcessorPhone, p.District FROM processor_data_collection pdc JOIN processors p ON p.ProcessorID = pdc.Pid WHERE pdc.PbatchID = ?";
+        query = `
+          SELECT pdc.*, p.ProcessorName, p.ProcessorPhone,
+                 ff.TypeOfHerb AS linkedFarmerHerb, ff.FbatchID AS linkedFarmerBatchID, ff.Quantity AS linkedFarmerQuantity,
+                 fa.FarmerName AS linkedFarmerName,
+                 a.AdminName AS approvedByName, a.ARole AS approvedByRole
+          FROM processor_data_collection pdc
+          JOIN processors p ON p.ProcessorID = pdc.Pid
+          LEFT JOIN farmer_data_collection ff ON ff.FbatchID = pdc.LinkedFarmerBatchID
+          LEFT JOIN farmers fa ON fa.FarmerID = ff.Fid
+          LEFT JOIN admins a ON pdc.ApprovedBy = a.AdminID
+          WHERE pdc.PbatchID = ?
+        `;
         break;
+
       case "LAB":
-        query = "SELECT ldc.*, l.LabTesterName, l.LabTesterPhone, l.District FROM labtester_data_collection ldc JOIN labtesters l ON l.LabTesterID = ldc.LabID WHERE ldc.LbatchID = ?";
+        query = `
+          SELECT ldc.*, l.LabTesterName, l.LabTesterPhone,
+                 pc.ProcessingStep AS linkedProcessorStep, pc.PbatchID AS linkedProcessorBatchID,
+                 pr.ProcessorName AS linkedProcessorName,
+                 a.AdminName AS approvedByName, a.ARole AS approvedByRole
+          FROM labtester_data_collection ldc
+          JOIN labtesters l ON l.LabTesterID = ldc.LabID
+          LEFT JOIN processor_data_collection pc ON pc.PbatchID = ldc.LinkedBatchID
+          LEFT JOIN processors pr ON pr.ProcessorID = pc.Pid
+          LEFT JOIN admins a ON ldc.ApprovedBy = a.AdminID
+          WHERE ldc.LbatchID = ?
+        `;
         break;
+
       case "MFG":
-        query = "SELECT mdc.*, m.ManufacturerName, m.ManufacturerPhone, m.District FROM manufacturer_data_collection mdc JOIN manufacturers m ON m.ManufacturerID = mdc.ManufacturerID WHERE mdc.MbatchID = ?";
+        query = `
+          SELECT mdc.*, m.ManufacturerName, m.ManufacturerPhone,
+                 a.AdminName AS approvedByName, a.ARole AS approvedByRole,
+                 GROUP_CONCAT(ll.LbatchID) AS linkedLabBatchIDs,
+                 GROUP_CONCAT(lab.LabTesterName) AS linkedLabTesterNames
+          FROM manufacturer_data_collection mdc
+          JOIN manufacturers m ON m.ManufacturerID = mdc.ManufacturerID
+          LEFT JOIN admins a ON mdc.ApprovedBy = a.AdminID
+          LEFT JOIN manufacturer_labtester_link ll ON ll.MbatchID = mdc.MbatchID
+          LEFT JOIN labtester_data_collection lab ON lab.LbatchID = ll.LbatchID
+          WHERE mdc.MbatchID = ?
+          GROUP BY mdc.MbatchID
+        `;
         break;
+
       default:
         return res.status(400).json({ error: "Invalid submission ID" });
     }
@@ -553,8 +597,8 @@ app.get("/api/admin/dashboard/submissiondetails/:submissionId", async (req, res)
 
     res.json(rows[0]);
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Server error" });
+    console.error("❌ Fetch submission details failed:", err);
+    res.status(500).json({ error: "Failed to fetch submission details" });
   }
 });
 

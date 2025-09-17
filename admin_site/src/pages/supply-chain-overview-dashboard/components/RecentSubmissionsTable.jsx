@@ -10,6 +10,7 @@ const RecentSubmissionsTable = ({ district }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
+  // Fetch submissions
   useEffect(() => {
     const fetchSubmissions = async () => {
       setLoading(true);
@@ -26,7 +27,6 @@ const RecentSubmissionsTable = ({ district }) => {
         setLoading(false);
       }
     };
-
     fetchSubmissions();
   }, [district]);
 
@@ -36,7 +36,7 @@ const RecentSubmissionsTable = ({ district }) => {
   const endIndex = startIndex + itemsPerPage;
   const currentSubmissions = submissions.slice(startIndex, endIndex);
 
-  // Status and icon helpers remain unchanged
+  // Status helper
   const getStatusConfig = (status) => {
     switch (status?.toLowerCase()) {
       case "approved":
@@ -57,7 +57,6 @@ const RecentSubmissionsTable = ({ district }) => {
           textColor: "text-error",
           icon: "XCircle",
         };
-
       default:
         return {
           bgColor: "bg-muted/10",
@@ -94,10 +93,11 @@ const RecentSubmissionsTable = ({ district }) => {
 
   if (loading) return <div className="p-4 text-center">Loading...</div>;
 
-  const showldetails = async (submission) => {
+  // Show details modal
+  const showDetails = async (submission) => {
     try {
       const res = await fetch(
-        `http://localhost:5001/api/admin/dashboard/submissiondetails/${submission.submissionId}`
+        `http://localhost:5001/api/admin/dashboard/submission/${submission.submissionId}`
       );
       if (!res.ok) throw new Error("Failed to fetch details");
       const data = await res.json();
@@ -110,28 +110,27 @@ const RecentSubmissionsTable = ({ district }) => {
 
   return (
     <div className="bg-card rounded-lg border border-border shadow-card">
-      <div className="p-6 border-b border-border">
-        <div className="flex items-center justify-between">
-          <div>
-            <h3 className="text-lg font-heading font-semibold text-foreground">
-              All Submissions
-            </h3>
-            <p className="text-sm text-muted-foreground">
-              Latest data submissions across all stakeholders
-            </p>
-          </div>
-          <div className="flex items-center space-x-2">
-            <Button variant="outline" size="sm">
-              <Icon name="Filter" size={16} className="mr-2" />
-              Filter
-            </Button>
-            <Button variant="outline" size="sm">
-              <Icon name="Download" size={16} className="mr-2" />
-              Export
-            </Button>
-          </div>
+      {/* Header */}
+      <div className="p-6 border-b border-border flex items-center justify-between">
+        <div>
+          <h3 className="text-lg font-heading font-semibold text-foreground">
+            All Submissions
+          </h3>
+          <p className="text-sm text-muted-foreground">
+            Latest data submissions across all stakeholders
+          </p>
+        </div>
+        <div className="flex items-center space-x-2">
+          <Button variant="outline" size="sm">
+            <Icon name="Filter" size={16} className="mr-2" /> Filter
+          </Button>
+          <Button variant="outline" size="sm">
+            <Icon name="Download" size={16} className="mr-2" /> Export
+          </Button>
         </div>
       </div>
+
+      {/* Table */}
       <div className="overflow-x-auto">
         <table className="w-full">
           <thead className="bg-muted/50">
@@ -157,77 +156,67 @@ const RecentSubmissionsTable = ({ district }) => {
             </tr>
           </thead>
           <tbody className="divide-y divide-border">
-            {currentSubmissions?.map((submission) => {
-              const statusConfig = getStatusConfig(submission?.status);
+            {currentSubmissions.map((submission) => {
+              const statusConfig = getStatusConfig(submission.status);
               const stakeholderIcon = getStakeholderIcon(
-                submission?.stakeholderType
+                submission.stakeholderType
               );
 
               return (
                 <tr
-                  key={submission?.submissionId}
+                  key={submission.submissionId}
                   className="hover:bg-muted/30 transition-smooth"
                 >
-                  <td className="p-4">
-                    <div className="flex items-center space-x-3">
-                      <div className="flex items-center justify-center w-8 h-8 bg-primary/10 rounded-full">
-                        <Icon
-                          name={stakeholderIcon}
-                          size={16}
-                          className="text-primary"
-                        />
-                      </div>
-                      <div>
-                        <p className="text-sm font-medium text-foreground">
-                          {submission?.stakeholderName}
-                        </p>
-                        <p className="text-xs text-muted-foreground">
-                          {submission?.stakeholderType}
-                        </p>
-                      </div>
+                  <td className="p-4 flex items-center space-x-3">
+                    <div className="flex items-center justify-center w-8 h-8 bg-primary/10 rounded-full">
+                      <Icon
+                        name={stakeholderIcon}
+                        size={16}
+                        className="text-primary"
+                      />
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-foreground">
+                        {submission.stakeholderName}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        {submission.stakeholderType}
+                      </p>
                     </div>
                   </td>
-                  <td className="p-4">
-                    <span className="text-sm font-mono text-foreground">
-                      {submission?.submissionId}
-                    </span>
+                  <td className="p-4 text-sm font-mono text-foreground">
+                    {submission.submissionId}
                   </td>
-                  <td className="p-4">
-                    <span className="text-sm text-foreground">
-                      {submission?.submissionType}
-                    </span>
+                  <td className="p-4 text-sm text-foreground">
+                    {submission.submissionType}
                   </td>
                   <td className="p-4">
                     <div
-                      className={`inline-flex items-center space-x-1 px-2 py-1 rounded-full ${statusConfig?.bgColor}`}
+                      className={`inline-flex items-center space-x-1 px-2 py-1 rounded-full ${statusConfig.bgColor}`}
                     >
                       <Icon
-                        name={statusConfig?.icon}
+                        name={statusConfig.icon}
                         size={12}
-                        className={statusConfig?.textColor}
+                        className={statusConfig.textColor}
                       />
                       <span
-                        className={`text-xs font-medium ${statusConfig?.textColor}`}
+                        className={`text-xs font-medium ${statusConfig.textColor}`}
                       >
-                        {submission?.status}
+                        {submission.status}
                       </span>
                     </div>
                   </td>
-                  <td className="p-4">
-                    <span className="text-sm text-muted-foreground">
-                      {formatDate(submission?.timestamp)}
-                    </span>
+                  <td className="p-4 text-sm text-muted-foreground">
+                    {formatDate(submission.timestamp)}
                   </td>
                   <td className="p-4">
-                    <div className="flex items-center space-x-2">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => showldetails(submission)}
-                      >
-                        <Icon name="Eye" size={14} />
-                      </Button>
-                    </div>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => showDetails(submission)}
+                    >
+                      <Icon name="Eye" size={14} />
+                    </Button>
                   </td>
                 </tr>
               );
@@ -235,38 +224,39 @@ const RecentSubmissionsTable = ({ district }) => {
           </tbody>
         </table>
       </div>
+
+      {/* Pagination */}
       {totalPages > 1 && (
-        <div className="p-4 border-t border-border">
-          <div className="flex items-center justify-between">
-            <div className="text-sm text-muted-foreground">
-              Showing {startIndex + 1} to{" "}
-              {Math.min(endIndex, submissions?.length)} of {submissions?.length}{" "}
-              entries
-            </div>
-            <div className="flex items-center space-x-2">
-              <Button
-                variant="outline"
-                size="sm"
-                disabled={currentPage === 1}
-                onClick={() => setCurrentPage(currentPage - 1)}
-              >
-                <Icon name="ChevronLeft" size={16} />
-              </Button>
-              <span className="text-sm font-medium text-foreground px-3">
-                {currentPage} of {totalPages}
-              </span>
-              <Button
-                variant="outline"
-                size="sm"
-                disabled={currentPage === totalPages}
-                onClick={() => setCurrentPage(currentPage + 1)}
-              >
-                <Icon name="ChevronRight" size={16} />
-              </Button>
-            </div>
+        <div className="p-4 border-t border-border flex items-center justify-between">
+          <div className="text-sm text-muted-foreground">
+            Showing {startIndex + 1} to {Math.min(endIndex, submissions.length)}{" "}
+            of {submissions.length} entries
+          </div>
+          <div className="flex items-center space-x-2">
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={currentPage === 1}
+              onClick={() => setCurrentPage(currentPage - 1)}
+            >
+              <Icon name="ChevronLeft" size={16} />
+            </Button>
+            <span className="text-sm font-medium text-foreground px-3">
+              {currentPage} of {totalPages}
+            </span>
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={currentPage === totalPages}
+              onClick={() => setCurrentPage(currentPage + 1)}
+            >
+              <Icon name="ChevronRight" size={16} />
+            </Button>
           </div>
         </div>
       )}
+
+      {/* Modal */}
       {isModalOpen && selectedSubmission && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
           <div className="bg-white rounded-xl shadow-lg w-full max-w-lg p-6 overflow-y-auto max-h-[80vh]">
