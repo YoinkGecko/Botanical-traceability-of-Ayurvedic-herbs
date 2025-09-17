@@ -151,7 +151,7 @@ const RecentSubmissionsTable = ({ district }) => {
                 Submitted
               </th>
               <th className="text-left p-4 text-sm font-medium text-muted-foreground">
-                Location
+                All Details
               </th>
             </tr>
           </thead>

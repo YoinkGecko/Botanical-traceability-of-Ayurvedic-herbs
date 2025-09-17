@@ -574,17 +574,22 @@ app.get("/api/admin/dashboard/submission/:submissionId", async (req, res) => {
 
       case "MFG":
         query = `
-          SELECT mdc.*, m.ManufacturerName, m.ManufacturerPhone,
-                 a.AdminName AS approvedByName, a.ARole AS approvedByRole,
-                 GROUP_CONCAT(ll.LbatchID) AS linkedLabBatchIDs,
-                 GROUP_CONCAT(lab.LabTesterName) AS linkedLabTesterNames
-          FROM manufacturer_data_collection mdc
-          JOIN manufacturers m ON m.ManufacturerID = mdc.ManufacturerID
-          LEFT JOIN admins a ON mdc.ApprovedBy = a.AdminID
-          LEFT JOIN manufacturer_labtester_link ll ON ll.MbatchID = mdc.MbatchID
-          LEFT JOIN labtester_data_collection lab ON lab.LbatchID = ll.LbatchID
-          WHERE mdc.MbatchID = ?
-          GROUP BY mdc.MbatchID
+          SELECT 
+    mdc.*, 
+    m.ManufacturerName, 
+    m.ManufacturerPhone,
+    a.AdminName AS approvedByName, 
+    a.ARole AS approvedByRole,
+    GROUP_CONCAT(ll.LbatchID) AS linkedLabBatchIDs,
+    GROUP_CONCAT(l.LabTesterName) AS linkedLabTesterNames
+FROM manufacturer_data_collection mdc
+JOIN manufacturers m ON m.ManufacturerID = mdc.ManufacturerID
+LEFT JOIN admins a ON mdc.ApprovedBy = a.AdminID
+LEFT JOIN manufacturer_labtester_link ll ON ll.MbatchID = mdc.MbatchID
+LEFT JOIN labtester_data_collection ldc ON ldc.LbatchID = ll.LbatchID
+LEFT JOIN labtesters l ON l.LabTesterID = ldc.LabID
+WHERE mdc.MbatchID = ?
+GROUP BY mdc.MbatchID
         `;
         break;
 
