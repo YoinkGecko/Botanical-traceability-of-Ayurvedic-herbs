@@ -259,7 +259,7 @@ app.get("/api/dashboard/funneldata", async (req, res) => {
     const [[{ count: labTesting }]] = await db
       .promise()
       .query(
-        "SELECT COUNT(*) AS count FROM labtester_data_collection WHERE (Status = 'PENDING' OR Status = 'APPROVED') AND District = ?",
+        "SELECT COUNT(*) AS count FROM labtester_data_collection WHERE District = ?",
         [district]
       );
 
@@ -267,7 +267,7 @@ app.get("/api/dashboard/funneldata", async (req, res) => {
     const [[{ count: processing }]] = await db
       .promise()
       .query(
-        "SELECT COUNT(*) AS count FROM processor_data_collection WHERE Status != 'REJECTED' AND District = ?",
+        "SELECT COUNT(*) AS count FROM processor_data_collection WHERE District = ?",
         [district]
       );
 
@@ -275,7 +275,7 @@ app.get("/api/dashboard/funneldata", async (req, res) => {
     const [[{ count: approved }]] = await db
       .promise()
       .query(
-        "SELECT COUNT(*) AS count FROM manufacturer_data_collection WHERE Status = 'APPROVED' AND District = ?",
+        "SELECT COUNT(*) AS count FROM manufacturer_data_collection WHERE District = ?",
         [district]
       );
 
