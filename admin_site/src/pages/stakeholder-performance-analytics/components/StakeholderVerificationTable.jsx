@@ -48,6 +48,7 @@ const StakeholderVerificationTable = ({ activeTab, data = [] }) => {
             harvestedBy: f.HarvestedBy,
             quantity: f.Quantity,
             location: f.Location,
+            locationAccuracy: f.LocationAccuracy,
             district: f.District,
             photos: f.Photos,
             status: f.Status,
@@ -283,9 +284,17 @@ const StakeholderVerificationTable = ({ activeTab, data = [] }) => {
       case "farmers":
         return (
           <>
+            <td className="p-4">{item?.Fid || "-"}</td>
             <td className="p-4">{item?.typeOfHerb || "-"}</td>
+            <td className="p-4">{item?.harvestedBy || "-"}</td>
             <td className="p-4">{item?.quantity || "-"}</td>
             <td className="p-4">{item?.location || "-"}</td>
+            <td className="p-4">{item?.locationAccuracy || "-"}</td>
+            <td className="p-4">{item?.district || "-"}</td>
+            <td className="p-4">{item?.photos || "-"}</td>
+            <td className="p-4">{item?.status || "-"}</td>
+            <td className="p-4">{item?.approvedBy || "-"}</td>
+            <td className="p-4">{formatDate(item?.registrationDate)}</td>
           </>
         );
       case "lab-testers":
@@ -354,13 +363,37 @@ const StakeholderVerificationTable = ({ activeTab, data = [] }) => {
       farmers: (
         <>
           <th className="text-left p-4 text-sm font-medium text-muted-foreground">
+            Farmer ID (Fid)
+          </th>
+          <th className="text-left p-4 text-sm font-medium text-muted-foreground">
             Type of Herb
+          </th>
+          <th className="text-left p-4 text-sm font-medium text-muted-foreground">
+            Harvested By
           </th>
           <th className="text-left p-4 text-sm font-medium text-muted-foreground">
             Quantity
           </th>
           <th className="text-left p-4 text-sm font-medium text-muted-foreground">
             Location
+          </th>
+          <th className="text-left p-4 text-sm font-medium text-muted-foreground">
+            Location Accuracy
+          </th>
+          <th className="text-left p-4 text-sm font-medium text-muted-foreground">
+            District
+          </th>
+          <th className="text-left p-4 text-sm font-medium text-muted-foreground">
+            Photos
+          </th>
+          <th className="text-left p-4 text-sm font-medium text-muted-foreground">
+            Status
+          </th>
+          <th className="text-left p-4 text-sm font-medium text-muted-foreground">
+            Approved By
+          </th>
+          <th className="text-left p-4 text-sm font-medium text-muted-foreground">
+            Registration Date
           </th>
         </>
       ),
