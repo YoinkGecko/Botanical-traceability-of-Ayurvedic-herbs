@@ -55,16 +55,6 @@ const StakeholderPerformanceAnalytics = () => {
     alert("Export initiated! Download will begin shortly.");
   };
 
-  const getTabDisplayName = (tab) => {
-    const names = {
-      farmers: "Farmers",
-      "lab-testers": "Lab Testers",
-      processors: "Processors",
-      manufacturers: "Manufacturers",
-    };
-    return names?.[tab] || "Stakeholders";
-  };
-
   return (
     <div className="min-h-screen bg-background">
       <Header />

@@ -571,13 +571,13 @@ const StakeholderVerificationTable = ({ activeTab, data = [] }) => {
     const specificHeaders = {
       farmers: (
         <th className="text-left p-4 text-sm font-medium text-muted-foreground">
-          Farm Details
+          Type of Herb
         </th>
       ),
       "lab-testers": (
         <>
           <th className="text-left p-4 text-sm font-medium text-muted-foreground">
-            Certification
+            Test Results
           </th>
           <th className="text-left p-4 text-sm font-medium text-muted-foreground">
             Experience
