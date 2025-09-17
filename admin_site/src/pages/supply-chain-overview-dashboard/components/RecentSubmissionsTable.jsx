@@ -103,7 +103,7 @@ const RecentSubmissionsTable = ({ district }) => {
         <div className="flex items-center justify-between">
           <div>
             <h3 className="text-lg font-heading font-semibold text-foreground">
-              Recent Submissions
+              All Submissions
             </h3>
             <p className="text-sm text-muted-foreground">
               Latest data submissions across all stakeholders

@@ -453,7 +453,7 @@ app.get("/api/admin/dashboard/recentsubmissions", async (req, res) => {
           JOIN farmers f ON f.FarmerID = fdc.Fid
           WHERE fdc.District = ?
           ORDER BY fdc.Timestamp DESC
-          LIMIT 2
+           
         ) farmer
 
         UNION ALL
@@ -471,7 +471,7 @@ app.get("/api/admin/dashboard/recentsubmissions", async (req, res) => {
           JOIN processors p ON p.ProcessorID = pdc.Pid
           WHERE pdc.District = ?
           ORDER BY pdc.Timestamp DESC
-          LIMIT 2
+           
         ) processor
 
         UNION ALL
@@ -489,7 +489,7 @@ app.get("/api/admin/dashboard/recentsubmissions", async (req, res) => {
           JOIN labtesters l ON l.LabTesterID = ldc.LabID
           WHERE ldc.District = ?
           ORDER BY ldc.Timestamp DESC
-          LIMIT 2
+           
         ) lab
 
         UNION ALL
@@ -507,7 +507,7 @@ app.get("/api/admin/dashboard/recentsubmissions", async (req, res) => {
           JOIN manufacturers m ON m.ManufacturerID = mdc.ManufacturerID
           WHERE mdc.District = ?
           ORDER BY mdc.Timestamp DESC
-          LIMIT 2
+           
         ) manufacturer
 
         ORDER BY timestamp DESC
