@@ -330,7 +330,7 @@ const StakeholderVerificationTable = ({ activeTab, data = [] }) => {
             className="flex items-center space-x-1 hover:text-foreground transition-colors"
             onClick={() => handleSort("name")}
           >
-            <span>Name</span>
+            <span>ID</span>
             <Icon name={getSortIcon("name")} size={14} />
           </button>
         </th>
@@ -339,13 +339,11 @@ const StakeholderVerificationTable = ({ activeTab, data = [] }) => {
             className="flex items-center space-x-1 hover:text-foreground transition-colors"
             onClick={() => handleSort("id")}
           >
-            <span>ID</span>
+            <span> Batch ID</span>
             <Icon name={getSortIcon("id")} size={14} />
           </button>
         </th>
-        <th className="text-left p-4 text-sm font-medium text-muted-foreground">
-          Contact
-        </th>
+        <th className="text-left p-4 text-sm font-medium text-muted-foreground"></th>
         <th className="text-left p-4 text-sm font-medium text-muted-foreground">
           Location
         </th>
