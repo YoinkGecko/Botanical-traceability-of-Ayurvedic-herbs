@@ -1,9 +1,8 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import Icon from "../../../components/AppIcon";
 import Button from "../../../components/ui/Button";
 import Input from "../../../components/ui/Input";
 import Select from "../../../components/ui/Select";
-import { useEffect } from "react";
 
 const StakeholderVerificationTable = ({ activeTab, data = [] }) => {
   const [mockData, setMockData] = useState({
@@ -20,7 +19,6 @@ const StakeholderVerificationTable = ({ activeTab, data = [] }) => {
     direction: "desc",
   });
   const [loadingActions, setLoadingActions] = useState({});
-
   const itemsPerPage = 15;
 
   useEffect(() => {
@@ -31,63 +29,77 @@ const StakeholderVerificationTable = ({ activeTab, data = [] }) => {
             fetch("http://localhost:5001/api/farmers").then((res) =>
               res.json()
             ),
-            fetch("http://localhost:5001/api/lab-testers").then((res) =>
+            fetch("http://localhost:5001/api/labtester-data").then((res) =>
               res.json()
             ),
-            fetch("http://localhost:5001/api/processors").then((res) =>
+            fetch("http://localhost:5001/api/processor-data").then((res) =>
               res.json()
             ),
-            fetch("http://localhost:5001/api/manufacturers").then((res) =>
+            fetch("http://localhost:5001/api/manufacturer-data").then((res) =>
               res.json()
             ),
           ]);
 
         setMockData({
           farmers: farmersRes.map((f) => ({
-            id: f.id,
-            name: f.name,
-            phone: f.phone,
+            id: f.FbatchID,
+            name: f.Fid,
             typeOfHerb: f.TypeOfHerb,
+            harvestedBy: f.HarvestedBy,
             quantity: f.Quantity,
             location: f.Location,
+            district: f.District,
+            photos: f.Photos,
             status: f.Status,
             registrationDate: f.Timestamp,
+            approvedBy: f.ApprovedBy,
           })),
           "lab-testers": labsRes.map((l) => ({
-            id: l.Lid,
-            name: l.LabName,
-            phone: l.LabPhone,
-            email: l.LabEmail,
-            location: l.District,
-            status: l.status,
-            registrationDate: l.created_at,
-            certification: l.Certification,
-            specialization: l.Specialization,
-            experience: l.Experience,
+            id: l.LbatchID,
+            labId: l.LabID,
+            linkedBatchId: l.LinkedBatchID,
+            testType: l.TestType,
+            testResults: l.TestResults,
+            passFail: l.PassFailStatus,
+            certificate: l.CertificateFile,
+            location: l.Location,
+            district: l.District,
+            photos: l.Photos,
+            status: l.Status,
+            registrationDate: l.Timestamp,
+            approvedBy: l.ApprovedBy,
           })),
           processors: processorsRes.map((p) => ({
-            id: p.Pid,
-            name: p.ProcessorName,
-            phone: p.ProcessorPhone,
-            email: p.ProcessorEmail,
-            location: p.District,
-            status: p.status,
-            registrationDate: p.created_at,
-            capacity: p.Capacity,
-            processingType: p.Type,
-            certifications: p.Certifications,
+            id: p.PbatchID,
+            processorId: p.Pid,
+            linkedFarmerBatchId: p.LinkedFarmerBatchID,
+            step: p.ProcessingStep,
+            weightGiven: p.WeightGivenByFarmer,
+            weightBefore: p.WeightBeforeProc,
+            weightAfter: p.WeightAfterProcessing,
+            parameters: p.Parameters,
+            location: p.Location,
+            district: p.District,
+            photos: p.Photos,
+            status: p.Status,
+            registrationDate: p.Timestamp,
+            approvedBy: p.ApprovedBy,
           })),
           manufacturers: manufacturersRes.map((m) => ({
-            id: m.Mid,
-            name: m.ManufacturerName,
-            phone: m.ManufacturerPhone,
-            email: m.ManufacturerEmail,
-            location: m.District,
-            status: m.status,
-            registrationDate: m.created_at,
-            capacity: m.Capacity,
-            productType: m.ProductType,
-            certifications: m.Certifications,
+            id: m.MbatchID,
+            manufacturerId: m.ManufacturerID,
+            productName: m.ProductName,
+            form: m.ProductForm,
+            ingredients: m.Ingredients,
+            packaging: m.PackagingInfo,
+            weightFinal: m.WeightFinal,
+            qrCode: m.QRCodeID,
+            location: m.Location,
+            district: m.District,
+            photos: m.Photos,
+            status: m.Status,
+            registrationDate: m.Timestamp,
+            approvedBy: m.ApprovedBy,
           })),
         });
       } catch (err) {
@@ -98,19 +110,22 @@ const StakeholderVerificationTable = ({ activeTab, data = [] }) => {
     fetchData();
   }, []);
 
-  // Get data for current tab
   const currentData = data?.length ? data : mockData?.[activeTab] || [];
 
-  // Filter and search data
   const filteredData = useMemo(() => {
     return (
       currentData?.filter((item) => {
         const matchesSearch =
           !searchTerm ||
-          item?.name?.toLowerCase()?.includes(searchTerm?.toLowerCase()) ||
-          item?.id?.toLowerCase()?.includes(searchTerm?.toLowerCase()) ||
-          item?.email?.toLowerCase()?.includes(searchTerm?.toLowerCase()) ||
-          item?.location?.toLowerCase()?.includes(searchTerm?.toLowerCase());
+          item?.name
+            ?.toString()
+            ?.toLowerCase()
+            .includes(searchTerm?.toLowerCase()) ||
+          item?.id
+            ?.toString()
+            ?.toLowerCase()
+            .includes(searchTerm?.toLowerCase()) ||
+          item?.district?.toLowerCase()?.includes(searchTerm?.toLowerCase());
 
         const matchesStatus =
           statusFilter === "all" ||
@@ -121,7 +136,6 @@ const StakeholderVerificationTable = ({ activeTab, data = [] }) => {
     );
   }, [currentData, searchTerm, statusFilter]);
 
-  // Sort data
   const sortedData = useMemo(() => {
     return [...filteredData]?.sort((a, b) => {
       if (!sortConfig?.key) return 0;
@@ -129,29 +143,22 @@ const StakeholderVerificationTable = ({ activeTab, data = [] }) => {
       let aValue = a?.[sortConfig?.key];
       let bValue = b?.[sortConfig?.key];
 
-      // Handle date sorting
       if (sortConfig?.key === "registrationDate") {
         aValue = new Date(aValue);
         bValue = new Date(bValue);
       }
 
-      // Handle string sorting
       if (typeof aValue === "string") {
         aValue = aValue?.toLowerCase();
         bValue = bValue?.toLowerCase();
       }
 
-      if (aValue < bValue) {
-        return sortConfig?.direction === "asc" ? -1 : 1;
-      }
-      if (aValue > bValue) {
-        return sortConfig?.direction === "asc" ? 1 : -1;
-      }
+      if (aValue < bValue) return sortConfig?.direction === "asc" ? -1 : 1;
+      if (aValue > bValue) return sortConfig?.direction === "asc" ? 1 : -1;
       return 0;
     });
   }, [filteredData, sortConfig]);
 
-  // Paginate data
   const totalPages = Math.ceil(sortedData?.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
@@ -170,20 +177,10 @@ const StakeholderVerificationTable = ({ activeTab, data = [] }) => {
       ...prev,
       [`${stakeholderId}_approve`]: true,
     }));
-
     try {
-      // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 1500));
-
-      // In real implementation, make API call to approve stakeholder
-      console.log(`Approving stakeholder: ${stakeholderId}`);
-
-      // Show success notification
       alert(`Stakeholder ${stakeholderId} has been approved successfully!`);
-
-      // Here you would typically refresh the data or update the local state
     } catch (error) {
-      console.error("Error approving stakeholder:", error);
       alert("Failed to approve stakeholder. Please try again.");
     } finally {
       setLoadingActions((prev) => ({
@@ -198,20 +195,10 @@ const StakeholderVerificationTable = ({ activeTab, data = [] }) => {
       ...prev,
       [`${stakeholderId}_reject`]: true,
     }));
-
     try {
-      // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 1500));
-
-      // In real implementation, make API call to reject stakeholder
-      console.log(`Rejecting stakeholder: ${stakeholderId}`);
-
-      // Show success notification
       alert(`Stakeholder ${stakeholderId} has been rejected.`);
-
-      // Here you would typically refresh the data or update the local state
     } catch (error) {
-      console.error("Error rejecting stakeholder:", error);
       alert("Failed to reject stakeholder. Please try again.");
     } finally {
       setLoadingActions((prev) => ({
@@ -304,61 +291,30 @@ const StakeholderVerificationTable = ({ activeTab, data = [] }) => {
       case "lab-testers":
         return (
           <>
-            <td className="p-4">
-              <div className="text-sm">
-                <div className="font-medium text-foreground">
-                  {item?.certification}
-                </div>
-                <div className="text-xs text-muted-foreground">
-                  {item?.specialization}
-                </div>
-              </div>
-            </td>
-            <td className="p-4">
-              <span className="text-sm text-foreground">
-                {item?.experience}
-              </span>
-            </td>
+            <td className="p-4">{item?.testType || "-"}</td>
+            <td className="p-4">{item?.testResults || "-"}</td>
+            <td className="p-4">{item?.passFail || "-"}</td>
+            <td className="p-4">{item?.certificate || "-"}</td>
           </>
         );
       case "processors":
         return (
           <>
-            <td className="p-4">
-              <div className="text-sm">
-                <div className="font-medium text-foreground">
-                  {item?.capacity}
-                </div>
-                <div className="text-xs text-muted-foreground">
-                  {item?.processingType}
-                </div>
-              </div>
-            </td>
-            <td className="p-4">
-              <span className="text-sm text-foreground">
-                {item?.certifications}
-              </span>
-            </td>
+            <td className="p-4">{item?.step || "-"}</td>
+            <td className="p-4">{item?.weightGiven || "-"}</td>
+            <td className="p-4">{item?.weightBefore || "-"}</td>
+            <td className="p-4">{item?.weightAfter || "-"}</td>
+            <td className="p-4">{item?.parameters || "-"}</td>
           </>
         );
       case "manufacturers":
         return (
           <>
-            <td className="p-4">
-              <div className="text-sm">
-                <div className="font-medium text-foreground">
-                  {item?.capacity}
-                </div>
-                <div className="text-xs text-muted-foreground">
-                  {item?.productType}
-                </div>
-              </div>
-            </td>
-            <td className="p-4">
-              <span className="text-sm text-foreground">
-                {item?.certifications}
-              </span>
-            </td>
+            <td className="p-4">{item?.productName || "-"}</td>
+            <td className="p-4">{item?.form || "-"}</td>
+            <td className="p-4">{item?.weightFinal || "-"}</td>
+            <td className="p-4">{item?.ingredients || "-"}</td>
+            <td className="p-4">{item?.qrCode || "-"}</td>
           </>
         );
       default:

@@ -680,6 +680,82 @@ app.get("/api/manufacturers", (req, res) => {
 });
 
 
+
+// 1️⃣ Farmers
+app.get("/api/farmers", (req, res) => {
+  db.query("SELECT * FROM farmer_data_collection", (err, results) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json(results);
+  });
+});
+
+// 2️⃣ Processor data
+app.get("/api/processor-data", (req, res) => {
+  db.query("SELECT * FROM processor_data_collection", (err, results) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json(results);
+  });
+});
+
+// 3️⃣ Lab tester data
+app.get("/api/labtester-data", (req, res) => {
+  db.query("SELECT * FROM labtester_data_collection", (err, results) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json(results);
+  });
+});
+
+// 4️⃣ Manufacturer data
+app.get("/api/manufacturer-data", (req, res) => {
+  db.query("SELECT * FROM manufacturer_data_collection", (err, results) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json(results);
+  });
+});
+
+// Approve / Reject endpoints (example for any table)
+app.post("/api/:table/:id/approve", (req, res) => {
+  const { table, id } = req.params;
+  const tableMap = {
+    farmers: "farmer_data_collection",
+    processors: "processor_data_collection",
+    "lab-testers": "labtester_data_collection",
+    manufacturers: "manufacturer_data_collection",
+  };
+  const tableName = tableMap[table];
+  if (!tableName) return res.status(400).json({ error: "Invalid table" });
+
+  db.query(
+    `UPDATE ${tableName} SET Status='APPROVED' WHERE ${tableName.slice(0, 1).toUpperCase() + tableName.slice(1, 2)}batchID=?`,
+    [id],
+    (err, result) => {
+      if (err) return res.status(500).json({ error: err.message });
+      res.json({ success: true, message: "Approved" });
+    }
+  );
+});
+
+app.post("/api/:table/:id/reject", (req, res) => {
+  const { table, id } = req.params;
+  const tableMap = {
+    farmers: "farmer_data_collection",
+    processors: "processor_data_collection",
+    "lab-testers": "labtester_data_collection",
+    manufacturers: "manufacturer_data_collection",
+  };
+  const tableName = tableMap[table];
+  if (!tableName) return res.status(400).json({ error: "Invalid table" });
+
+  db.query(
+    `UPDATE ${tableName} SET Status='REJECTED' WHERE ${tableName.slice(0, 1).toUpperCase() + tableName.slice(1, 2)}batchID=?`,
+    [id],
+    (err, result) => {
+      if (err) return res.status(500).json({ error: err.message });
+      res.json({ success: true, message: "Rejected" });
+    }
+  );
+});
+
 const PORT = 5001;
 app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);
