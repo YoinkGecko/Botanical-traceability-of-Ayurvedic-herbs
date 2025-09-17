@@ -682,7 +682,7 @@ app.get("/api/manufacturers", (req, res) => {
 
 
 // 1️⃣ Farmers
-app.get("/api/farmers", (req, res) => {
+app.get("/api/farmer-data", (req, res) => {
   db.query("SELECT * FROM farmer_data_collection where Status != 'APPROVED'", (err, results) => {
     if (err) return res.status(500).json({ error: err.message });
     res.json(results);

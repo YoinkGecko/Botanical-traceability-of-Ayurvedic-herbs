@@ -26,7 +26,7 @@ const StakeholderVerificationTable = ({ activeTab, data = [] }) => {
       try {
         const [farmersRes, labsRes, processorsRes, manufacturersRes] =
           await Promise.all([
-            fetch("http://localhost:5001/api/farmers").then((res) =>
+            fetch("http://localhost:5001/api/farmer-data").then((res) =>
               res.json()
             ),
             fetch("http://localhost:5001/api/labtester-data").then((res) =>
