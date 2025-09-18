@@ -295,9 +295,8 @@ const StakeholderVerificationTable = ({ activeTab, data = [] }) => {
             <td className="p-4">{item?.locationAccuracy || "-"}</td>
             <td className="p-4">{item?.district || "-"}</td>
             <td className="p-4">{item?.photos || "-"}</td>
-            <td className="p-4">{item?.status || "-"}</td>
+
             <td className="p-4">{item?.approvedBy || "-"}</td>
-            <td className="p-4">{formatDate(item?.registrationDate)}</td>
           </>
         );
       case "lab-testers":
@@ -416,14 +415,9 @@ const StakeholderVerificationTable = ({ activeTab, data = [] }) => {
           <th className="text-left p-4 text-sm font-medium text-muted-foreground">
             Photos
           </th>
-          <th className="text-left p-4 text-sm font-medium text-muted-foreground">
-            Status
-          </th>
+
           <th className="text-left p-4 text-sm font-medium text-muted-foreground">
             Approved By
-          </th>
-          <th className="text-left p-4 text-sm font-medium text-muted-foreground">
-            Registration Date
           </th>
         </>
       ),
@@ -462,14 +456,9 @@ const StakeholderVerificationTable = ({ activeTab, data = [] }) => {
           <th className="text-left p-4 text-sm font-medium text-muted-foreground">
             Photos
           </th>
-          <th className="text-left p-4 text-sm font-medium text-muted-foreground">
-            Status
-          </th>
+
           <th className="text-left p-4 text-sm font-medium text-muted-foreground">
             Approved By
-          </th>
-          <th className="text-left p-4 text-sm font-medium text-muted-foreground">
-            Registration Date
           </th>
         </>
       ),
@@ -508,14 +497,9 @@ const StakeholderVerificationTable = ({ activeTab, data = [] }) => {
           <th className="text-left p-4 text-sm font-medium text-muted-foreground">
             Photos
           </th>
-          <th className="text-left p-4 text-sm font-medium text-muted-foreground">
-            Status
-          </th>
+
           <th className="text-left p-4 text-sm font-medium text-muted-foreground">
             Approved By
-          </th>
-          <th className="text-left p-4 text-sm font-medium text-muted-foreground">
-            Registration Date
           </th>
         </>
       ),
@@ -551,14 +535,9 @@ const StakeholderVerificationTable = ({ activeTab, data = [] }) => {
           <th className="text-left p-4 text-sm font-medium text-muted-foreground">
             Photos
           </th>
-          <th className="text-left p-4 text-sm font-medium text-muted-foreground">
-            Status
-          </th>
+
           <th className="text-left p-4 text-sm font-medium text-muted-foreground">
             Approved By
-          </th>
-          <th className="text-left p-4 text-sm font-medium text-muted-foreground">
-            Registration Date
           </th>
         </>
       ),
