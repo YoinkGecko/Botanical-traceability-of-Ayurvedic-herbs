@@ -287,12 +287,49 @@ app.get("/api/dashboard/funneldata", async (req, res) => {
     const totalApproved =
       farmerApproved + processorApproved + labTesterApproved + manufacturerApproved;
 
+        // Approved stage → sum of approved across all 4 tables
+    const [[{ count: farmerre }]] = await db.promise().query(
+      "SELECT COUNT(*) AS count FROM farmer_data_collection WHERE District = ? AND status = 'REJECTED'",
+      [district]
+    );
+
+    const [[{ count: processorre }]] = await db.promise().query(
+      "SELECT COUNT(*) AS count FROM processor_data_collection WHERE District = ? AND status = 'REJECTED'",
+      [district]
+    );
+
+    const [[{ count: labTesterre }]] = await db.promise().query(
+      "SELECT COUNT(*) AS count FROM labtester_data_collection WHERE District = ? AND status = 'REJECTED'",
+      [district]
+    );
+
+    const [[{ count: manufacturerre }]] = await db.promise().query(
+      "SELECT COUNT(*) AS count FROM manufacturer_data_collection WHERE District = ? AND status = 'REJECTED'",
+      [district]
+    );
+
+    const totalrej =
+      farmerre + processorre + labTesterre + manufacturerre;
+
+        const [[{ count: farmer }]] = await db.promise().query(
+      "SELECT COUNT(*) AS count FROM farmer_data_collection WHERE District = ?",
+      [district]
+    );
+
+    const [[{ count: manu }]] = await db.promise().query(
+      "SELECT COUNT(*) AS count FROM manufacturer_data_collection WHERE District = ? AND status = 'REJECTED'",
+      [district]
+    );
+
     // Send final response
     res.json({
       Submissions: totalSubmissions,
+      farmer,
       labTesting,
       Processing: processing,
+      man:manu,
       Approved: totalApproved,
+      Rejected:totalrej
     });
   } catch (err) {
     console.error("Error fetching funnel data:", err);

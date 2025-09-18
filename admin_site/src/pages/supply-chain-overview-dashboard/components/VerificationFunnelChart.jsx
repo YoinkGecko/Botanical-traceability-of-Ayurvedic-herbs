@@ -11,7 +11,16 @@ import {
 } from "recharts";
 
 const VerificationFunnelChart = ({ data }) => {
-  const COLORS = ["#2D5016", "#8B4513", "#FF8C00", "#228B22", "#DAA520"];
+  const COLORS = [
+    "#4F81BD", // Submissions - blue
+    "#C0504D", // Initial Review - reddish
+    "#9BBB59", // Farmer - green
+    "#8064A2", // Lab Testing - purple
+    "#F79646", // Processing - orange
+    "#4BACC6", // Manufacturing - teal
+    "#2E75B6", // Approved - darker blue
+    "#FF4C4C", // Rejected - red
+  ];
 
   const CustomTooltip = ({ active, payload }) => {
     if (active && payload && payload?.length) {

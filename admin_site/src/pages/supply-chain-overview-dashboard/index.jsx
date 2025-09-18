@@ -36,9 +36,12 @@ const SupplyChainOverviewDashboard = () => {
   const verificationFunnelData = [
     { name: "Submissions", value: funneldata.Submissions },
     { name: "Inital review", value: 4 },
+    { name: "Farmer", value: funneldata.farmer },
     { name: "Lab Testing", value: funneldata.labTesting },
     { name: "Processing", value: funneldata.Processing },
+    { name: "Manufacturing", value: funneldata.man },
     { name: "Approved", value: funneldata.Approved },
+    { name: "Rejected", value: funneldata.Rejected || 0 },
   ];
 
   // Mock data for geographic regions
