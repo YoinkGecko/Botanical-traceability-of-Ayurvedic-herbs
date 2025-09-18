@@ -1,4 +1,5 @@
 import React from "react";
+import { memo } from "react";
 import {
   BarChart,
   Bar,
@@ -10,7 +11,7 @@ import {
   Cell,
 } from "recharts";
 
-const VerificationFunnelChart = ({ data }) => {
+const VerificationFunnelChart = memo(({ data }) => {
   const COLORS = [
     "#4F81BD", // Submissions - blue
     "#C0504D", // Initial Review - reddish
@@ -115,6 +116,6 @@ const VerificationFunnelChart = ({ data }) => {
       </div>
     </div>
   );
-};
+});
 
 export default VerificationFunnelChart;
