@@ -167,6 +167,7 @@ const StakeholderPerformanceAnalytics = () => {
                   <PerformanceTrendChart
                     activeTab={activeTab}
                     timePeriod={filters?.timePeriod}
+                    re={refreshKey}
                   />
                 </div>
 
