@@ -113,7 +113,7 @@ const RecentSubmissionsTable = ({ district }) => {
     }
   };
 
-  // Export submissions as CSV (no imports needed)
+  // Export submissions as CSV
   const exportToCSV = () => {
     if (!submissions.length) return;
 
