@@ -11,17 +11,20 @@ import Icon from "../../components/AppIcon";
 import Button from "../../components/ui/Button";
 
 const StakeholderPerformanceAnalytics = () => {
+  const [refreshKey, setRefreshKey] = useState(0);
+
   const [activeTab, setActiveTab] = useState("farmers");
   const [filters, setFilters] = useState({});
   const [lastUpdated, setLastUpdated] = useState(new Date());
   const [isLoading, setIsLoading] = useState(false);
-  const [currentView, setCurrentView] = useState("verification"); // 'verification' or 'analytics'
+  const [currentView, setCurrentView] = useState("verification");
 
-  // Simulate data refresh every 15 minutes
+  const triggerRefresh = () => setRefreshKey((prev) => prev + 1);
   useEffect(() => {
+    triggerRefresh();
     const interval = setInterval(() => {
       setLastUpdated(new Date());
-    }, 15 * 60 * 1000); // 15 minutes
+    }, 10000);
 
     return () => clearInterval(interval);
   }, []);
@@ -127,12 +130,14 @@ const StakeholderPerformanceAnalytics = () => {
               <StakeholderTabs
                 activeTab={activeTab}
                 onTabChange={handleTabChange}
+                re={refreshKey}
               />
 
               {/* Stakeholder Verification Table */}
               <StakeholderVerificationTable
                 activeTab={activeTab}
                 data={[]} // Pass actual data here when available
+                re={refreshKey}
               />
             </>
           ) : (
@@ -142,16 +147,18 @@ const StakeholderPerformanceAnalytics = () => {
                 onFiltersChange={handleFiltersChange}
                 onBookmark={handleBookmark}
                 onExport={handleExport}
+                re={refreshKey}
               />
 
               {/* Stakeholder Category Tabs */}
               <StakeholderTabs
                 activeTab={activeTab}
                 onTabChange={handleTabChange}
+                re={refreshKey}
               />
 
               {/* Performance Metrics Strip */}
-              <PerformanceMetrics activeTab={activeTab} />
+              <PerformanceMetrics activeTab={activeTab} re={refreshKey} />
 
               {/* Main Content Grid */}
               <div className="grid grid-cols-1 xl:grid-cols-3 gap-8 mb-8">
@@ -170,7 +177,10 @@ const StakeholderPerformanceAnalytics = () => {
               </div>
 
               {/* Geographic Distribution Map - Full Width */}
-              <GeographicDistributionMap activeTab={activeTab} />
+              <GeographicDistributionMap
+                activeTab={activeTab}
+                re={refreshKey}
+              />
             </>
           )}
         </div>
