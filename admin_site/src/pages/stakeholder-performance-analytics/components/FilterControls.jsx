@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Icon from "../../../components/AppIcon";
 import Button from "../../../components/ui/Button";
 
-const FilterControls = ({ onFiltersChange, onBookmark, onExport }) => {
+const FilterControls = ({ onFiltersChange, onBookmark, onExport, re }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [filters, setFilters] = useState({
     timePeriod: "last-30-days",

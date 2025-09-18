@@ -4,7 +4,7 @@ import Button from "../../../components/ui/Button";
 import Input from "../../../components/ui/Input";
 import Select from "../../../components/ui/Select";
 
-const StakeholderVerificationTable = ({ activeTab, data = [] }) => {
+const StakeholderVerificationTable = ({ activeTab, data = [], re }) => {
   const [mockData, setMockData] = useState({
     farmers: [],
     "lab-testers": [],
@@ -112,7 +112,7 @@ const StakeholderVerificationTable = ({ activeTab, data = [] }) => {
     };
 
     fetchData();
-  }, []);
+  }, [re]);
 
   const currentData = data?.length ? data : mockData?.[activeTab] || [];
 

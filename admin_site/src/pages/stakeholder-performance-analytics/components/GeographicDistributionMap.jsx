@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Icon from "../../../components/AppIcon";
 
-const GeographicDistributionMap = ({ activeTab }) => {
+const GeographicDistributionMap = ({ activeTab, re }) => {
   const [selectedRegion, setSelectedRegion] = useState(null);
 
   const generateRegionData = () => {
