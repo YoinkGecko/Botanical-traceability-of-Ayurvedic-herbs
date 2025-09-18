@@ -884,6 +884,102 @@ app.post("/api/stakeholders/reject", (req, res) => {
 });
 
 
+// =============================
+// MAP LOCATIONS ROUTE
+// =============================
+// =============================
+// MAP LOCATIONS ROUTE
+// =============================
+app.get("/api/map-locations", (req, res) => {
+  const { district } = req.query;
+
+  if (!district) {
+    return res.status(400).json({ error: "District required" });
+  }
+
+  try {
+    // Farmer data
+    db.query(
+      "SELECT FbatchID AS batchId, Location, District, Quantity, 'farmer' AS type FROM farmer_data_collection WHERE District = ?",
+      [district],
+      (err, farmers) => {
+        if (err) {
+          console.error("Error fetching farmers:", err);
+          return res.status(500).json({ error: "Server error" });
+        }
+
+        // Processor data
+        db.query(
+          "SELECT PbatchID AS batchId, Location, District, ProcessingStep AS processStep, 'processor' AS type FROM processor_data_collection WHERE District = ?",
+          [district],
+          (err, processors) => {
+            if (err) {
+              console.error("Error fetching processors:", err);
+              return res.status(500).json({ error: "Server error" });
+            }
+
+            // Lab data
+            db.query(
+              "SELECT LbatchID AS batchId, Location, District, TestResults AS testResult, 'lab' AS type FROM labtester_data_collection WHERE District = ?",
+              [district],
+              (err, labs) => {
+                if (err) {
+                  console.error("Error fetching labs:", err);
+                  return res.status(500).json({ error: "Server error" });
+                }
+
+                // Manufacturer data
+                db.query(
+                  "SELECT MbatchID AS batchId, Location, District, ProductName, 'manufacturer' AS type FROM manufacturer_data_collection WHERE District = ?",
+                  [district],
+                  (err, manufacturers) => {
+                    if (err) {
+                      console.error("Error fetching manufacturers:", err);
+                      return res.status(500).json({ error: "Server error" });
+                    }
+
+                    // Merge & format
+                    const all = [
+                      ...farmers,
+                      ...processors,
+                      ...labs,
+                      ...manufacturers,
+                    ].map((row) => {
+                      let message = "";
+                      if (row.type === "farmer") {
+                        message = `👨‍🌾 Farmer Batch: ${row.batchId} | Qty: ${row.Quantity}`;
+                      } else if (row.type === "processor") {
+                        message = `🏭 Processor Batch: ${row.batchId} | Step: ${row.processStep}`;
+                      } else if (row.type === "lab") {
+                        message = `🧪 Lab Batch: ${row.batchId} | Result: ${row.testResult}`;
+                      } else if (row.type === "manufacturer") {
+                        message = `🏢 Manufacturer Batch: ${row.batchId} | Product: ${row.ProductName}`;
+                      }
+
+                      return {
+                        type: row.type,
+                        batchId: row.batchId,
+                        location: row.Location,
+                        district: row.District,
+                        message,
+                      };
+                    });
+
+                    res.json(all);
+                  }
+                );
+              }
+            );
+          }
+        );
+      }
+    );
+  } catch (err) {
+    console.error("❌ Error in map locations route:", err);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
 const PORT = 5001;
 app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);

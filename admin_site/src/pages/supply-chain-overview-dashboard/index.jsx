@@ -7,6 +7,7 @@ import GeographicHeatMap from "./components/GeographicHeatMap";
 import Icon from "../../components/AppIcon";
 import Button from "../../components/ui/Button";
 import DistrictMap from "pages/DistrictMap";
+import DistrictMapWrapper from "./DistrictMapWrapper";
 
 const SupplyChainOverviewDashboard = () => {
   const [isHeatMapVisible, setIsHeatMapVisible] = useState(false);
@@ -332,11 +333,12 @@ const SupplyChainOverviewDashboard = () => {
             </button>
 
             {/* Map component */}
-            <DistrictMap
-              district="mumbai"
-              location="19.076,72.8777"
-              message="Hello Mumbai!"
-            />
+            {isHeatMapVisible && (
+              <DistrictMapWrapper
+                district={localStorage.getItem("district")}
+                onClose={() => setIsHeatMapVisible(false)}
+              />
+            )}
           </div>
         </div>
       )}
