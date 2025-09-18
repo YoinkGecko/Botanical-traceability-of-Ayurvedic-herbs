@@ -27,7 +27,12 @@ const RecentSubmissionsTable = ({ district }) => {
         setLoading(false);
       }
     };
+
+    // Initial fetch
     fetchSubmissions();
+
+    const interval = setInterval(fetchSubmissions, 5000);
+    return () => clearInterval(interval);
   }, [district]);
 
   // Pagination
