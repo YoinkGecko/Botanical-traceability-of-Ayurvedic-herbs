@@ -131,6 +131,7 @@ CREATE TABLE labtester_data_collection (
     LinkedBatchID BIGINT NOT NULL, -- from processor_data_collection
     TestType ENUM('Moisture','Pesticide','DNA','Other') NOT NULL,
     TestResults TEXT,
+    DNASequence TEXT,
     PassFailStatus ENUM('PASS','FAIL','PENDING') DEFAULT 'PENDING',
     CertificateFile VARCHAR(255),
     Location VARCHAR(100),
@@ -144,6 +145,7 @@ CREATE TABLE labtester_data_collection (
     FOREIGN KEY (LinkedBatchID) REFERENCES processor_data_collection(PbatchID),
     FOREIGN KEY (ApprovedBy) REFERENCES admins(AdminID)
 );
+
 
 -- ================================
 -- Manufacturer Data Collection
