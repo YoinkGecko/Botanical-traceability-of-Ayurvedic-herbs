@@ -196,11 +196,9 @@ const StakeholderVerificationTable = ({ activeTab, data = [] }) => {
       if (!response.ok) throw new Error("Failed to approve");
 
       alert(`${activeTab} batch ${batchId} approved successfully!`);
-      window.location.reload();
     } catch (error) {
       console.error(error);
       alert("Failed to approve. Please try again.");
-      window.location.reload();
     } finally {
       setLoadingActions((prev) => ({
         ...prev,
@@ -230,11 +228,9 @@ const StakeholderVerificationTable = ({ activeTab, data = [] }) => {
       if (!response.ok) throw new Error("Failed to reject");
 
       alert(`${activeTab} batch ${batchId} rejected successfully!`);
-      window.location.reload();
     } catch (error) {
       console.error(error);
       alert("Failed to reject. Please try again.");
-      window.location.reload();
     } finally {
       setLoadingActions((prev) => ({
         ...prev,
