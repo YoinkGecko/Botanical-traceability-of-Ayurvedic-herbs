@@ -722,7 +722,7 @@ app.get("/api/manufacturer-data", (req, res) => {
   });
 });
 
-// Approve / Reject endpoints (example for any table)
+
 app.post("/api/:table/:id/approve", (req, res) => {
   const { table, id } = req.params;
   const tableMap = {
@@ -845,6 +845,8 @@ app.post("/api/stakeholders/reject", (req, res) => {
     }
   );
 });
+
+
 const PORT = 5001;
 app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);

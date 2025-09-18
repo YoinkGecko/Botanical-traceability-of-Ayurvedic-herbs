@@ -208,7 +208,7 @@ const StakeholderVerificationTable = ({ activeTab, data = [], re }) => {
   };
 
   const handleReject = async (batchId, activeTab) => {
-    const adminPhone = localStorage.getItem("adminPhone");
+    const adminPhone = localStorage.getItem("phonenumber");
 
     setLoadingActions((prev) => ({
       ...prev,
