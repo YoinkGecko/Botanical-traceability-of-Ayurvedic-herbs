@@ -155,7 +155,7 @@ const SupplyChainOverviewDashboard = () => {
     };
 
     fetchAll();
-    const interval = setInterval(fetchAll, 30000); // every 30 sec
+    const interval = setInterval(fetchAll, 5000); // every 30 sec
     return () => clearInterval(interval);
   }, []);
 

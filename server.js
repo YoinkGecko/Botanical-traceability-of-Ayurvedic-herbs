@@ -216,74 +216,83 @@ app.get("/api/dashboard/kpis", async (req, res) => {
   }
 });
 
-
 app.get("/api/dashboard/funneldata", async (req, res) => {
   try {
     const { district } = req.query;
 
-    const [[{ count: farmerSubmissions }]] = await db
-      .promise()
-      .query(
-        "SELECT COUNT(*) AS count FROM farmer_data_collection WHERE District = ?",
-        [district]
-      );
+    // Farmer submissions
+    const [[{ count: farmerSubmissions }]] = await db.promise().query(
+      "SELECT COUNT(*) AS count FROM farmer_data_collection WHERE District = ?",
+      [district]
+    );
 
-    const [[{ count: processorSubmissions }]] = await db
-      .promise()
-      .query(
-        "SELECT COUNT(*) AS count FROM processor_data_collection WHERE District = ?",
-        [district]
-      );
+    // Processor submissions
+    const [[{ count: processorSubmissions }]] = await db.promise().query(
+      "SELECT COUNT(*) AS count FROM processor_data_collection WHERE District = ?",
+      [district]
+    );
 
-    const [[{ count: labTesterSubmissions }]] = await db
-      .promise()
-      .query(
-        "SELECT COUNT(*) AS count FROM labtester_data_collection WHERE District = ?",
-        [district]
-      );
+    // Lab tester submissions
+    const [[{ count: labTesterSubmissions }]] = await db.promise().query(
+      "SELECT COUNT(*) AS count FROM labtester_data_collection WHERE District = ?",
+      [district]
+    );
 
-    const [[{ count: manufacturerSubmissions }]] = await db
-      .promise()
-      .query(
-        "SELECT COUNT(*) AS count FROM manufacturer_data_collection WHERE District = ?",
-        [district]
-      );
+    // Manufacturer submissions
+    const [[{ count: manufacturerSubmissions }]] = await db.promise().query(
+      "SELECT COUNT(*) AS count FROM manufacturer_data_collection WHERE District = ?",
+      [district]
+    );
 
+    // Total submissions across all roles
     const totalSubmissions =
       farmerSubmissions +
       processorSubmissions +
       labTesterSubmissions +
       manufacturerSubmissions;
 
-    // Count labTesting → with status filter
-    const [[{ count: labTesting }]] = await db
-      .promise()
-      .query(
-        "SELECT COUNT(*) AS count FROM labtester_data_collection WHERE District = ?",
-        [district]
-      );
+    // Lab Testing stage (example: still in progress)
+    const [[{ count: labTesting }]] = await db.promise().query(
+      "SELECT COUNT(*) AS count FROM labtester_data_collection WHERE District = ? AND status = 'IN_PROGRESS'",
+      [district]
+    );
 
-    // Count Processing → status not rejected
-    const [[{ count: processing }]] = await db
-      .promise()
-      .query(
-        "SELECT COUNT(*) AS count FROM processor_data_collection WHERE District = ?",
-        [district]
-      );
+    // Processing stage (not rejected)
+    const [[{ count: processing }]] = await db.promise().query(
+      "SELECT COUNT(*) AS count FROM processor_data_collection WHERE District = ? AND status != 'REJECTED'",
+      [district]
+    );
 
-    // Count Approved → manufacturer approved
-    const [[{ count: approved }]] = await db
-      .promise()
-      .query(
-        "SELECT COUNT(*) AS count FROM manufacturer_data_collection WHERE District = ?",
-        [district]
-      );
+    // Approved stage → sum of approved across all 4 tables
+    const [[{ count: farmerApproved }]] = await db.promise().query(
+      "SELECT COUNT(*) AS count FROM farmer_data_collection WHERE District = ? AND status = 'APPROVED'",
+      [district]
+    );
 
+    const [[{ count: processorApproved }]] = await db.promise().query(
+      "SELECT COUNT(*) AS count FROM processor_data_collection WHERE District = ? AND status = 'APPROVED'",
+      [district]
+    );
+
+    const [[{ count: labTesterApproved }]] = await db.promise().query(
+      "SELECT COUNT(*) AS count FROM labtester_data_collection WHERE District = ? AND status = 'APPROVED'",
+      [district]
+    );
+
+    const [[{ count: manufacturerApproved }]] = await db.promise().query(
+      "SELECT COUNT(*) AS count FROM manufacturer_data_collection WHERE District = ? AND status = 'APPROVED'",
+      [district]
+    );
+
+    const totalApproved =
+      farmerApproved + processorApproved + labTesterApproved + manufacturerApproved;
+
+    // Send final response
     res.json({
       Submissions: totalSubmissions,
       labTesting,
       Processing: processing,
-      Approved: approved,
+      Approved: totalApproved,
     });
   } catch (err) {
     console.error("Error fetching funnel data:", err);
