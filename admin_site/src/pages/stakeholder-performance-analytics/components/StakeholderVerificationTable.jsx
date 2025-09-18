@@ -175,39 +175,65 @@ const StakeholderVerificationTable = ({ activeTab, data = [] }) => {
         prev?.key === key && prev?.direction === "asc" ? "desc" : "asc",
     }));
   };
-
-  const handleApprove = async (stakeholderId) => {
+  const adminPhone = localStorage.getItem("phonenumber");
+  const handleApprove = async (batchId, activeTab) => {
     setLoadingActions((prev) => ({
       ...prev,
-      [`${stakeholderId}_approve`]: true,
+      [`${batchId}_approve`]: true,
     }));
+
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      alert(`Stakeholder ${stakeholderId} has been approved successfully!`);
+      const response = await fetch(
+        "http://localhost:5001/api/stakeholders/approve",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ batchId, activeTab, adminPhone }), // ✅ send phone too
+        }
+      );
+
+      if (!response.ok) throw new Error("Failed to approve");
+
+      alert(`${activeTab} batch ${batchId} approved successfully!`);
     } catch (error) {
-      alert("Failed to approve stakeholder. Please try again.");
+      console.error(error);
+      alert("Failed to approve. Please try again.");
     } finally {
       setLoadingActions((prev) => ({
         ...prev,
-        [`${stakeholderId}_approve`]: false,
+        [`${batchId}_approve`]: false,
       }));
     }
   };
 
-  const handleReject = async (stakeholderId) => {
+  const handleReject = async (batchId, activeTab) => {
+    const adminPhone = localStorage.getItem("adminPhone");
+
     setLoadingActions((prev) => ({
       ...prev,
-      [`${stakeholderId}_reject`]: true,
+      [`${batchId}_reject`]: true,
     }));
+
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      alert(`Stakeholder ${stakeholderId} has been rejected.`);
+      const response = await fetch(
+        "http://localhost:5001/api/stakeholders/reject",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ batchId, activeTab, adminPhone }),
+        }
+      );
+
+      if (!response.ok) throw new Error("Failed to reject");
+
+      alert(`${activeTab} batch ${batchId} rejected successfully!`);
     } catch (error) {
-      alert("Failed to reject stakeholder. Please try again.");
+      console.error(error);
+      alert("Failed to reject. Please try again.");
     } finally {
       setLoadingActions((prev) => ({
         ...prev,
-        [`${stakeholderId}_reject`]: false,
+        [`${batchId}_reject`]: false,
       }));
     }
   };
@@ -706,7 +732,7 @@ const StakeholderVerificationTable = ({ activeTab, data = [] }) => {
                           <Button
                             variant="default"
                             size="sm"
-                            onClick={() => handleApprove(item?.id)}
+                            onClick={() => handleApprove(item?.id, activeTab)}
                             loading={isApproving}
                             disabled={isApproving || isRejecting}
                             className="bg-green-600 hover:bg-green-700 text-white"
@@ -721,7 +747,7 @@ const StakeholderVerificationTable = ({ activeTab, data = [] }) => {
                           <Button
                             variant="destructive"
                             size="sm"
-                            onClick={() => handleReject(item?.id)}
+                            onClick={() => handleReject(item?.id, activeTab)}
                             loading={isRejecting}
                             disabled={isApproving || isRejecting}
                           >

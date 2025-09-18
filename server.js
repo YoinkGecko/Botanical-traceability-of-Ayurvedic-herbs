@@ -756,6 +756,86 @@ app.post("/api/:table/:id/reject", (req, res) => {
   );
 });
 
+// Approve route
+app.post("/api/stakeholders/approve", (req, res) => {
+  const { batchId, activeTab, adminPhone } = req.body;
+
+  // Table mapping
+  const tableMap = {
+    farmers: { table: "farmer_data_collection", idField: "FbatchID" },
+    processors: { table: "processor_data_collection", idField: "PbatchID" },
+    "lab-testers": { table: "labtester_data_collection", idField: "LbatchID" },
+    "labtesters": { table: "labtester_data_collection", idField: "LbatchID" },
+    "lab_testers": { table: "labtester_data_collection", idField: "LbatchID" },
+    manufacturers: { table: "manufacturer_data_collection", idField: "MbatchID" },
+  };
+
+  const key = activeTab.toLowerCase().replace(/\s+/g, "-");
+  const mapping = tableMap[key];
+
+  if (!mapping) return res.status(400).json({ error: "Invalid stakeholder type" });
+
+  // Step 1: get AdminID from phone
+  db.query(
+    "SELECT AdminID FROM admins WHERE AdminPhone=? AND status='ACTIVE'",
+    [adminPhone],
+    (err, admins) => {
+      if (err) return res.status(500).json({ error: "Database error" });
+      if (!admins.length) return res.status(401).json({ error: "Unauthorized: Admin not found or inactive" });
+
+      const adminId = admins[0].AdminID;
+
+      // Step 2: update batch status
+      const sql = `UPDATE ${mapping.table} SET Status='APPROVED', ApprovedBy=? WHERE ${mapping.idField}=?`;
+
+      db.query(sql, [adminId, batchId], (err2, result) => {
+        if (err2) return res.status(500).json({ error: "Database error" });
+        if (result.affectedRows === 0) return res.status(404).json({ error: "Batch not found" });
+
+        res.json({ success: true, message: `${key} batch ${batchId} approved by Admin ${adminId}` });
+      });
+    }
+  );
+});
+
+// Reject route
+app.post("/api/stakeholders/reject", (req, res) => {
+  const { batchId, activeTab, adminPhone } = req.body;
+
+  const tableMap = {
+    farmers: { table: "farmer_data_collection", idField: "FbatchID" },
+    processors: { table: "processor_data_collection", idField: "PbatchID" },
+    "lab-testers": { table: "labtester_data_collection", idField: "LbatchID" },
+    "labtesters": { table: "labtester_data_collection", idField: "LbatchID" },
+    "lab_testers": { table: "labtester_data_collection", idField: "LbatchID" },
+    manufacturers: { table: "manufacturer_data_collection", idField: "MbatchID" },
+  };
+
+  const key = activeTab.toLowerCase().replace(/\s+/g, "-");
+  const mapping = tableMap[key];
+
+  if (!mapping) return res.status(400).json({ error: "Invalid stakeholder type" });
+
+  db.query(
+    "SELECT AdminID FROM admins WHERE AdminPhone=? AND status='ACTIVE'",
+    [adminPhone],
+    (err, admins) => {
+      if (err) return res.status(500).json({ error: "Database error" });
+      if (!admins.length) return res.status(401).json({ error: "Unauthorized: Admin not found or inactive" });
+
+      const adminId = admins[0].AdminID;
+
+      const sql = `UPDATE ${mapping.table} SET Status='REJECTED', ApprovedBy=? WHERE ${mapping.idField}=?`;
+
+      db.query(sql, [adminId, batchId], (err2, result) => {
+        if (err2) return res.status(500).json({ error: "Database error" });
+        if (result.affectedRows === 0) return res.status(404).json({ error: "Batch not found" });
+
+        res.json({ success: true, message: `${key} batch ${batchId} rejected by Admin ${adminId}` });
+      });
+    }
+  );
+});
 const PORT = 5001;
 app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);
