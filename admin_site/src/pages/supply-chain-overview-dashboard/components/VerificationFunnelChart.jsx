@@ -25,10 +25,6 @@ const VerificationFunnelChart = ({ data }) => {
               {d?.value?.toLocaleString()}
             </span>
           </p>
-          <p className="text-sm text-muted-foreground">
-            Rate:{" "}
-            <span className="font-medium text-foreground">{d?.rate}%</span>
-          </p>
         </div>
       );
     }
@@ -105,7 +101,6 @@ const VerificationFunnelChart = ({ data }) => {
               style={{ backgroundColor: COLORS[index % COLORS.length] }}
             ></div>
             <span className="text-foreground font-medium">{stage?.name}</span>
-            <span className="text-muted-foreground">({stage?.rate}%)</span>
           </div>
         ))}
       </div>
