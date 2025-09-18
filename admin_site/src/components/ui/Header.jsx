@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
+import { LogOut } from "lucide-react";
 import Icon from "../AppIcon";
 import Button from "./Button";
 
@@ -84,7 +85,6 @@ const Header = () => {
               </div>
             </Link>
           </div>
-
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-1">
             {navigationItems?.map((item) => (
@@ -103,7 +103,6 @@ const Header = () => {
               </Link>
             ))}
           </nav>
-
           {/* Right Section */}
           <div className="flex items-center space-x-4">
             {/* Real-time Status Indicator */}
@@ -124,12 +123,27 @@ const Header = () => {
                   {adminInfo.district || ""}
                 </span>
               </div>
+
+              {/* User Icon */}
               <Button
                 variant="ghost"
                 size="icon"
                 className="w-10 h-10 rounded-full bg-muted"
               >
                 <Icon name="User" size={20} />
+              </Button>
+
+              {/* Logout Button with Lucide Icon */}
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => {
+                  localStorage.removeItem("phonenumber"); // optional: clear admin info
+                  window.location.href = "/";
+                }}
+                title="Logout"
+              >
+                <LogOut size={20} className="text-foreground" />
               </Button>
             </div>
 
