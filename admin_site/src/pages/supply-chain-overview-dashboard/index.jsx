@@ -6,6 +6,7 @@ import RecentSubmissionsTable from "./components/RecentSubmissionsTable";
 import GeographicHeatMap from "./components/GeographicHeatMap";
 import Icon from "../../components/AppIcon";
 import Button from "../../components/ui/Button";
+import DistrictMap from "pages/DistrictMap";
 
 const SupplyChainOverviewDashboard = () => {
   const [isHeatMapVisible, setIsHeatMapVisible] = useState(false);
@@ -286,12 +287,59 @@ const SupplyChainOverviewDashboard = () => {
         </div>
       </main>
       {/* Geographic Heat Map Modal */}
-      <GeographicHeatMap
-        isVisible={isHeatMapVisible}
-        onToggle={() => setIsHeatMapVisible(!isHeatMapVisible)}
-        regionData={regionData}
-        district={dis}
-      />
+      {isHeatMapVisible && (
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100vw",
+            height: "100vh",
+            backgroundColor: "rgba(0,0,0,0.5)", // dark backdrop
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 9999,
+          }}
+        >
+          <div
+            style={{
+              position: "relative",
+              width: "90%",
+              height: "80%",
+              backgroundColor: "#fff",
+              borderRadius: "8px",
+              overflow: "hidden",
+            }}
+          >
+            {/* Close button */}
+            <button
+              onClick={() => setIsHeatMapVisible(false)}
+              style={{
+                position: "absolute",
+                top: 10,
+                right: 10,
+                zIndex: 1000,
+                background: "red",
+                color: "#fff",
+                border: "none",
+                padding: "6px 10px",
+                borderRadius: "4px",
+                cursor: "pointer",
+              }}
+            >
+              Close
+            </button>
+
+            {/* Map component */}
+            <DistrictMap
+              district="mumbai"
+              location="19.076,72.8777"
+              message="Hello Mumbai!"
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 };
