@@ -85,6 +85,7 @@ const DISTRICT_AREAS = {
 
 const DistrictMap = ({ district, location, message }) => {
   useEffect(() => {
+    if (!district) return;
     const districtData = DISTRICT_AREAS[district.toLowerCase()];
     if (!districtData) return;
 

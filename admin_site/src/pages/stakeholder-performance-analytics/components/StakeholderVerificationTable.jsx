@@ -3,8 +3,14 @@ import Icon from "../../../components/AppIcon";
 import Button from "../../../components/ui/Button";
 import Input from "../../../components/ui/Input";
 import Select from "../../../components/ui/Select";
+import DistrictMap from "../../DistrictMap";
 
 const StakeholderVerificationTable = ({ activeTab, data = [], re }) => {
+  const [showmap, setshowmap] = useState(false);
+  const [district, setdistrict] = useState("mumbai");
+  const [location, setlocation] = useState("19.22,12.44");
+  const [message, setmessage] = useState("test");
+
   const [mockData, setMockData] = useState({
     farmers: [],
     "lab-testers": [],
@@ -601,6 +607,44 @@ const StakeholderVerificationTable = ({ activeTab, data = [], re }) => {
 
   return (
     <div className="bg-card rounded-lg border border-border shadow-card">
+      {showmap && (
+        <div
+          style={{
+            position: "relative",
+            width: "90%",
+            height: "80%",
+            backgroundColor: "#fff",
+            borderRadius: "8px",
+            overflow: "hidden",
+          }}
+        >
+          {/* Close button */}
+          <button
+            onClick={() => setshowmap(false)}
+            style={{
+              position: "absolute",
+              top: 10,
+              right: 10,
+              zIndex: 1000, // <- make sure this is high
+              background: "red",
+              color: "#fff",
+              border: "none",
+              padding: "6px 10px",
+              borderRadius: "4px",
+              cursor: "pointer",
+            }}
+          >
+            Close
+          </button>
+
+          {/* Map */}
+          <DistrictMap
+            district={district}
+            location={location}
+            message={message}
+          />
+        </div>
+      )}
       <div className="p-6 border-b border-border">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
           <div>
@@ -761,7 +805,14 @@ const StakeholderVerificationTable = ({ activeTab, data = [], re }) => {
                           </Button>
                         </>
                       )}
-                      <Button variant="ghost" size="sm" title="View Details">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        title="View Details"
+                        onClick={() => {
+                          setshowmap(true);
+                        }}
+                      >
                         <Icon name="Eye" size={14} />
                       </Button>
                     </div>
