@@ -117,14 +117,10 @@ const RecentSubmissionsTable = ({ district }) => {
   const exportToCSV = () => {
     if (!submissions.length) return;
 
-    // Extract headers
     const headers = Object.keys(submissions[0]);
     const csvRows = [];
 
-    // Add headers
     csvRows.push(headers.join(","));
-
-    // Add rows
     for (const row of submissions) {
       const values = headers.map(
         (h) => `"${row[h] !== null && row[h] !== undefined ? row[h] : ""}"`
@@ -133,17 +129,13 @@ const RecentSubmissionsTable = ({ district }) => {
     }
 
     const csvString = csvRows.join("\n");
-
-    // Trigger download
     const blob = new Blob([csvString], { type: "text/csv" });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement("a");
-    a.setAttribute("hidden", "");
-    a.setAttribute("href", url);
-    a.setAttribute("download", "submissions.csv");
-    document.body.appendChild(a);
+    a.href = url;
+    a.download = "all_submissions.csv";
     a.click();
-    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
   };
 
   return (
