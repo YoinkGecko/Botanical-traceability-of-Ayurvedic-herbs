@@ -113,6 +113,39 @@ const RecentSubmissionsTable = ({ district }) => {
     }
   };
 
+  // Export submissions as CSV (no imports needed)
+  const exportToCSV = () => {
+    if (!submissions.length) return;
+
+    // Extract headers
+    const headers = Object.keys(submissions[0]);
+    const csvRows = [];
+
+    // Add headers
+    csvRows.push(headers.join(","));
+
+    // Add rows
+    for (const row of submissions) {
+      const values = headers.map(
+        (h) => `"${row[h] !== null && row[h] !== undefined ? row[h] : ""}"`
+      );
+      csvRows.push(values.join(","));
+    }
+
+    const csvString = csvRows.join("\n");
+
+    // Trigger download
+    const blob = new Blob([csvString], { type: "text/csv" });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.setAttribute("hidden", "");
+    a.setAttribute("href", url);
+    a.setAttribute("download", "submissions.csv");
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  };
+
   return (
     <div className="bg-card rounded-lg border border-border shadow-card">
       {/* Header */}
@@ -129,7 +162,7 @@ const RecentSubmissionsTable = ({ district }) => {
           <Button variant="outline" size="sm">
             <Icon name="Filter" size={16} className="mr-2" /> Filter
           </Button>
-          <Button variant="outline" size="sm">
+          <Button variant="outline" size="sm" onClick={exportToCSV}>
             <Icon name="Download" size={16} className="mr-2" /> Export
           </Button>
         </div>
