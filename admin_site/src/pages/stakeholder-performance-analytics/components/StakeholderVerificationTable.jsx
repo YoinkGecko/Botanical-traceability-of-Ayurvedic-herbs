@@ -118,6 +118,12 @@ const StakeholderVerificationTable = ({ activeTab, data = [], re }) => {
     };
 
     fetchData();
+
+    // refresh every 5 seconds
+    const interval = setInterval(fetchData, 5000);
+
+    // cleanup on unmount
+    return () => clearInterval(interval);
   }, [re]);
 
   const currentData = data?.length ? data : mockData?.[activeTab] || [];
