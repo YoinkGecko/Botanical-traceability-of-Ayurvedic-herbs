@@ -61,6 +61,7 @@ const StakeholderVerificationTable = ({ activeTab, data = [] }) => {
             linkedBatchId: l.LinkedBatchID, // processor batch
             testType: l.TestType,
             testResults: l.TestResults,
+            DNASequence: l.DNASequence,
             passFail: l.PassFailStatus,
             certificate: l.CertificateFile,
             location: l.Location,
@@ -306,6 +307,7 @@ const StakeholderVerificationTable = ({ activeTab, data = [] }) => {
             <td className="p-4">{item?.linkedBatchId || "-"}</td>
             <td className="p-4">{item?.testType || "-"}</td>
             <td className="p-4">{item?.testResults || "-"}</td>
+            <td className="p-4">{item?.DNASequence || "-"}</td>
             <td className="p-4">{item?.passFail || "-"}</td>
             <td className="p-4">{item?.certificate || "-"}</td>
             <td className="p-4">{item?.location || "-"}</td>
@@ -438,6 +440,9 @@ const StakeholderVerificationTable = ({ activeTab, data = [] }) => {
           </th>
           <th className="text-left p-4 text-sm font-medium text-muted-foreground">
             Test Results
+          </th>
+          <th className="text-left p-4 text-sm font-medium text-muted-foreground">
+            DNASequence
           </th>
           <th className="text-left p-4 text-sm font-medium text-muted-foreground">
             Pass/Fail

@@ -134,7 +134,8 @@ CREATE TABLE labtester_data_collection (
     DNASequence TEXT,
     PassFailStatus ENUM('PASS','FAIL','PENDING') DEFAULT 'PENDING',
     CertificateFile VARCHAR(255),
-    Location VARCHAR(100),
+    Location VARCHAR(100), 
+    
     LocationAccuracy DECIMAL(5,2),
     District VARCHAR(100),
     Timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
