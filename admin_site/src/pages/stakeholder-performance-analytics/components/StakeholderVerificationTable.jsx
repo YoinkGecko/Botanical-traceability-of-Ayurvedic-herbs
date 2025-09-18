@@ -610,39 +610,54 @@ const StakeholderVerificationTable = ({ activeTab, data = [], re }) => {
       {showmap && (
         <div
           style={{
-            position: "relative",
-            width: "90%",
-            height: "80%",
-            backgroundColor: "#fff",
-            borderRadius: "8px",
-            overflow: "hidden",
+            position: "fixed", // full-screen overlay
+            top: 0,
+            left: 0,
+            width: "100vw",
+            height: "100vh",
+            backgroundColor: "rgba(0,0,0,0.5)", // semi-transparent black backdrop
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 9999, // ensure it's on top
           }}
         >
-          {/* Close button */}
-          <button
-            onClick={() => setshowmap(false)}
+          <div
             style={{
-              position: "absolute",
-              top: 10,
-              right: 10,
-              zIndex: 1000, // <- make sure this is high
-              background: "red",
-              color: "#fff",
-              border: "none",
-              padding: "6px 10px",
-              borderRadius: "4px",
-              cursor: "pointer",
+              position: "relative",
+              width: "90%",
+              height: "80%",
+              backgroundColor: "#fff",
+              borderRadius: "8px",
+              overflow: "hidden",
             }}
           >
-            Close
-          </button>
+            {/* Close button */}
+            <button
+              onClick={() => setshowmap(false)}
+              style={{
+                position: "absolute",
+                top: 10,
+                right: 10,
+                zIndex: 1000,
+                background: "red",
+                color: "#fff",
+                border: "none",
+                padding: "6px 10px",
+                borderRadius: "4px",
+                cursor: "pointer",
+              }}
+            >
+              Close
+            </button>
 
-          {/* Map */}
-          <DistrictMap
-            district={district}
-            location={location}
-            message={message}
-          />
+            {/* Map */}
+            <DistrictMap
+              district={district}
+              location={location}
+              message={message}
+            />
+          </div>
         </div>
       )}
       <div className="p-6 border-b border-border">
