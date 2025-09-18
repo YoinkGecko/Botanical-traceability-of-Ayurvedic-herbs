@@ -825,6 +825,9 @@ const StakeholderVerificationTable = ({ activeTab, data = [], re }) => {
                         size="sm"
                         title="View Details"
                         onClick={() => {
+                          setdistrict(item.district);
+                          setlocation(item.location);
+                          setmessage(formatDate(item?.registrationDate));
                           setshowmap(true);
                         }}
                       >
