@@ -14,6 +14,7 @@ import {
 
 const BlockchainExplorer = () => {
   const navigate = useNavigate();
+  const [expandedId, setExpandedId] = useState(null);
   const [user, setUser] = useState(null);
   const [transactions, setTransactions] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -239,7 +240,7 @@ const BlockchainExplorer = () => {
           ))}
         </motion.div>
 
-        {/* Transactions Cards */}
+        {/* Transactions Timeline */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -251,18 +252,34 @@ const BlockchainExplorer = () => {
           </h3>
 
           {filteredTransactions?.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredTransactions?.map((transaction) => {
+            <div className="relative border-l border-gray-200 ml-6">
+              {filteredTransactions?.map((transaction, index) => {
                 const TypeIcon = getTypeIcon(transaction?.type);
+
                 return (
-                  <div
-                    key={transaction?.id}
-                    className="bg-gray-50 rounded-xl shadow p-5 hover:shadow-md transition"
+                  <motion.div
+                    key={transaction.id}
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: index * 0.15 }}
+                    className="mb-10 ml-6"
                   >
-                    {/* Header */}
-                    <div className="flex items-center justify-between mb-3">
-                      <div className="flex items-center space-x-2">
-                        <TypeIcon size={18} className="text-gray-500" />
+                    {/* Timeline dot */}
+                    <span className="absolute -left-3 flex items-center justify-center w-6 h-6 bg-green-500 rounded-full ring-4 ring-white shadow-md">
+                      <TypeIcon size={14} className="text-white" />
+                    </span>
+
+                    {/* Card */}
+                    <div
+                      className="bg-gray-50 rounded-xl shadow p-5 hover:shadow-md transition cursor-pointer"
+                      onClick={() =>
+                        setExpandedId(
+                          expandedId === transaction.id ? null : transaction.id
+                        )
+                      }
+                    >
+                      {/* Header */}
+                      <div className="flex items-center justify-between mb-3">
                         <span
                           className={`inline-flex px-2 py-1 text-xs font-medium rounded-full capitalize ${getTypeColor(
                             transaction?.type
@@ -270,47 +287,60 @@ const BlockchainExplorer = () => {
                         >
                           {transaction?.type?.replace("_", " ")}
                         </span>
-                      </div>
-                      <span
-                        className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${
-                          transaction?.status === "verified"
-                            ? "bg-green-100 text-green-800"
-                            : "bg-yellow-100 text-yellow-800"
-                        }`}
-                      >
-                        {transaction?.status}
-                      </span>
-                    </div>
 
-                    {/* Body */}
-                    <div className="mb-3">
+                        {/* Glowing status badge */}
+                        <span
+                          className={`inline-flex px-2 py-1 text-xs font-medium rounded-full relative ${
+                            transaction?.status === "verified"
+                              ? "bg-green-100 text-green-800 animate-pulse-green"
+                              : "bg-yellow-100 text-yellow-800 animate-pulse-yellow"
+                          }`}
+                        >
+                          {transaction?.status}
+                        </span>
+                      </div>
+
+                      {/* Summary */}
                       <p className="text-sm font-semibold text-gray-900">
                         {transaction?.details}
                       </p>
                       <p className="text-xs text-gray-500">
                         {transaction?.amount}
                       </p>
-                    </div>
 
-                    {/* Footer */}
-                    <div className="text-xs text-gray-500 space-y-1">
-                      <p>
-                        <span className="font-medium text-gray-700">ID:</span>{" "}
-                        {transaction?.id}
-                      </p>
-                      <p className="font-mono truncate">{transaction?.hash}</p>
-                      <p>
-                        <span className="font-medium text-gray-700">
-                          Location:
-                        </span>{" "}
-                        {transaction?.location}
-                      </p>
-                      <p>
-                        <span className="font-medium text-gray-700">Time:</span>{" "}
-                        {transaction?.timestamp}
-                      </p>
+                      {/* Expandable details */}
+                      {expandedId === transaction.id && (
+                        <motion.div
+                          initial={{ opacity: 0, height: 0 }}
+                          animate={{ opacity: 1, height: "auto" }}
+                          transition={{ duration: 0.3 }}
+                          className="mt-3 text-xs text-gray-500 space-y-1"
+                        >
+                          <p>
+                            <span className="font-medium text-gray-700">
+                              ID:
+                            </span>{" "}
+                            {transaction?.id}
+                          </p>
+                          <p className="font-mono break-all">
+                            {transaction?.hash}
+                          </p>
+                          <p>
+                            <span className="font-medium text-gray-700">
+                              Location:
+                            </span>{" "}
+                            {transaction?.location}
+                          </p>
+                          <p>
+                            <span className="font-medium text-gray-700">
+                              Time:
+                            </span>{" "}
+                            {transaction?.timestamp}
+                          </p>
+                        </motion.div>
+                      )}
                     </div>
-                  </div>
+                  </motion.div>
                 );
               })}
             </div>
