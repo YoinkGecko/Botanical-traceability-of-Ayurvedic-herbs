@@ -154,6 +154,7 @@ CREATE TABLE labtester_data_collection (
 CREATE TABLE manufacturer_data_collection (
     MbatchID BIGINT AUTO_INCREMENT PRIMARY KEY,
     ManufacturerID BIGINT NOT NULL,
+    LinkedLabBatchID BIGINT NOT NULL,
     ProductName VARCHAR(150) NOT NULL,
     ProductForm ENUM('Tablet','Powder','Oil','Capsule','Other') NOT NULL,
     Ingredients TEXT,
@@ -167,6 +168,7 @@ CREATE TABLE manufacturer_data_collection (
     Status ENUM('PENDING','APPROVED','REJECTED') DEFAULT 'PENDING',
     ApprovedBy BIGINT DEFAULT NULL,
     FOREIGN KEY (ManufacturerID) REFERENCES manufacturers(ManufacturerID),
+    FOREIGN KEY (LinkedLabBatchID) REFERENCES labtester_data_collection(LbatchID),
     FOREIGN KEY (ApprovedBy) REFERENCES admins(AdminID)
 );
 
