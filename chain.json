@@ -196,5 +196,47 @@
     },
     "previousHash": "6431dde06eb63282a540bdc0a112ac6bb284ea5eb97c6883c3f022d1fb959e35",
     "hash": "7874f759d6314d1d2d26d130f93397075dfebee3b8e9c92b2036ee7b7a603ceb"
+  },
+  {
+    "index": 19,
+    "timestamp": 1758362195158,
+    "data": {
+      "FbatchID": 20,
+      "Fid": 1,
+      "TypeOfHerb": "testbc5",
+      "HarvestedBy": "Manual",
+      "Quantity": "160.50",
+      "Location": "19.0118,73.195",
+      "LocationAccuracy": "1.50",
+      "Timestamp": "2025-09-20T09:54:48.000Z",
+      "District": "mumbai",
+      "Photos": "photo1.jpg",
+      "Status": "APPROVED",
+      "ApprovedBy": 1,
+      "role": "farmers"
+    },
+    "previousHash": "7874f759d6314d1d2d26d130f93397075dfebee3b8e9c92b2036ee7b7a603ceb",
+    "hash": "91721e3b27d7cd0143eaf70d3ab5816eac27242ed01fa49eccfc2521fb3a4d85"
+  },
+  {
+    "index": 20,
+    "timestamp": 1758362234690,
+    "data": {
+      "FbatchID": 19,
+      "Fid": 1,
+      "TypeOfHerb": "testbc4",
+      "HarvestedBy": "Manual",
+      "Quantity": "160.50",
+      "Location": "19.0118,73.195",
+      "LocationAccuracy": "1.50",
+      "Timestamp": "2025-09-20T09:51:14.000Z",
+      "District": "mumbai",
+      "Photos": "photo1.jpg",
+      "Status": "APPROVED",
+      "ApprovedBy": 1,
+      "role": "farmers"
+    },
+    "previousHash": "91721e3b27d7cd0143eaf70d3ab5816eac27242ed01fa49eccfc2521fb3a4d85",
+    "hash": "591c47b65bc630b0dcec66e684cf29096366d983130e4472ef2dd6527a392424"
   }
 ]

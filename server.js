@@ -802,12 +802,10 @@ app.post("/api/:table/:id/reject", (req, res) => {
   );
 });
 
-// Approve route
-// Approve route with Blockchain integration and role
+// Approve route with transactional BC integration (callback style)
 app.post("/api/stakeholders/approve", (req, res) => {
   const { batchId, activeTab, adminPhone } = req.body;
 
-  // Table mapping
   const tableMap = {
     farmers: { table: "farmer_data_collection", idField: "FbatchID" },
     processors: { table: "processor_data_collection", idField: "PbatchID" },
@@ -819,10 +817,9 @@ app.post("/api/stakeholders/approve", (req, res) => {
 
   const key = activeTab.toLowerCase().replace(/\s+/g, "-");
   const mapping = tableMap[key];
-
   if (!mapping) return res.status(400).json({ error: "Invalid stakeholder type" });
 
-  // Step 1: get AdminID from phone
+  // Step 1: get AdminID
   db.query(
     "SELECT AdminID FROM admins WHERE AdminPhone=? AND status='ACTIVE'",
     [adminPhone],
@@ -832,37 +829,51 @@ app.post("/api/stakeholders/approve", (req, res) => {
 
       const adminId = admins[0].AdminID;
 
-      // Step 2: update batch status
-      const sql = `UPDATE ${mapping.table} SET Status='APPROVED', ApprovedBy=? WHERE ${mapping.idField}=?`;
+      // Step 2: start transaction
+      db.beginTransaction((errTrans) => {
+        if (errTrans) return res.status(500).json({ error: "Transaction start failed" });
 
-      db.query(sql, [adminId, batchId], (err2, result) => {
-        if (err2) return res.status(500).json({ error: "Database error" });
-        if (result.affectedRows === 0) return res.status(404).json({ error: "Batch not found" });
+        // Step 3: update batch
+        const sqlUpdate = `UPDATE ${mapping.table} SET Status='APPROVED', ApprovedBy=? WHERE ${mapping.idField}=?`;
+        db.query(sqlUpdate, [adminId, batchId], (err2, result) => {
+          if (err2) return db.rollback(() => res.status(500).json({ error: "Database error on update" }));
+          if (result.affectedRows === 0) return db.rollback(() => res.status(404).json({ error: "Batch not found" }));
 
-        // ✅ Send success response to frontend
-        res.json({ success: true, message: `${key} batch ${batchId} approved by Admin ${adminId}` });
+          // Step 4: fetch updated row
+          const sqlSelect = `SELECT * FROM ${mapping.table} WHERE ${mapping.idField}=?`;
+          db.query(sqlSelect, [batchId], (err3, rows) => {
+            if (err3) return db.rollback(() => res.status(500).json({ error: "Database error on select" }));
+            if (!rows.length) return db.rollback(() => res.status(404).json({ error: "Row not found" }));
 
-        // Step 3: fetch the updated row and send to Blockchain
-        const sqlSelect = `SELECT * FROM ${mapping.table} WHERE ${mapping.idField} = ?`;
-        db.query(sqlSelect, [batchId], async (err3, rows) => {
-          if (err3) return console.error("DB fetch for blockchain failed:", err3);
-          if (!rows.length) return console.error("No row found for blockchain");
+            const approvedRow = rows[0];
+            approvedRow.role = key;
 
-          const approvedRow = rows[0];
-
-          // ✅ Add role/type to the row
-          approvedRow.role = key; // e.g., "farmers", "processors", "lab-testers", etc.
-
-          try {
-            await fetch("http://localhost:3000/add", {
+            // Step 5: send to BC server
+            fetch("http://localhost:3000/add", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({ data: approvedRow }),
-            });
-            console.log(`✅ Block added to blockchain for batch ${batchId} with role ${approvedRow.role}`);
-          } catch (bcErr) {
-            console.error("Failed to add block to blockchain:", bcErr);
-          }
+            })
+              .then((bcRes) => {
+                if (!bcRes.ok) throw new Error("Blockchain server failed");
+
+                // Step 6: commit transaction
+                db.commit((errCommit) => {
+                  if (errCommit) return db.rollback(() => res.status(500).json({ error: "Commit failed" }));
+
+                  res.json({
+                    success: true,
+                    message: `${key} batch ${batchId} approved & added to blockchain`,
+                  });
+                });
+              })
+              .catch((bcErr) => {
+                db.rollback(() => {
+                  console.error(bcErr);
+                  res.status(500).json({ error: "Blockchain push failed, transaction rolled back" });
+                });
+              });
+          });
         });
       });
     }
