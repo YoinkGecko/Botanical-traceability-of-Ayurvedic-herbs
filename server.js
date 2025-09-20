@@ -803,6 +803,7 @@ app.post("/api/:table/:id/reject", (req, res) => {
 });
 
 // Approve route
+// Approve route with Blockchain integration and role
 app.post("/api/stakeholders/approve", (req, res) => {
   const { batchId, activeTab, adminPhone } = req.body;
 
@@ -838,7 +839,31 @@ app.post("/api/stakeholders/approve", (req, res) => {
         if (err2) return res.status(500).json({ error: "Database error" });
         if (result.affectedRows === 0) return res.status(404).json({ error: "Batch not found" });
 
+        // ✅ Send success response to frontend
         res.json({ success: true, message: `${key} batch ${batchId} approved by Admin ${adminId}` });
+
+        // Step 3: fetch the updated row and send to Blockchain
+        const sqlSelect = `SELECT * FROM ${mapping.table} WHERE ${mapping.idField} = ?`;
+        db.query(sqlSelect, [batchId], async (err3, rows) => {
+          if (err3) return console.error("DB fetch for blockchain failed:", err3);
+          if (!rows.length) return console.error("No row found for blockchain");
+
+          const approvedRow = rows[0];
+
+          // ✅ Add role/type to the row
+          approvedRow.role = key; // e.g., "farmers", "processors", "lab-testers", etc.
+
+          try {
+            await fetch("http://localhost:3000/add", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ data: approvedRow }),
+            });
+            console.log(`✅ Block added to blockchain for batch ${batchId} with role ${approvedRow.role}`);
+          } catch (bcErr) {
+            console.error("Failed to add block to blockchain:", bcErr);
+          }
+        });
       });
     }
   );
