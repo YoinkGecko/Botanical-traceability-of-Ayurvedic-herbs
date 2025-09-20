@@ -50,18 +50,6 @@ function createGenesisBlock() {
   };
 }
 
-function resetChain() {
-  const genesisBlock = createGenesisBlock();
-  saveChain([genesisBlock]);
-  console.log(`⚠️ [${getISTTimestamp()}] Chain reset with Genesis Block`);
-  return [genesisBlock];
-}
-
-function loadChain() {
-  if (!fs.existsSync(chainFile)) return resetChain();
-  return JSON.parse(fs.readFileSync(chainFile));
-}
-
 function saveChain(chain) {
   fs.writeFileSync(chainFile, JSON.stringify(chain, null, 2));
 
@@ -69,6 +57,32 @@ function saveChain(chain) {
   const backupFile = path.join(__dirname, `chain_backup_${getISTFilenameTimestamp()}.json`);
   fs.writeFileSync(backupFile, JSON.stringify(chain, null, 2));
   console.log(`✅ [${getISTTimestamp()}] Blockchain saved. Backup created: ${backupFile}`);
+}
+
+function loadChain() {
+  // chain.json exists → load normally
+  if (fs.existsSync(chainFile)) {
+    return JSON.parse(fs.readFileSync(chainFile));
+  }
+
+  // chain.json missing → check for latest backup
+  const backups = fs.readdirSync(__dirname)
+    .filter(f => f.startsWith("chain_backup_") && f.endsWith(".json"))
+    .sort();
+
+  if (backups.length) {
+    const latestBackup = backups[backups.length - 1];
+    const backupData = JSON.parse(fs.readFileSync(path.join(__dirname, latestBackup)));
+    fs.writeFileSync(chainFile, JSON.stringify(backupData, null, 2));
+    console.log(`✅ [${getISTTimestamp()}] chain.json restored from backup: ${latestBackup}`);
+    return backupData;
+  }
+
+  // No chain.json & no backup → create Genesis block
+  const genesisBlock = createGenesisBlock();
+  saveChain([genesisBlock]);
+  console.log(`⚠️ [${getISTTimestamp()}] No backup found → chain.json created with Genesis Block`);
+  return [genesisBlock];
 }
 
 function verifyChain(chain) {
@@ -127,9 +141,7 @@ app.get("/block/:id", (req, res) => {
   res.json(block);
 });
 
-app.get("/chain", (req, res) => {
-  res.json(loadChain());
-});
+app.get("/chain", (req, res) => res.json(loadChain()));
 
 app.get("/verify", (req, res) => {
   const chain = loadChain();
@@ -163,7 +175,7 @@ setInterval(() => {
   } else {
     console.log(`✅ [${now}] Blockchain valid`);
   }
-}, 5000); // every 5 seconds
+}, 5000);
 
 // ----------------- Server Start -----------------
 const PORT = 3000;
