@@ -1,7 +1,8 @@
 // src/pages/SecuritySettings.jsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import { useRef } from "react";
 
 const SecuritySettings = () => {
   const navigate = useNavigate();
@@ -12,9 +13,44 @@ const SecuritySettings = () => {
     telemetryEnabled: false,
   });
 
+  const [logs, setLogs] = useState("");
+  const logsEndRef = useRef(null);
+
   const handleToggle = (key) => {
     setSettings((prev) => ({ ...prev, [key]: !prev[key] }));
   };
+
+  // Fetch logs every 2 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      fetch("http://localhost:3000/logs")
+        .then((res) => res.text())
+        .then((data) => {
+          try {
+            // Try parsing as JSON array
+            const parsed = JSON.parse(data);
+            if (Array.isArray(parsed)) {
+              setLogs(parsed.join("\n")); // join array elements with newline
+            } else {
+              setLogs(data);
+            }
+          } catch {
+            // Not JSON → treat as plain text
+            setLogs(data);
+          }
+        })
+        .catch((err) => setLogs(`❌ Error fetching logs: ${err}`));
+    }, 2000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  // Auto-scroll to bottom when logs update
+  useEffect(() => {
+    if (logsEndRef.current) {
+      logsEndRef.current.scrollTop = logsEndRef.current.scrollHeight;
+    }
+  }, [logs]);
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -122,6 +158,24 @@ const SecuritySettings = () => {
               }`}
             ></span>
           </label>
+        </motion.div>
+
+        {/* ------------------ Server Logs Section ------------------ */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.3 }}
+          className="bg-gray-900 rounded-xl shadow-sm p-6 mt-6"
+        >
+          <p className="text-lg font-semibold text-white mb-2">
+            Blockchain Server Logs
+          </p>
+          <div
+            ref={logsEndRef}
+            className="h-64 overflow-y-auto bg-black text-green-400 p-3 rounded text-xs font-mono"
+          >
+            <pre className="whitespace-pre-wrap break-words">{logs}</pre>
+          </div>
         </motion.div>
       </div>
     </div>

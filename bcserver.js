@@ -58,7 +58,7 @@ function saveChain(chain) {
   // Timestamped backup
   const backupFile = path.join(backupDir, `chain_backup_${getISTFilenameTimestamp()}.json`);
   fs.writeFileSync(backupFile, JSON.stringify(chain, null, 2));
-  console.log(`✅ [${getISTTimestamp()}] Blockchain saved. Backup created: ${backupFile}`);
+  console.log(`✅ [${getISTTimestamp()}] Blockchain saved. Backup created: ${backupFile} `);
 }
 
 function loadChain() {
@@ -76,14 +76,14 @@ function loadChain() {
     const latestBackup = backups[backups.length - 1];
     const backupData = JSON.parse(fs.readFileSync(path.join(backupDir, latestBackup)));
     fs.writeFileSync(chainFile, JSON.stringify(backupData, null, 2));
-    console.log(`✅ [${getISTTimestamp()}] chain.json restored from backup: ${latestBackup}`);
+    console.log(`✅ [${getISTTimestamp()}] chain.json restored from backup: ${latestBackup} `);
     return backupData;
   }
 
   // No chain.json & no backup → create Genesis block
   const genesisBlock = createGenesisBlock();
   saveChain([genesisBlock]);
-  console.log(`⚠️ [${getISTTimestamp()}] No backup found → chain.json created with Genesis Block`);
+  console.log(`⚠️ [${getISTTimestamp()}] No backup found → chain.json created with Genesis Block `);
   return [genesisBlock];
 }
 
@@ -115,7 +115,7 @@ app.post("/add", (req, res) => {
       const latestBackup = backups[backups.length - 1];
       chain = JSON.parse(fs.readFileSync(path.join(backupDir, latestBackup)));
       saveChain(chain);
-      console.log(`✅ [${getISTTimestamp()}] Blockchain restored from backup: ${latestBackup}`);
+      console.log(`✅ [${getISTTimestamp()}] Blockchain restored from backup: ${latestBackup} `);
     } else {
       console.error("❌ No backup found! Manual intervention required.");
     }
@@ -170,18 +170,33 @@ setInterval(() => {
     if (backups.length) {
       const latestBackup = backups[backups.length - 1];
       fs.copyFileSync(path.join(backupDir, latestBackup), chainFile);
-      console.log(`✅ [${now}] Blockchain restored from backup: ${latestBackup}`);
+      console.log(`✅ [${now}] Blockchain restored from backup: ${latestBackup} `);
     } else {
       console.error("❌ No backup found! Manual intervention required.");
     }
   } else {
-    console.log(`✅ [${now}] Blockchain valid`);
+    console.log(`✅ [${now}] Blockchain valid `);
   }
 }, 5000);
+// bcserver.js
+let logLines = []; // runtime logs
 
+// Override console.log to capture logs
+const origLog = console.log;
+console.log = (...args) => {
+  const msg = `[${getISTTimestamp()}] ${args.join(" ")} `;
+  logLines.push(msg);
+  if (logLines.length > 200) logLines.shift();
+  origLog(...args);
+};
+
+// Endpoint to fetch logs
+app.get("/logs", (req, res) => {
+  res.json(logLines);
+});
 // ----------------- Server Start -----------------
 const PORT = 3000;
 app.listen(PORT, () => {
-  console.log(`Blockchain server running on http://localhost:${PORT}`);
+  console.log(`Blockchain server running on http://localhost:${PORT} `);
   loadChain(); // ensure chain exists
 });
