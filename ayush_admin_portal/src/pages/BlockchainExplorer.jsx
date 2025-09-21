@@ -106,7 +106,7 @@ const BlockchainExplorer = () => {
 
   const roleLabels = {
     farmers: "Farmer",
-    proc: "Processing",
+    processors: "Processing",
     labtester: "Lab Test",
     manufacturer: "Manufacturer",
   };
