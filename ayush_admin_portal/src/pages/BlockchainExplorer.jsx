@@ -36,7 +36,6 @@ const BlockchainExplorer = () => {
         .catch((err) => console.error("Error fetching blockchain:", err));
     }
   }, [navigate]);
-  console.log(transactions);
 
   const getTypeIcon = (type) => {
     switch (type) {
@@ -254,48 +253,56 @@ const BlockchainExplorer = () => {
                         </span>
                       </div>
 
-                      {/* Summary */}
+                      {/* Summary Block starts here*/}
                       <p className="text-sm font-semibold text-gray-900">
-                        Tx ID: TX0{transaction.index}
+                        TX0{transaction.index}
                       </p>
+                      {/* */}
+                      {transaction.data.role === "farmers" && (
+                        <>
+                          <p className="text-xs text-gray-500">
+                            Batch ID: {transaction.data.FbatchID}
+                          </p>
 
-                      <p className="text-xs text-gray-500">Amount:</p>
-
-                      {/* Expandable details */}
-                      {expandedId === transaction.id && (
-                        <motion.div
-                          initial={{ opacity: 0, height: 0 }}
-                          animate={{ opacity: 1, height: "auto" }}
-                          transition={{ duration: 0.3 }}
-                          className="mt-3 text-xs text-gray-500 space-y-1"
-                        >
-                          <p>
-                            <span className="font-medium text-gray-700">
-                              Details:
-                            </span>{" "}
-                          </p>
-                          <p className="font-mono break-all">
-                            <span className="font-medium text-gray-700">
-                              Hash:
-                            </span>{" "}
-                          </p>
-                          <p>
-                            <span className="font-medium text-gray-700">
-                              Location:
-                            </span>{" "}
-                            <a
-                              href={`https://www.google.com/maps?q=${transaction?.location}`}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-blue-600 hover:underline"
-                            ></a>
-                          </p>
-                          <p>
-                            <span className="font-medium text-gray-700">
-                              Time:
-                            </span>{" "}
-                          </p>
-                        </motion.div>
+                          {expandedId === transaction.id && (
+                            <motion.div
+                              initial={{ opacity: 0, height: 0 }}
+                              animate={{ opacity: 1, height: "auto" }}
+                              transition={{ duration: 0.3 }}
+                              className="mt-3 text-xs text-gray-500 space-y-1"
+                            >
+                              <p>
+                                <span className="font-medium text-gray-700">
+                                  Details:
+                                </span>{" "}
+                                <br />
+                                <span className="font-medium text-gray-700">
+                                  Hash:
+                                </span>{" "}
+                                {transaction.hash} <br />
+                                <span className="font-medium text-gray-700">
+                                  Location:
+                                </span>{" "}
+                                <a
+                                  href={`https://www.google.com/maps?q=${transaction.data.Location}`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-blue-600 hover:underline"
+                                >
+                                  {transaction.data.Location}
+                                </a>{" "}
+                                <br />
+                                <span className="font-medium text-gray-700">
+                                  Time:
+                                </span>{" "}
+                                {new Date(
+                                  transaction.timestamp
+                                ).toLocaleString()}{" "}
+                                <br />
+                              </p>
+                            </motion.div>
+                          )}
+                        </>
                       )}
                     </div>
                   </motion.div>
