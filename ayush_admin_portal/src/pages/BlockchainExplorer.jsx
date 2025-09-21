@@ -41,7 +41,7 @@ const BlockchainExplorer = () => {
     switch (type) {
       case "farmers":
         return User;
-      case "processing":
+      case "processors":
         return Package;
       case "lab_test":
         return Beaker;
@@ -56,7 +56,7 @@ const BlockchainExplorer = () => {
     switch (type) {
       case "farmers":
         return "bg-green-100 text-green-800";
-      case "processing":
+      case "processors":
         return "bg-blue-100 text-blue-800";
       case "lab_test":
         return "bg-purple-100 text-purple-800";
@@ -170,7 +170,7 @@ const BlockchainExplorer = () => {
               >
                 <option value="all">All Types</option>
                 <option value="farmers">Farmer</option>
-                <option value="processing">Processing</option>
+                <option value="processors">Processing</option>
                 <option value="lab_test">Lab Test</option>
                 <option value="manufacturer">Manufacturer</option>
               </select>
@@ -262,7 +262,7 @@ const BlockchainExplorer = () => {
                       <p className="text-sm font-semibold text-gray-900">
                         TX0{transaction.index}
                       </p>
-                      {/* */}
+                      {/*Farmer Blocks*/}
                       {transaction.data.role === "farmers" && (
                         <>
                           <p className="text-xs text-gray-500">
@@ -296,6 +296,83 @@ const BlockchainExplorer = () => {
                                   Quantity Harvested:
                                 </span>{" "}
                                 {transaction.data.Quantity} Kg
+                                <br />
+                                <span className="font-medium text-gray-700">
+                                  Location:
+                                </span>{" "}
+                                <a
+                                  href={`https://www.google.com/maps?q=${transaction.data.Location}`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-blue-600 hover:underline"
+                                  title="Click to see location"
+                                >
+                                  {transaction.data.Location}
+                                </a>{" "}
+                                <br />
+                                <span className="font-medium text-gray-700">
+                                  District :
+                                </span>{" "}
+                                {transaction.data.District}
+                                <br />
+                                <span className="font-medium text-gray-700">
+                                  Approved By ID :
+                                </span>{" "}
+                                {transaction.data.ApprovedBy}
+                                <br />
+                                <span className="font-medium text-gray-700">
+                                  Harvesting Time:
+                                </span>{" "}
+                                {new Date(
+                                  transaction.data.Timestamp
+                                ).toLocaleString()}{" "}
+                                <br />
+                              </p>
+                            </motion.div>
+                          )}
+                        </>
+                      )}
+
+                      {/*Processor Block*/}
+                      {transaction.data.role === "processors" && (
+                        <>
+                          <p className="text-xs text-gray-500">
+                            Batch ID: {transaction.data.PbatchID}
+                          </p>
+
+                          {expandedId === transaction.index && (
+                            <motion.div
+                              initial={{ opacity: 0, height: 0 }}
+                              animate={{ opacity: 1, height: "auto" }}
+                              transition={{ duration: 0.3 }}
+                              className="mt-3 text-xs text-gray-500 space-y-1"
+                            >
+                              <p>
+                                <span className="font-medium text-gray-700">
+                                  Processor ID:
+                                </span>{" "}
+                                {transaction.data.Pid}
+                                <br />
+                                <span className="font-medium text-gray-700">
+                                  Linked Farmer Batch :
+                                </span>{" "}
+                                {transaction.data.LinkedFarmerBatchID}
+                                <br />
+                                <span className="font-medium text-gray-700">
+                                  Processing Step :
+                                </span>{" "}
+                                {transaction.data.ProcessingStep},{" "}
+                                {transaction.data.Parameters}
+                                <br />
+                                <span className="font-medium text-gray-700">
+                                  Weight before processing :
+                                </span>{" "}
+                                {transaction.data.WeightBeforeProc} Kg
+                                <br />
+                                <span className="font-medium text-gray-700">
+                                  Weight after processing :
+                                </span>{" "}
+                                {transaction.data.WeightAfterProcessing} Kg
                                 <br />
                                 <span className="font-medium text-gray-700">
                                   Location:
