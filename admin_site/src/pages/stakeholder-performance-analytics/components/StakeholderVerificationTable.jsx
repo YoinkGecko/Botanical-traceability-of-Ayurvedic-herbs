@@ -327,6 +327,7 @@ const StakeholderVerificationTable = ({ activeTab, data = [], re }) => {
         return (
           <>
             <td className="p-4">{item?.Fid || "-"}</td>
+            <td className="p-4">{item?.FbatchID || "-"}</td>
             <td className="p-4">{item?.typeOfHerb || "-"}</td>
             <td className="p-4">{item?.harvestedBy || "-"}</td>
             <td className="p-4">{item?.quantity || "-"}</td>
@@ -334,8 +335,8 @@ const StakeholderVerificationTable = ({ activeTab, data = [], re }) => {
             <td className="p-4">{item?.locationAccuracy || "-"}</td>
             <td className="p-4">{item?.district || "-"}</td>
             <td className="p-4">{item?.photos || "-"}</td>
-
-            <td className="p-4">{item?.approvedBy || "-"}</td>
+            <td className="p-4">{item?.Status || "-"}</td>
+            <td className="p-4">{item?.Timestamp || "-"}</td>
           </>
         );
       case "lab-testers":
@@ -400,45 +401,36 @@ const StakeholderVerificationTable = ({ activeTab, data = [], re }) => {
   };
 
   const renderTableHeaders = () => {
-    const commonHeaders = (
-      <>
-        <th className="text-left p-4 text-sm font-medium text-muted-foreground">
-          <button
-            className="flex items-center space-x-1 hover:text-foreground transition-colors"
-            onClick={() => handleSort("name")}
-          >
-            <span>ID</span>
-            <Icon name={getSortIcon("name")} size={14} />
-          </button>
-        </th>
-        <th className="text-left p-4 text-sm font-medium text-muted-foreground">
-          <button
-            className="flex items-center space-x-1 hover:text-foreground transition-colors"
-            onClick={() => handleSort("id")}
-          >
-            <span> Batch ID</span>
-            <Icon name={getSortIcon("id")} size={14} />
-          </button>
-        </th>
-        <th className="text-left p-4 text-sm font-medium text-muted-foreground"></th>
-        <th className="text-left p-4 text-sm font-medium text-muted-foreground">
-          Location
-        </th>
-      </>
-    );
+    const commonHeaders = <></>;
 
     const specificHeaders = {
       farmers: (
         <>
           <th className="text-left p-4 text-sm font-medium text-muted-foreground">
-            Farmer ID (Fid)
+            <button
+              className="flex items-center space-x-1 hover:text-foreground transition-colors"
+              onClick={() => handleSort("name")}
+            >
+              <span>Farmer ID</span>
+              <Icon name={getSortIcon("name")} size={14} />
+            </button>
+          </th>
+          <th className="text-left p-4 text-sm font-medium text-muted-foreground">
+            <button
+              className="flex items-center space-x-1 hover:text-foreground transition-colors"
+              onClick={() => handleSort("id")}
+            >
+              <span> Batch ID</span>
+              <Icon name={getSortIcon("id")} size={14} />
+            </button>
           </th>
           <th className="text-left p-4 text-sm font-medium text-muted-foreground">
             Type of Herb
           </th>
           <th className="text-left p-4 text-sm font-medium text-muted-foreground">
-            Harvested By
+            Harvesting method
           </th>
+
           <th className="text-left p-4 text-sm font-medium text-muted-foreground">
             Quantity
           </th>
@@ -454,9 +446,26 @@ const StakeholderVerificationTable = ({ activeTab, data = [], re }) => {
           <th className="text-left p-4 text-sm font-medium text-muted-foreground">
             Photos
           </th>
-
           <th className="text-left p-4 text-sm font-medium text-muted-foreground">
-            Approved By
+            <button
+              className="flex items-center space-x-1 hover:text-foreground transition-colors"
+              onClick={() => handleSort("status")}
+            >
+              <span>Status</span>
+              <Icon name={getSortIcon("status")} size={14} />
+            </button>
+          </th>
+          <th className="text-left p-4 text-sm font-medium text-muted-foreground">
+            <button
+              className="flex items-center space-x-1 hover:text-foreground transition-colors"
+              onClick={() => handleSort("registrationDate")}
+            >
+              <span>Registration Date</span>
+              <Icon name={getSortIcon("registrationDate")} size={14} />
+            </button>
+          </th>
+          <th className="text-right p-4 text-sm font-medium text-muted-foreground">
+            Actions
           </th>
         </>
       ),
@@ -586,27 +595,6 @@ const StakeholderVerificationTable = ({ activeTab, data = [], re }) => {
       <>
         {commonHeaders}
         {specificHeaders?.[activeTab]}
-        <th className="text-left p-4 text-sm font-medium text-muted-foreground">
-          <button
-            className="flex items-center space-x-1 hover:text-foreground transition-colors"
-            onClick={() => handleSort("status")}
-          >
-            <span>Status</span>
-            <Icon name={getSortIcon("status")} size={14} />
-          </button>
-        </th>
-        <th className="text-left p-4 text-sm font-medium text-muted-foreground">
-          <button
-            className="flex items-center space-x-1 hover:text-foreground transition-colors"
-            onClick={() => handleSort("registrationDate")}
-          >
-            <span>Registration Date</span>
-            <Icon name={getSortIcon("registrationDate")} size={14} />
-          </button>
-        </th>
-        <th className="text-right p-4 text-sm font-medium text-muted-foreground">
-          Actions
-        </th>
       </>
     );
   };
@@ -782,7 +770,7 @@ const StakeholderVerificationTable = ({ activeTab, data = [], re }) => {
                       <span
                         className={`text-xs font-medium ${statusConfig?.textColor}`}
                       >
-                        {item?.status}
+                        {item?.Status}
                       </span>
                     </div>
                   </td>
