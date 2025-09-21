@@ -89,26 +89,5 @@
     },
     "previousHash": "c721fca544c54792c97a62aa4d5e264542be63ddf9b144fa0e433e723b8445a3",
     "hash": "0b89bd3cc729622c843402d7646a6ae767677220828cc847b76886478e4dd90a"
-  },
-  {
-    "index": 6,
-    "timestamp": 1758430895069,
-    "data": {
-      "FbatchID": 22,
-      "Fid": 1,
-      "TypeOfHerb": "meet1",
-      "HarvestedBy": "Manual",
-      "Quantity": "160.50",
-      "Location": "19.0118,73.195",
-      "LocationAccuracy": "1.50",
-      "Timestamp": "2025-09-20T15:22:11.000Z",
-      "District": "mumbai",
-      "Photos": "photo1.jpg",
-      "Status": "APPROVED",
-      "ApprovedBy": 1,
-      "role": "farmers"
-    },
-    "previousHash": "0b89bd3cc729622c843402d7646a6ae767677220828cc847b76886478e4dd90a",
-    "hash": "3e93005423b91ebcc61b15cd022d1d3aab3a844afdf4220d60ef475da8e7644c"
   }
 ]
