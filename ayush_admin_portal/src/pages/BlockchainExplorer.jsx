@@ -30,51 +30,13 @@ const BlockchainExplorer = () => {
       fetch("http://localhost:3000/chain")
         .then((res) => res.json())
         .then((data) => {
-          const mappedTransactions = data.map((block) => {
-            const id = `TX0${block.index}`;
-
-            // Handle genesis block
-            if (typeof block.data === "string") {
-              return {};
-            }
-
-            // Determine type for icons/colors
-            let type =
-              block.data.role === "farmers"
-                ? "farmer"
-                : block.data.role === "proc"
-                ? "processing"
-                : block.data.role === "labtester"
-                ? "lab_test"
-                : block.data.role === "manufacturer"
-                ? "manufacturer"
-                : "unknown";
-
-            return {
-              id,
-              type,
-              hash: block.hash,
-              timestamp: new Date(block.timestamp).toLocaleString(),
-              status:
-                block.data.Status?.toLowerCase() === "approved"
-                  ? "verified"
-                  : "pending",
-              details: JSON.stringify(block.data, null, 2),
-              location: block.data.Location || "-",
-              amount:
-                block.data.Quantity ||
-                block.data.WeightAfterProcessing ||
-                block.data.WeightFinal ||
-                "-",
-              rawData: block.data, // full object to display in expanded section
-            };
-          });
-
-          setTransactions(mappedTransactions.reverse());
+          // Store the raw blockchain data directly in state
+          setTransactions(data.reverse()); // reverse if you want latest first
         })
         .catch((err) => console.error("Error fetching blockchain:", err));
     }
   }, [navigate]);
+  console.log(transactions);
 
   const getTypeIcon = (type) => {
     switch (type) {
@@ -137,8 +99,8 @@ const BlockchainExplorer = () => {
     },
     {
       label: "Today",
-      value: transactions?.filter((t) => t?.timestamp?.includes("2024-01-15"))
-        ?.length,
+      value: 4, //transactions?.filter((t) => t?.timestamp?.includes("2024-01-15"))
+      //?.length
       color: "text-purple-600",
     },
   ];
@@ -294,11 +256,10 @@ const BlockchainExplorer = () => {
 
                       {/* Summary */}
                       <p className="text-sm font-semibold text-gray-900">
-                        {transaction?.id}
+                        Tx ID: TX0{transaction.index}
                       </p>
-                      <p className="text-xs text-gray-500">
-                        Amount: {transaction?.amount} Kg
-                      </p>
+
+                      <p className="text-xs text-gray-500">Amount:</p>
 
                       {/* Expandable details */}
                       {expandedId === transaction.id && (
@@ -312,13 +273,11 @@ const BlockchainExplorer = () => {
                             <span className="font-medium text-gray-700">
                               Details:
                             </span>{" "}
-                            {transaction?.details}
                           </p>
                           <p className="font-mono break-all">
                             <span className="font-medium text-gray-700">
                               Hash:
                             </span>{" "}
-                            {transaction?.hash}
                           </p>
                           <p>
                             <span className="font-medium text-gray-700">
@@ -329,15 +288,12 @@ const BlockchainExplorer = () => {
                               target="_blank"
                               rel="noopener noreferrer"
                               className="text-blue-600 hover:underline"
-                            >
-                              {transaction?.location}
-                            </a>
+                            ></a>
                           </p>
                           <p>
                             <span className="font-medium text-gray-700">
                               Time:
                             </span>{" "}
-                            {transaction?.timestamp}
                           </p>
                         </motion.div>
                       )}
