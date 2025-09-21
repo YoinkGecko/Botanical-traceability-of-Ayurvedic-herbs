@@ -45,7 +45,7 @@ const BlockchainExplorer = () => {
         return Package;
       case "lab-testers":
         return Beaker;
-      case "manufacturer":
+      case "manufacturers":
         return Factory;
       default:
         return Database;
@@ -60,7 +60,7 @@ const BlockchainExplorer = () => {
         return "bg-blue-100 text-blue-800";
       case "lab-testers":
         return "bg-purple-100 text-purple-800";
-      case "manufacturer":
+      case "manufacturers":
         return "bg-orange-100 text-orange-800";
       default:
         return "bg-gray-100 text-gray-800";
@@ -108,7 +108,7 @@ const BlockchainExplorer = () => {
     farmers: "Farmer",
     processors: "Processing",
     "lab-testers": "Lab Test",
-    manufacturer: "Manufacturer",
+    manufacturers: "Manufacturer",
   };
 
   if (!user) return null;
@@ -171,8 +171,8 @@ const BlockchainExplorer = () => {
                 <option value="all">All Types</option>
                 <option value="farmers">Farmer</option>
                 <option value="processors">Processing</option>
-                <option value="lab_test">Lab Test</option>
-                <option value="manufacturer">Manufacturer</option>
+                <option value="lab-testers">Lab Test</option>
+                <option value="manufacturers">Manufacturer</option>
               </select>
             </div>
           </div>
@@ -453,6 +453,96 @@ const BlockchainExplorer = () => {
                                   Status :
                                 </span>{" "}
                                 {transaction.data.PassFailStatus}
+                                <br />
+                                <span className="font-medium text-gray-700">
+                                  Location:
+                                </span>{" "}
+                                <a
+                                  href={`https://www.google.com/maps?q=${transaction.data.Location}`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-blue-600 hover:underline"
+                                  title="Click to see location"
+                                >
+                                  {transaction.data.Location}
+                                </a>{" "}
+                                <br />
+                                <span className="font-medium text-gray-700">
+                                  District :
+                                </span>{" "}
+                                {transaction.data.District}
+                                <br />
+                                <span className="font-medium text-gray-700">
+                                  Approved By ID :
+                                </span>{" "}
+                                {transaction.data.ApprovedBy}
+                                <br />
+                                <span className="font-medium text-gray-700">
+                                  Harvesting Time:
+                                </span>{" "}
+                                {new Date(
+                                  transaction.data.Timestamp
+                                ).toLocaleString()}{" "}
+                                <br />
+                              </p>
+                            </motion.div>
+                          )}
+                        </>
+                      )}
+
+                      {/*Manufacturer Block*/}
+                      {transaction.data.role === "manufacturers" && (
+                        <>
+                          <p className="text-xs text-gray-500">
+                            Batch ID: {transaction.data.MbatchID}
+                          </p>
+
+                          {expandedId === transaction.index && (
+                            <motion.div
+                              initial={{ opacity: 0, height: 0 }}
+                              animate={{ opacity: 1, height: "auto" }}
+                              transition={{ duration: 0.3 }}
+                              className="mt-3 text-xs text-gray-500 space-y-1"
+                            >
+                              <p>
+                                <span className="font-medium text-gray-700">
+                                  Manufacturer ID:
+                                </span>{" "}
+                                {transaction.data.ManufacturerID}
+                                <br />
+                                <span className="font-medium text-gray-700">
+                                  Linked Lab Batch :
+                                </span>{" "}
+                                {transaction.data.LinkedLabBatchID}
+                                <br />
+                                <span className="font-medium text-gray-700">
+                                  Product Name:
+                                </span>{" "}
+                                {transaction.data.ProductName} <br />
+                                <span className="font-medium text-gray-700">
+                                  Product Form:
+                                </span>{" "}
+                                {transaction.data.ProductForm}
+                                <br />
+                                <span className="font-medium text-gray-700">
+                                  Ingredients :
+                                </span>{" "}
+                                {transaction.data.Ingredients}
+                                <br />
+                                <span className="font-medium text-gray-700">
+                                  Packaging Info :
+                                </span>{" "}
+                                {transaction.data.PackagingInfo}
+                                <br />
+                                <span className="font-medium text-gray-700">
+                                  Final weight :
+                                </span>{" "}
+                                {transaction.data.WeightFinal}g
+                                <br />
+                                <span className="font-medium text-gray-700">
+                                  QR id :
+                                </span>{" "}
+                                {transaction.data.QRCodeID}
                                 <br />
                                 <span className="font-medium text-gray-700">
                                   Location:
