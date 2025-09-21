@@ -39,7 +39,7 @@ const BlockchainExplorer = () => {
 
   const getTypeIcon = (type) => {
     switch (type) {
-      case "farmer":
+      case "farmers":
         return User;
       case "processing":
         return Package;
@@ -54,7 +54,7 @@ const BlockchainExplorer = () => {
 
   const getTypeColor = (type) => {
     switch (type) {
-      case "farmer":
+      case "farmers":
         return "bg-green-100 text-green-800";
       case "processing":
         return "bg-blue-100 text-blue-800";
@@ -75,7 +75,7 @@ const BlockchainExplorer = () => {
       transaction?.location?.toLowerCase()?.includes(searchTerm?.toLowerCase());
 
     const matchesFilter =
-      filterType === "all" || transaction?.type === filterType;
+      filterType === "all" || transaction?.data.role === filterType;
 
     return matchesSearch && matchesFilter;
   });
@@ -103,6 +103,13 @@ const BlockchainExplorer = () => {
       color: "text-purple-600",
     },
   ];
+
+  const roleLabels = {
+    farmers: "Farmer",
+    proc: "Processing",
+    labtester: "Lab Test",
+    manufacturer: "Manufacturer",
+  };
 
   if (!user) return null;
 
@@ -162,7 +169,7 @@ const BlockchainExplorer = () => {
                 className="border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-green-500 focus:border-transparent"
               >
                 <option value="all">All Types</option>
-                <option value="farmer">Farmer</option>
+                <option value="farmers">Farmer</option>
                 <option value="processing">Processing</option>
                 <option value="lab_test">Lab Test</option>
                 <option value="manufacturer">Manufacturer</option>
@@ -207,11 +214,11 @@ const BlockchainExplorer = () => {
           {filteredTransactions?.length > 0 ? (
             <div className="relative border-l border-gray-200 ml-6">
               {filteredTransactions?.map((transaction, index) => {
-                const TypeIcon = getTypeIcon(transaction?.type);
+                const TypeIcon = getTypeIcon(transaction?.data.role);
 
                 return (
                   <motion.div
-                    key={transaction.id}
+                    key={transaction.index}
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: index * 0.15 }}
@@ -227,7 +234,9 @@ const BlockchainExplorer = () => {
                       className="bg-gray-50 rounded-xl shadow p-5 hover:shadow-md transition cursor-pointer"
                       onClick={() =>
                         setExpandedId(
-                          expandedId === transaction.id ? null : transaction.id
+                          expandedId === transaction.index
+                            ? null
+                            : transaction.index
                         )
                       }
                     >
@@ -235,21 +244,17 @@ const BlockchainExplorer = () => {
                       <div className="flex items-center justify-between mb-3">
                         <span
                           className={`inline-flex px-2 py-1 text-xs font-medium rounded-full capitalize ${getTypeColor(
-                            transaction?.type
+                            transaction?.data.role
                           )}`}
                         >
-                          {transaction?.type?.replace("_", " ")}
+                          {roleLabels[transaction?.data.role]}
                         </span>
 
                         {/* Glowing status badge */}
                         <span
-                          className={`inline-flex px-2 py-1 text-xs font-medium rounded-full relative ${
-                            transaction?.status === "verified"
-                              ? "bg-green-100 text-green-800 animate-pulse-green"
-                              : "bg-yellow-100 text-yellow-800 animate-pulse-yellow"
-                          }`}
+                          className={`inline-flex px-2 py-1 text-xs font-medium rounded-full relative bg-green-100 text-green-800 animate-pulse-green`}
                         >
-                          {transaction?.status}
+                          Approved
                         </span>
                       </div>
 
@@ -264,7 +269,7 @@ const BlockchainExplorer = () => {
                             Batch ID: {transaction.data.FbatchID}
                           </p>
 
-                          {expandedId === transaction.id && (
+                          {expandedId === transaction.index && (
                             <motion.div
                               initial={{ opacity: 0, height: 0 }}
                               animate={{ opacity: 1, height: "auto" }}
@@ -273,13 +278,25 @@ const BlockchainExplorer = () => {
                             >
                               <p>
                                 <span className="font-medium text-gray-700">
-                                  Details:
+                                  Farmer ID:
                                 </span>{" "}
+                                {transaction.data.Fid}
                                 <br />
                                 <span className="font-medium text-gray-700">
-                                  Hash:
+                                  Herb :
                                 </span>{" "}
-                                {transaction.hash} <br />
+                                {transaction.data.TypeOfHerb}
+                                <br />
+                                <span className="font-medium text-gray-700">
+                                  Harvesting Method :
+                                </span>{" "}
+                                {transaction.data.HarvestedBy}
+                                <br />
+                                <span className="font-medium text-gray-700">
+                                  Quantity Harvested:
+                                </span>{" "}
+                                {transaction.data.Quantity} Kg
+                                <br />
                                 <span className="font-medium text-gray-700">
                                   Location:
                                 </span>{" "}
@@ -288,6 +305,7 @@ const BlockchainExplorer = () => {
                                   target="_blank"
                                   rel="noopener noreferrer"
                                   className="text-blue-600 hover:underline"
+                                  title="Click to see location"
                                 >
                                   {transaction.data.Location}
                                 </a>{" "}
@@ -296,7 +314,7 @@ const BlockchainExplorer = () => {
                                   Time:
                                 </span>{" "}
                                 {new Date(
-                                  transaction.timestamp
+                                  transaction.data.Timestamp
                                 ).toLocaleString()}{" "}
                                 <br />
                               </p>
