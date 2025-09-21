@@ -189,6 +189,13 @@ console.log = (...args) => {
   if (logLines.length > 200) logLines.shift();
   origLog(...args);
 };
+const origError = console.error;
+console.error = (...args) => {
+  const msg = `[${getISTTimestamp()}] ${args.join(" ")} `;
+  logLines.push(msg);
+  if (logLines.length > 5000) logLines.shift(); // optional: bada limit
+  origError(...args);
+};
 
 // Endpoint to fetch logs
 app.get("/logs", (req, res) => {
