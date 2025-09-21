@@ -311,7 +311,17 @@ const BlockchainExplorer = () => {
                                 </a>{" "}
                                 <br />
                                 <span className="font-medium text-gray-700">
-                                  Time:
+                                  District :
+                                </span>{" "}
+                                {transaction.data.District}
+                                <br />
+                                <span className="font-medium text-gray-700">
+                                  Approved By ID :
+                                </span>{" "}
+                                {transaction.data.ApprovedBy}
+                                <br />
+                                <span className="font-medium text-gray-700">
+                                  Harvesting Time:
                                 </span>{" "}
                                 {new Date(
                                   transaction.data.Timestamp
