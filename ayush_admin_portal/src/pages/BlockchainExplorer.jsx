@@ -26,59 +26,53 @@ const BlockchainExplorer = () => {
       navigate("/login");
     } else {
       setUser(JSON.parse(adminData));
-      // Mock blockchain data
-      setTransactions([
-        {
-          id: "TX001",
-          type: "farmer",
-          hash: "0x1a2b3c4d5e6f7g8h9i0j",
-          timestamp: "2024-01-15 14:30:25",
-          status: "verified",
-          details: "Organic turmeric harvest registration",
-          location: "Karnataka",
-          amount: "500 kg",
-        },
-        {
-          id: "TX002",
-          type: "processing",
-          hash: "0x2b3c4d5e6f7g8h9i0j1k",
-          timestamp: "2024-01-15 13:45:10",
-          status: "verified",
-          details: "Ayurvedic medicine processing",
-          location: "Kerala",
-          amount: "200 units",
-        },
-        {
-          id: "TX003",
-          type: "lab_test",
-          hash: "0x3c4d5e6f7g8h9i0j1k2l",
-          timestamp: "2024-01-15 12:15:00",
-          status: "verified",
-          details: "Quality testing for Ashwagandha powder",
-          location: "Tamil Nadu",
-          amount: "50 samples",
-        },
-        {
-          id: "TX004",
-          type: "manufacturer",
-          hash: "0x4d5e6f7g8h9i0j1k2l3m",
-          timestamp: "2024-01-15 11:20:35",
-          status: "pending",
-          details: "Herbal supplement manufacturing",
-          location: "Maharashtra",
-          amount: "1000 bottles",
-        },
-        {
-          id: "TX005",
-          type: "farmer",
-          hash: "0x5e6f7g8h9i0j1k2l3m4n",
-          timestamp: "2024-01-15 10:55:15",
-          status: "verified",
-          details: "Organic neem oil production",
-          location: "Gujarat",
-          amount: "300 liters",
-        },
-      ]);
+
+      fetch("http://localhost:3000/chain")
+        .then((res) => res.json())
+        .then((data) => {
+          const mappedTransactions = data.map((block) => {
+            const id = `TX0${block.index}`;
+
+            // Handle genesis block
+            if (typeof block.data === "string") {
+              return {};
+            }
+
+            // Determine type for icons/colors
+            let type =
+              block.data.role === "farmers"
+                ? "farmer"
+                : block.data.role === "proc"
+                ? "processing"
+                : block.data.role === "labtester"
+                ? "lab_test"
+                : block.data.role === "manufacturer"
+                ? "manufacturer"
+                : "unknown";
+
+            return {
+              id,
+              type,
+              hash: block.hash,
+              timestamp: new Date(block.timestamp).toLocaleString(),
+              status:
+                block.data.Status?.toLowerCase() === "approved"
+                  ? "verified"
+                  : "pending",
+              details: JSON.stringify(block.data, null, 2),
+              location: block.data.Location || "-",
+              amount:
+                block.data.Quantity ||
+                block.data.WeightAfterProcessing ||
+                block.data.WeightFinal ||
+                "-",
+              rawData: block.data, // full object to display in expanded section
+            };
+          });
+
+          setTransactions(mappedTransactions.reverse());
+        })
+        .catch((err) => console.error("Error fetching blockchain:", err));
     }
   }, [navigate]);
 
@@ -116,9 +110,7 @@ const BlockchainExplorer = () => {
     const matchesSearch =
       transaction?.id?.toLowerCase()?.includes(searchTerm?.toLowerCase()) ||
       transaction?.hash?.toLowerCase()?.includes(searchTerm?.toLowerCase()) ||
-      transaction?.details
-        ?.toLowerCase()
-        ?.includes(searchTerm?.toLowerCase()) ||
+      transaction?.id?.toLowerCase()?.includes(searchTerm?.toLowerCase()) ||
       transaction?.location?.toLowerCase()?.includes(searchTerm?.toLowerCase());
 
     const matchesFilter =
@@ -302,10 +294,10 @@ const BlockchainExplorer = () => {
 
                       {/* Summary */}
                       <p className="text-sm font-semibold text-gray-900">
-                        {transaction?.details}
+                        {transaction?.id}
                       </p>
                       <p className="text-xs text-gray-500">
-                        {transaction?.amount}
+                        Amount: {transaction?.amount} Kg
                       </p>
 
                       {/* Expandable details */}
@@ -318,18 +310,28 @@ const BlockchainExplorer = () => {
                         >
                           <p>
                             <span className="font-medium text-gray-700">
-                              ID:
+                              Details:
                             </span>{" "}
-                            {transaction?.id}
+                            {transaction?.details}
                           </p>
                           <p className="font-mono break-all">
+                            <span className="font-medium text-gray-700">
+                              Hash:
+                            </span>{" "}
                             {transaction?.hash}
                           </p>
                           <p>
                             <span className="font-medium text-gray-700">
                               Location:
                             </span>{" "}
-                            {transaction?.location}
+                            <a
+                              href={`https://www.google.com/maps?q=${transaction?.location}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-blue-600 hover:underline"
+                            >
+                              {transaction?.location}
+                            </a>
                           </p>
                           <p>
                             <span className="font-medium text-gray-700">
