@@ -253,7 +253,7 @@ app.get("/api/dashboard/funneldata", async (req, res) => {
 
     // Lab Testing stage (example: still in progress)
     const [[{ count: labTesting }]] = await db.promise().query(
-      "SELECT COUNT(*) AS count FROM labtester_data_collection WHERE District = ? AND status = 'IN_PROGRESS'",
+      "SELECT COUNT(*) AS count FROM labtester_data_collection WHERE District = ? ",
       [district]
     );
 
@@ -317,7 +317,7 @@ app.get("/api/dashboard/funneldata", async (req, res) => {
     );
 
     const [[{ count: manu }]] = await db.promise().query(
-      "SELECT COUNT(*) AS count FROM manufacturer_data_collection WHERE District = ? AND status = 'REJECTED'",
+      "SELECT COUNT(*) AS count FROM manufacturer_data_collection WHERE District = ? ",
       [district]
     );
 
