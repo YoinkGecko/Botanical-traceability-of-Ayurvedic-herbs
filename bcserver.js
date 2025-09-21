@@ -10,7 +10,9 @@ app.use(express.json());
 app.use(cors()); // allow all origins
 
 // Paths
-const chainFile = path.join(__dirname, "chain.json");
+// Paths
+const chainFile = "/Users/kartikeyasharma/Desktop/sih_2025/sih27/chain/chain.json";
+const backupDir = "/Users/kartikeyasharma/Desktop/sih_2025/sih27/chain/backup";
 
 // ----------------- IST Timestamp Helpers -----------------
 function getISTTimestamp() {
@@ -54,7 +56,7 @@ function saveChain(chain) {
   fs.writeFileSync(chainFile, JSON.stringify(chain, null, 2));
 
   // Timestamped backup
-  const backupFile = path.join(__dirname, `chain_backup_${getISTFilenameTimestamp()}.json`);
+  const backupFile = path.join(backupDir, `chain_backup_${getISTFilenameTimestamp()}.json`);
   fs.writeFileSync(backupFile, JSON.stringify(chain, null, 2));
   console.log(`✅ [${getISTTimestamp()}] Blockchain saved. Backup created: ${backupFile}`);
 }
@@ -66,13 +68,13 @@ function loadChain() {
   }
 
   // chain.json missing → check for latest backup
-  const backups = fs.readdirSync(__dirname)
+  const backups = fs.readdirSync(backupDir)
     .filter(f => f.startsWith("chain_backup_") && f.endsWith(".json"))
     .sort();
 
   if (backups.length) {
     const latestBackup = backups[backups.length - 1];
-    const backupData = JSON.parse(fs.readFileSync(path.join(__dirname, latestBackup)));
+    const backupData = JSON.parse(fs.readFileSync(path.join(backupDir, latestBackup)));
     fs.writeFileSync(chainFile, JSON.stringify(backupData, null, 2));
     console.log(`✅ [${getISTTimestamp()}] chain.json restored from backup: ${latestBackup}`);
     return backupData;
@@ -106,12 +108,12 @@ app.post("/add", (req, res) => {
   const invalidIndex = verifyChain(chain);
   if (invalidIndex !== -1) {
     console.warn(`⚠️ [${getISTTimestamp()}] Chain invalid at block ${invalidIndex + 1}! Restoring from latest backup...`);
-    const backups = fs.readdirSync(__dirname)
+    const backups = fs.readdirSync(backupDir)
       .filter(f => f.startsWith("chain_backup_") && f.endsWith(".json"))
       .sort();
     if (backups.length) {
       const latestBackup = backups[backups.length - 1];
-      chain = JSON.parse(fs.readFileSync(path.join(__dirname, latestBackup)));
+      chain = JSON.parse(fs.readFileSync(path.join(backupDir, latestBackup)));
       saveChain(chain);
       console.log(`✅ [${getISTTimestamp()}] Blockchain restored from backup: ${latestBackup}`);
     } else {
@@ -162,12 +164,12 @@ setInterval(() => {
 
   if (invalidIndex !== -1) {
     console.error(`⚠️ [${now}] Tamper detected at block ${invalidIndex + 1}! Restoring from latest backup...`);
-    const backups = fs.readdirSync(__dirname)
+    const backups = fs.readdirSync(backupDir)
       .filter(f => f.startsWith("chain_backup_") && f.endsWith(".json"))
       .sort();
     if (backups.length) {
       const latestBackup = backups[backups.length - 1];
-      fs.copyFileSync(path.join(__dirname, latestBackup), chainFile);
+      fs.copyFileSync(path.join(backupDir, latestBackup), chainFile);
       console.log(`✅ [${now}] Blockchain restored from backup: ${latestBackup}`);
     } else {
       console.error("❌ No backup found! Manual intervention required.");
