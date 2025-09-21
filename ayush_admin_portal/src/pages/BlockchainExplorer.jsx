@@ -43,7 +43,7 @@ const BlockchainExplorer = () => {
         return User;
       case "processors":
         return Package;
-      case "lab_test":
+      case "lab-testers":
         return Beaker;
       case "manufacturer":
         return Factory;
@@ -58,7 +58,7 @@ const BlockchainExplorer = () => {
         return "bg-green-100 text-green-800";
       case "processors":
         return "bg-blue-100 text-blue-800";
-      case "lab_test":
+      case "lab-testers":
         return "bg-purple-100 text-purple-800";
       case "manufacturer":
         return "bg-orange-100 text-orange-800";
@@ -107,7 +107,7 @@ const BlockchainExplorer = () => {
   const roleLabels = {
     farmers: "Farmer",
     processors: "Processing",
-    labtester: "Lab Test",
+    "lab-testers": "Lab Test",
     manufacturer: "Manufacturer",
   };
 
@@ -373,6 +373,86 @@ const BlockchainExplorer = () => {
                                   Weight after processing :
                                 </span>{" "}
                                 {transaction.data.WeightAfterProcessing} Kg
+                                <br />
+                                <span className="font-medium text-gray-700">
+                                  Location:
+                                </span>{" "}
+                                <a
+                                  href={`https://www.google.com/maps?q=${transaction.data.Location}`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-blue-600 hover:underline"
+                                  title="Click to see location"
+                                >
+                                  {transaction.data.Location}
+                                </a>{" "}
+                                <br />
+                                <span className="font-medium text-gray-700">
+                                  District :
+                                </span>{" "}
+                                {transaction.data.District}
+                                <br />
+                                <span className="font-medium text-gray-700">
+                                  Approved By ID :
+                                </span>{" "}
+                                {transaction.data.ApprovedBy}
+                                <br />
+                                <span className="font-medium text-gray-700">
+                                  Harvesting Time:
+                                </span>{" "}
+                                {new Date(
+                                  transaction.data.Timestamp
+                                ).toLocaleString()}{" "}
+                                <br />
+                              </p>
+                            </motion.div>
+                          )}
+                        </>
+                      )}
+
+                      {/*Lab tester Block*/}
+                      {transaction.data.role === "lab-testers" && (
+                        <>
+                          <p className="text-xs text-gray-500">
+                            Batch ID: {transaction.data.LbatchID}
+                          </p>
+
+                          {expandedId === transaction.index && (
+                            <motion.div
+                              initial={{ opacity: 0, height: 0 }}
+                              animate={{ opacity: 1, height: "auto" }}
+                              transition={{ duration: 0.3 }}
+                              className="mt-3 text-xs text-gray-500 space-y-1"
+                            >
+                              <p>
+                                <span className="font-medium text-gray-700">
+                                  Lab ID:
+                                </span>{" "}
+                                {transaction.data.LabID}
+                                <br />
+                                <span className="font-medium text-gray-700">
+                                  Linked Processor Batch :
+                                </span>{" "}
+                                {transaction.data.LinkedBatchID}
+                                <br />
+                                <span className="font-medium text-gray-700">
+                                  Test Type :
+                                </span>{" "}
+                                {transaction.data.TestType} <br />
+                                <span className="font-medium text-gray-700">
+                                  Test Results:
+                                </span>{" "}
+                                {transaction.data.TestResults}
+                                <br />
+                                <span className="font-medium text-gray-700">
+                                  DNA :
+                                </span>{" "}
+                                {transaction.data.DNASequence}
+                                <br />
+                                <span className="font-medium text-gray-700">
+                                  Status :
+                                </span>{" "}
+                                {transaction.data.PassFailStatus}
                                 <br />
                                 <span className="font-medium text-gray-700">
                                   Location:
