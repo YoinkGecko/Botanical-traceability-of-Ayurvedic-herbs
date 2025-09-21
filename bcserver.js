@@ -193,7 +193,7 @@ const origError = console.error;
 console.error = (...args) => {
   const msg = `[${getISTTimestamp()}] ${args.join(" ")} `;
   logLines.push(msg);
-  if (logLines.length > 5000) logLines.shift(); // optional: bada limit
+  if (logLines.length > 200) logLines.shift(); // optional: bada limit
   origError(...args);
 };
 
