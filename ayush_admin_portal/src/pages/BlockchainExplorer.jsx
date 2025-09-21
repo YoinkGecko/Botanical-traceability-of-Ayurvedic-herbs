@@ -19,6 +19,7 @@ const BlockchainExplorer = () => {
   const [transactions, setTransactions] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterType, setFilterType] = useState("all");
+  const todayDate = new Date().toISOString().split("T")[0]; // "YYYY-MM-DD"
 
   useEffect(() => {
     const adminData = localStorage.getItem("ayushAdmin");
@@ -88,18 +89,19 @@ const BlockchainExplorer = () => {
     },
     {
       label: "Verified",
-      value: transactions?.filter((t) => t?.status === "verified")?.length,
+      value: transactions?.length,
       color: "text-green-600",
     },
     {
       label: "Pending",
-      value: transactions?.filter((t) => t?.status === "pending")?.length,
+      value: 0,
       color: "text-orange-600",
     },
     {
       label: "Today",
-      value: 4, //transactions?.filter((t) => t?.timestamp?.includes("2024-01-15"))
-      //?.length
+      value: transactions?.filter(
+        (t) => t?.data?.Timestamp?.split("T")[0] === todayDate
+      )?.length,
       color: "text-purple-600",
     },
   ];
