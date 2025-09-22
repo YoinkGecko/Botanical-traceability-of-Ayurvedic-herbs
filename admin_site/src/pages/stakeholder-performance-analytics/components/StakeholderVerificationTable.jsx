@@ -46,70 +46,83 @@ const StakeholderVerificationTable = ({ activeTab, data = [], re }) => {
             ),
           ]);
 
+        const selectedDistrict = localStorage.getItem("district");
+
         setMockData({
-          farmers: farmersRes.map((f) => ({
-            id: f.FbatchID,
-            farmerid: f.Fid,
-            typeOfHerb: f.TypeOfHerb,
-            harvestedBy: f.HarvestedBy,
-            quantity: f.Quantity,
-            location: f.Location,
-            locationAccuracy: f.LocationAccuracy,
-            registrationDate: f.Timestamp,
-            district: f.District,
-            photos: f.Photos,
-            status: f.Status,
-          })),
-          "lab-testers": labsRes.map((l) => ({
-            id: l.LbatchID,
-            labId: l.LabID,
-            linkedBatchId: l.LinkedBatchID, // processor batch
-            testType: l.TestType,
-            testResults: l.TestResults,
-            DNASequence: l.DNASequence,
-            passFail: l.PassFailStatus,
-            certificate: l.CertificateFile,
-            location: l.Location,
-            locationAccuracy: l.LocationAccuracy, // ✅ add this
-            district: l.District,
-            photos: l.Photos,
-            status: l.Status,
-            registrationDate: l.Timestamp,
-            approvedBy: l.ApprovedBy,
-          })),
-          processors: processorsRes.map((p) => ({
-            id: p.PbatchID,
-            processorId: p.Pid,
-            linkedFarmerBatchId: p.LinkedFarmerBatchID,
-            step: p.ProcessingStep,
-            weightGiven: p.WeightGivenByFarmer,
-            weightBefore: p.WeightBeforeProc,
-            weightAfter: p.WeightAfterProcessing,
-            parameters: p.Parameters,
-            location: p.Location,
-            locationAccuracy: p.LocationAccuracy,
-            district: p.District,
-            photos: p.Photos,
-            status: p.Status,
-            registrationDate: p.Timestamp,
-            approvedBy: p.ApprovedBy,
-          })),
-          manufacturers: manufacturersRes.map((m) => ({
-            id: m.MbatchID,
-            manufacturerId: m.ManufacturerID,
-            productName: m.ProductName,
-            form: m.ProductForm,
-            ingredients: m.Ingredients,
-            packaging: m.PackagingInfo,
-            weightFinal: m.WeightFinal,
-            qrCode: m.QRCodeID,
-            location: m.Location,
-            district: m.District,
-            photos: m.Photos,
-            status: m.Status,
-            registrationDate: m.Timestamp,
-            approvedBy: m.ApprovedBy,
-          })),
+          farmers: farmersRes
+            .filter((f) => f.District === selectedDistrict)
+            .map((f) => ({
+              id: f.FbatchID,
+              farmerid: f.Fid,
+              typeOfHerb: f.TypeOfHerb,
+              harvestedBy: f.HarvestedBy,
+              quantity: f.Quantity,
+              location: f.Location,
+              locationAccuracy: f.LocationAccuracy,
+              registrationDate: f.Timestamp,
+              district: f.District,
+              photos: f.Photos,
+              status: f.Status,
+            })),
+
+          "lab-testers": labsRes
+            .filter((l) => l.District === selectedDistrict)
+            .map((l) => ({
+              id: l.LbatchID,
+              labId: l.LabID,
+              linkedBatchId: l.LinkedBatchID,
+              testType: l.TestType,
+              testResults: l.TestResults,
+              DNASequence: l.DNASequence,
+              passFail: l.PassFailStatus,
+              certificate: l.CertificateFile,
+              location: l.Location,
+              locationAccuracy: l.LocationAccuracy,
+              district: l.District,
+              photos: l.Photos,
+              status: l.Status,
+              registrationDate: l.Timestamp,
+              approvedBy: l.ApprovedBy,
+            })),
+
+          processors: processorsRes
+            .filter((p) => p.District === selectedDistrict)
+            .map((p) => ({
+              id: p.PbatchID,
+              processorId: p.Pid,
+              linkedFarmerBatchId: p.LinkedFarmerBatchID,
+              step: p.ProcessingStep,
+              weightGiven: p.WeightGivenByFarmer,
+              weightBefore: p.WeightBeforeProc,
+              weightAfter: p.WeightAfterProcessing,
+              parameters: p.Parameters,
+              location: p.Location,
+              locationAccuracy: p.LocationAccuracy,
+              district: p.District,
+              photos: p.Photos,
+              status: p.Status,
+              registrationDate: p.Timestamp,
+              approvedBy: p.ApprovedBy,
+            })),
+
+          manufacturers: manufacturersRes
+            .filter((m) => m.District === selectedDistrict)
+            .map((m) => ({
+              id: m.MbatchID,
+              manufacturerId: m.ManufacturerID,
+              productName: m.ProductName,
+              form: m.ProductForm,
+              ingredients: m.Ingredients,
+              packaging: m.PackagingInfo,
+              weightFinal: m.WeightFinal,
+              qrCode: m.QRCodeID,
+              location: m.Location,
+              district: m.District,
+              photos: m.Photos,
+              status: m.Status,
+              registrationDate: m.Timestamp,
+              approvedBy: m.ApprovedBy,
+            })),
         });
       } catch (err) {
         console.error("Error fetching:", err);
