@@ -352,14 +352,42 @@ const StakeholderVerificationTable = ({ activeTab, data = [], re }) => {
                 {item?.id}
               </span>
             </td>
-            <td className="p-4">{item?.typeOfHerb || "-"}</td>
-            <td className="p-4">{item?.harvestedBy || "-"}</td>
-            <td className="p-4">{item?.quantity || "-"}</td>
-            <td className="p-4">{item?.location || "-"}</td>
-            <td className="p-4">{item?.locationAccuracy || "-"}</td>
+            <td className="p-4">
+              <span className="text-sm font-mono text-foreground">
+                {item?.typeOfHerb || "-"}
+              </span>
+            </td>
+            <td className="p-4">
+              <span className="text-sm font-mono text-foreground">
+                {item?.harvestedBy || "-"}{" "}
+              </span>
+            </td>
+            <td className="p-4">
+              <span className="text-sm font-mono text-foreground">
+                {item?.quantity || "-"}
+              </span>
+            </td>
+            <td className="p-4">
+              <span className="text-sm font-mono text-foreground">
+                {item?.location || "-"}
+              </span>
+            </td>
+            <td className="p-4">
+              <span className="text-sm font-mono text-foreground">
+                {item?.locationAccuracy || "-"}
+              </span>
+            </td>
 
-            <td className="p-4">{item?.district || "-"}</td>
-            <td className="p-4">{item?.photos || "-"}</td>
+            <td className="p-4">
+              <span className="text-sm font-mono text-foreground">
+                {item?.district || "-"}
+              </span>
+            </td>
+            <td className="p-4">
+              <span className="text-sm font-mono text-foreground">
+                {item?.photos || "-"}
+              </span>
+            </td>
             <td className="p-4">
               <span className="text-sm text-muted-foreground">
                 {formatDate(item?.registrationDate)}
