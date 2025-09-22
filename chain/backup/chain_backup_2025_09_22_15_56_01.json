@@ -317,53 +317,5 @@
     },
     "previousHash": "f86a04883cbc329948e2a42b64e40c8865e89597ae829484e38d834adbf2100c",
     "hash": "e6b5da1ac19647f2d4ce30026d5665221c673fc5111203ce1b2b657b63c04b96"
-  },
-  {
-    "index": 16,
-    "timestamp": 1758536805365,
-    "data": {
-      "PbatchID": 4,
-      "Pid": 1,
-      "LinkedFarmerBatchID": 12,
-      "ProcessingStep": "Storage",
-      "WeightGivenByFarmer": "120.50",
-      "WeightBeforeProc": "118.00",
-      "WeightAfterProcessing": "115.00",
-      "Parameters": "cool",
-      "Location": "13.22,55.44",
-      "LocationAccuracy": "95.50",
-      "District": "mumbai",
-      "Timestamp": "2025-09-22T06:48:23.000Z",
-      "Photos": "drying1.jpg",
-      "Status": "APPROVED",
-      "ApprovedBy": 1,
-      "role": "processors"
-    },
-    "previousHash": "e6b5da1ac19647f2d4ce30026d5665221c673fc5111203ce1b2b657b63c04b96",
-    "hash": "bbe54d6c67646a7d7b946d97f35f190139fb6173b16f03f67155b4ab68cca374"
-  },
-  {
-    "index": 17,
-    "timestamp": 1758536828766,
-    "data": {
-      "LbatchID": 3,
-      "LabID": 1,
-      "LinkedBatchID": 4,
-      "TestType": "Moisture",
-      "TestResults": "Moisture content: 12%",
-      "DNASequence": "ADNSDJDSEDSFFF",
-      "PassFailStatus": "PASS",
-      "CertificateFile": "cert1.pdf",
-      "Location": "19.0118,73.195",
-      "LocationAccuracy": "1.50",
-      "District": "Mumbai",
-      "Timestamp": "2025-09-22T07:14:10.000Z",
-      "Photos": "photo1.jpg",
-      "Status": "APPROVED",
-      "ApprovedBy": 1,
-      "role": "lab-testers"
-    },
-    "previousHash": "bbe54d6c67646a7d7b946d97f35f190139fb6173b16f03f67155b4ab68cca374",
-    "hash": "bd4d8d93e4b563670089153f9f94d4a892f4b67c06f0a62a740d4eb0e3049889"
   }
 ]
