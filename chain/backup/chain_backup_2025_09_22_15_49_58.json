@@ -248,50 +248,5 @@
     },
     "previousHash": "dabe8f985d9c96c77e91566ceffdf1bb28c5e8b990cea9546a2e0542b5d53cad",
     "hash": "5eea2782ff0e8a59629716c398175c0b1b0054c3ef6da32973feee41b99a06a0"
-  },
-  {
-    "index": 13,
-    "timestamp": 1758536414048,
-    "data": {
-      "LbatchID": 5,
-      "LabID": 1,
-      "LinkedBatchID": 4,
-      "TestType": "Moisture",
-      "TestResults": " 12%",
-      "DNASequence": "ADNSDJDSEDSFFF",
-      "PassFailStatus": "PASS",
-      "CertificateFile": "cert1.pdf",
-      "Location": "19.0118,73.195",
-      "LocationAccuracy": "1.50",
-      "District": "mumbai",
-      "Timestamp": "2025-09-22T07:16:44.000Z",
-      "Photos": "photo1.jpg",
-      "Status": "APPROVED",
-      "ApprovedBy": 1,
-      "role": "lab-testers"
-    },
-    "previousHash": "5eea2782ff0e8a59629716c398175c0b1b0054c3ef6da32973feee41b99a06a0",
-    "hash": "ee81f57dd0244598362005584fe0027eb392561823f668a49b111a87c1268bc5"
-  },
-  {
-    "index": 14,
-    "timestamp": 1758536460549,
-    "data": {
-      "FbatchID": 31,
-      "Fid": 1,
-      "TypeOfHerb": "testherb5",
-      "HarvestedBy": "Manual",
-      "Quantity": "160.50",
-      "Location": "77.0118,07.195",
-      "LocationAccuracy": "1.50",
-      "Timestamp": "2025-09-22T06:49:40.000Z",
-      "District": "mumbai",
-      "Photos": "photo.jpg",
-      "Status": "APPROVED",
-      "ApprovedBy": 1,
-      "role": "farmers"
-    },
-    "previousHash": "ee81f57dd0244598362005584fe0027eb392561823f668a49b111a87c1268bc5",
-    "hash": "f86a04883cbc329948e2a42b64e40c8865e89597ae829484e38d834adbf2100c"
   }
 ]

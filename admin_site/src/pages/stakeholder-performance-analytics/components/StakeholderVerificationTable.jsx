@@ -50,7 +50,9 @@ const StakeholderVerificationTable = ({ activeTab, data = [], re }) => {
 
         setMockData({
           farmers: farmersRes
-            .filter((f) => f.District === selectedDistrict)
+            .filter(
+              (f) => f.District.toLowerCase() === selectedDistrict.toLowerCase()
+            )
             .map((f) => ({
               id: f.FbatchID,
               farmerid: f.Fid,
@@ -66,7 +68,9 @@ const StakeholderVerificationTable = ({ activeTab, data = [], re }) => {
             })),
 
           "lab-testers": labsRes
-            .filter((l) => l.District === selectedDistrict)
+            .filter(
+              (l) => l.District.toLowerCase() === selectedDistrict.toLowerCase()
+            )
             .map((l) => ({
               id: l.LbatchID,
               labId: l.LabID,
@@ -85,7 +89,9 @@ const StakeholderVerificationTable = ({ activeTab, data = [], re }) => {
             })),
 
           processors: processorsRes
-            .filter((p) => p.District === selectedDistrict)
+            .filter(
+              (p) => p.District.toLowerCase() === selectedDistrict.toLowerCase()
+            )
             .map((p) => ({
               id: p.PbatchID,
               processorId: p.Pid,
@@ -105,10 +111,13 @@ const StakeholderVerificationTable = ({ activeTab, data = [], re }) => {
             })),
 
           manufacturers: manufacturersRes
-            .filter((m) => m.District === selectedDistrict)
+            .filter(
+              (m) => m.District.toLowerCase() === selectedDistrict.toLowerCase()
+            )
             .map((m) => ({
               id: m.MbatchID,
               manufacturerId: m.ManufacturerID,
+              linkedlabbatch: m.LinkedLabBatchID,
               productName: m.ProductName,
               form: m.ProductForm,
               ingredients: m.Ingredients,
@@ -120,7 +129,6 @@ const StakeholderVerificationTable = ({ activeTab, data = [], re }) => {
               photos: m.Photos,
               status: m.Status,
               registrationDate: m.Timestamp,
-              approvedBy: m.ApprovedBy,
             })),
         });
       } catch (err) {
@@ -632,19 +640,105 @@ const StakeholderVerificationTable = ({ activeTab, data = [], re }) => {
       case "manufacturers":
         return (
           <>
-            <td className="p-4">{item?.manufacturerId || "-"}</td>
-            <td className="p-4">{item?.productName || "-"}</td>
-            <td className="p-4">{item?.form || "-"}</td>
-            <td className="p-4">{item?.weightFinal || "-"}</td>
-            <td className="p-4">{item?.ingredients || "-"}</td>
-            <td className="p-4">{item?.packaging || "-"}</td>
-            <td className="p-4">{item?.qrCode || "-"}</td>
-            <td className="p-4">{item?.location || "-"}</td>
-            <td className="p-4">{item?.district || "-"}</td>
-            <td className="p-4">{item?.photos || "-"}</td>
-            <td className="p-4">{item?.status || "-"}</td>
-            <td className="p-4">{item?.approvedBy || "-"}</td>
-            <td className="p-4">{formatDate(item?.registrationDate)}</td>
+            <td className="p-4">
+              <div className="flex items-center space-x-3">
+                <div className="flex items-center justify-center w-8 h-8 bg-primary/10 rounded-full">
+                  <Icon
+                    name={stakeholderIcon}
+                    size={16}
+                    className="text-primary"
+                  />
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-foreground">
+                    {item?.manufacturerId}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    {getTabDisplayName(activeTab)?.slice(0, -1)}
+                  </p>
+                </div>
+              </div>
+            </td>
+
+            <td className="p-4">
+              <span className="text-sm font-mono text-foreground">
+                {item?.id}
+              </span>
+            </td>
+            <td className="p-4">
+              <span className="text-sm font-mono text-foreground">
+                {item?.linkedlabbatch || "-"}
+              </span>
+            </td>
+            <td className="p-4">
+              <span className="text-sm font-mono text-foreground">
+                {item?.productName || "-"}{" "}
+              </span>
+            </td>
+            <td className="p-4">
+              <span className="text-sm font-mono text-foreground">
+                {item?.form || "-"}
+              </span>
+            </td>
+            <td className="p-4">
+              <span className="text-sm font-mono text-foreground">
+                {item?.ingredients || "-"}
+              </span>
+            </td>
+            <td className="p-4">
+              <span className="text-sm font-mono text-foreground">
+                {item?.packaging || "-"}
+              </span>
+            </td>
+
+            <td className="p-4">
+              <span className="text-sm font-mono text-foreground">
+                {item?.weightFinal || "-"}
+              </span>
+            </td>
+            <td className="p-4">
+              <span className="text-sm font-mono text-foreground">
+                {item?.qrCode || "-"}
+              </span>
+            </td>
+            <td className="p-4">
+              <span className="text-sm font-mono text-foreground">
+                {item?.location || "-"}
+              </span>
+            </td>
+
+            <td className="p-4">
+              <span className="text-sm font-mono text-foreground">
+                {item?.district || "-"}
+              </span>
+            </td>
+
+            <td className="p-4">
+              <span className="text-sm font-mono text-foreground">
+                {item?.photos || "-"}
+              </span>
+            </td>
+            <td className="p-4">
+              <span className="text-sm text-muted-foreground">
+                {formatDate(item?.registrationDate)}
+              </span>
+            </td>
+            <td className="p-4">
+              <div
+                className={`inline-flex items-center space-x-1 px-2 py-1 rounded-full ${statusConfig?.bgColor}`}
+              >
+                <Icon
+                  name={statusConfig?.icon}
+                  size={12}
+                  className={statusConfig?.textColor}
+                />
+                <span
+                  className={`text-xs font-medium ${statusConfig?.textColor}`}
+                >
+                  {item?.status}
+                </span>
+              </div>
+            </td>
           </>
         );
       default:
@@ -878,16 +972,32 @@ const StakeholderVerificationTable = ({ activeTab, data = [], re }) => {
       manufacturers: (
         <>
           <th className="text-left p-4 text-sm font-medium text-muted-foreground">
-            Manufacturer ID
+            <button
+              className="flex items-center space-x-1 hover:text-foreground transition-colors"
+              onClick={() => handleSort("name")}
+            >
+              <span>Manufacturer ID</span>
+              <Icon name={getSortIcon("name")} size={14} />
+            </button>
+          </th>
+          <th className="text-left p-4 text-sm font-medium text-muted-foreground">
+            <button
+              className="flex items-center space-x-1 hover:text-foreground transition-colors"
+              onClick={() => handleSort("id")}
+            >
+              <span> Batch ID</span>
+              <Icon name={getSortIcon("id")} size={14} />
+            </button>
+          </th>
+          <th className="text-left p-4 text-sm font-medium text-muted-foreground">
+            Linked batch
           </th>
           <th className="text-left p-4 text-sm font-medium text-muted-foreground">
             Product Name
           </th>
+
           <th className="text-left p-4 text-sm font-medium text-muted-foreground">
-            Form
-          </th>
-          <th className="text-left p-4 text-sm font-medium text-muted-foreground">
-            Weight Final
+            form
           </th>
           <th className="text-left p-4 text-sm font-medium text-muted-foreground">
             Ingredients
@@ -895,21 +1005,44 @@ const StakeholderVerificationTable = ({ activeTab, data = [], re }) => {
           <th className="text-left p-4 text-sm font-medium text-muted-foreground">
             Packaging
           </th>
+
           <th className="text-left p-4 text-sm font-medium text-muted-foreground">
-            QR Code
+            Final Weight
+          </th>
+          <th className="text-left p-4 text-sm font-medium text-muted-foreground">
+            QR ID
           </th>
           <th className="text-left p-4 text-sm font-medium text-muted-foreground">
             Location
           </th>
+
           <th className="text-left p-4 text-sm font-medium text-muted-foreground">
             District
           </th>
           <th className="text-left p-4 text-sm font-medium text-muted-foreground">
             Photos
           </th>
-
           <th className="text-left p-4 text-sm font-medium text-muted-foreground">
-            Approved By
+            <button
+              className="flex items-center space-x-1 hover:text-foreground transition-colors"
+              onClick={() => handleSort("registrationDate")}
+            >
+              <span>Registration Date</span>
+              <Icon name={getSortIcon("registrationDate")} size={14} />
+            </button>
+          </th>
+          <th className="text-left p-4 text-sm font-medium text-muted-foreground">
+            <button
+              className="flex items-center space-x-1 hover:text-foreground transition-colors"
+              onClick={() => handleSort("status")}
+            >
+              <span>Status</span>
+              <Icon name={getSortIcon("status")} size={14} />
+            </button>
+          </th>
+
+          <th className="text-right p-4 text-sm font-medium text-muted-foreground">
+            Actions
           </th>
         </>
       ),
