@@ -49,17 +49,16 @@ const StakeholderVerificationTable = ({ activeTab, data = [], re }) => {
         setMockData({
           farmers: farmersRes.map((f) => ({
             id: f.FbatchID,
-            name: f.Fid,
+            farmerid: f.Fid,
             typeOfHerb: f.TypeOfHerb,
             harvestedBy: f.HarvestedBy,
             quantity: f.Quantity,
             location: f.Location,
             locationAccuracy: f.LocationAccuracy,
+            registrationDate: f.Timestamp,
             district: f.District,
             photos: f.Photos,
             status: f.Status,
-            registrationDate: f.Timestamp,
-            approvedBy: f.ApprovedBy,
           })),
           "lab-testers": labsRes.map((l) => ({
             id: l.LbatchID,
@@ -322,21 +321,66 @@ const StakeholderVerificationTable = ({ activeTab, data = [], re }) => {
   };
 
   const renderSpecificColumns = (item) => {
+    const statusConfig = getStatusConfig(item?.status);
+    const stakeholderIcon = getStakeholderIcon(activeTab);
     switch (activeTab) {
       case "farmers":
         return (
           <>
-            <td className="p-4">{item?.Fid || "-"}</td>
-            <td className="p-4">{item?.FbatchID || "-"}</td>
+            <td className="p-4">
+              <div className="flex items-center space-x-3">
+                <div className="flex items-center justify-center w-8 h-8 bg-primary/10 rounded-full">
+                  <Icon
+                    name={stakeholderIcon}
+                    size={16}
+                    className="text-primary"
+                  />
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-foreground">
+                    {item?.farmerid}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    {getTabDisplayName(activeTab)?.slice(0, -1)}
+                  </p>
+                </div>
+              </div>
+            </td>
+
+            <td className="p-4">
+              <span className="text-sm font-mono text-foreground">
+                {item?.id}
+              </span>
+            </td>
             <td className="p-4">{item?.typeOfHerb || "-"}</td>
             <td className="p-4">{item?.harvestedBy || "-"}</td>
             <td className="p-4">{item?.quantity || "-"}</td>
             <td className="p-4">{item?.location || "-"}</td>
             <td className="p-4">{item?.locationAccuracy || "-"}</td>
+
             <td className="p-4">{item?.district || "-"}</td>
             <td className="p-4">{item?.photos || "-"}</td>
-            <td className="p-4">{item?.Status || "-"}</td>
-            <td className="p-4">{item?.Timestamp || "-"}</td>
+            <td className="p-4">
+              <span className="text-sm text-muted-foreground">
+                {formatDate(item?.registrationDate)}
+              </span>
+            </td>
+            <td className="p-4">
+              <div
+                className={`inline-flex items-center space-x-1 px-2 py-1 rounded-full ${statusConfig?.bgColor}`}
+              >
+                <Icon
+                  name={statusConfig?.icon}
+                  size={12}
+                  className={statusConfig?.textColor}
+                />
+                <span
+                  className={`text-xs font-medium ${statusConfig?.textColor}`}
+                >
+                  {item?.status}
+                </span>
+              </div>
+            </td>
           </>
         );
       case "lab-testers":
@@ -440,20 +484,12 @@ const StakeholderVerificationTable = ({ activeTab, data = [], re }) => {
           <th className="text-left p-4 text-sm font-medium text-muted-foreground">
             Location Accuracy
           </th>
+
           <th className="text-left p-4 text-sm font-medium text-muted-foreground">
             District
           </th>
           <th className="text-left p-4 text-sm font-medium text-muted-foreground">
             Photos
-          </th>
-          <th className="text-left p-4 text-sm font-medium text-muted-foreground">
-            <button
-              className="flex items-center space-x-1 hover:text-foreground transition-colors"
-              onClick={() => handleSort("status")}
-            >
-              <span>Status</span>
-              <Icon name={getSortIcon("status")} size={14} />
-            </button>
           </th>
           <th className="text-left p-4 text-sm font-medium text-muted-foreground">
             <button
@@ -464,6 +500,16 @@ const StakeholderVerificationTable = ({ activeTab, data = [], re }) => {
               <Icon name={getSortIcon("registrationDate")} size={14} />
             </button>
           </th>
+          <th className="text-left p-4 text-sm font-medium text-muted-foreground">
+            <button
+              className="flex items-center space-x-1 hover:text-foreground transition-colors"
+              onClick={() => handleSort("status")}
+            >
+              <span>Status</span>
+              <Icon name={getSortIcon("status")} size={14} />
+            </button>
+          </th>
+
           <th className="text-right p-4 text-sm font-medium text-muted-foreground">
             Actions
           </th>
@@ -710,8 +756,6 @@ const StakeholderVerificationTable = ({ activeTab, data = [], re }) => {
           </thead>
           <tbody className="divide-y divide-border">
             {currentPageData?.map((item) => {
-              const statusConfig = getStatusConfig(item?.status);
-              const stakeholderIcon = getStakeholderIcon(activeTab);
               const isApproving = loadingActions?.[`${item?.id}_approve`];
               const isRejecting = loadingActions?.[`${item?.id}_reject`];
 
@@ -720,65 +764,8 @@ const StakeholderVerificationTable = ({ activeTab, data = [], re }) => {
                   key={item?.id}
                   className="hover:bg-muted/30 transition-colors"
                 >
-                  <td className="p-4">
-                    <div className="flex items-center space-x-3">
-                      <div className="flex items-center justify-center w-8 h-8 bg-primary/10 rounded-full">
-                        <Icon
-                          name={stakeholderIcon}
-                          size={16}
-                          className="text-primary"
-                        />
-                      </div>
-                      <div>
-                        <p className="text-sm font-medium text-foreground">
-                          {item?.name}
-                        </p>
-                        <p className="text-xs text-muted-foreground">
-                          {getTabDisplayName(activeTab)?.slice(0, -1)}
-                        </p>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="p-4">
-                    <span className="text-sm font-mono text-foreground">
-                      {item?.id}
-                    </span>
-                  </td>
-                  <td className="p-4">
-                    <div className="text-sm">
-                      <div className="text-foreground">{item?.email}</div>
-                      <div className="text-xs text-muted-foreground">
-                        {item?.phone}
-                      </div>
-                    </div>
-                  </td>
-                  <td className="p-4">
-                    <span className="text-sm text-foreground">
-                      {item?.location}
-                    </span>
-                  </td>
                   {renderSpecificColumns(item)}
-                  <td className="p-4">
-                    <div
-                      className={`inline-flex items-center space-x-1 px-2 py-1 rounded-full ${statusConfig?.bgColor}`}
-                    >
-                      <Icon
-                        name={statusConfig?.icon}
-                        size={12}
-                        className={statusConfig?.textColor}
-                      />
-                      <span
-                        className={`text-xs font-medium ${statusConfig?.textColor}`}
-                      >
-                        {item?.Status}
-                      </span>
-                    </div>
-                  </td>
-                  <td className="p-4">
-                    <span className="text-sm text-muted-foreground">
-                      {formatDate(item?.registrationDate)}
-                    </span>
-                  </td>
+
                   <td className="p-4">
                     <div className="flex items-center justify-end space-x-2">
                       {item?.status?.toLowerCase() === "pending" && (
