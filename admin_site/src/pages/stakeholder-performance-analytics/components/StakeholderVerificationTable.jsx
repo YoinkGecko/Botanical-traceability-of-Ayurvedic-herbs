@@ -82,7 +82,6 @@ const StakeholderVerificationTable = ({ activeTab, data = [], re }) => {
               registrationDate: l.Timestamp,
               photos: l.Photos,
               status: l.Status,
-              approvedBy: l.ApprovedBy,
             })),
 
           processors: processorsRes
@@ -530,20 +529,104 @@ const StakeholderVerificationTable = ({ activeTab, data = [], re }) => {
       case "processors":
         return (
           <>
-            <td className="p-4">{item?.processorId || "-"}</td>
-            <td className="p-4">{item?.linkedFarmerBatchId || "-"}</td>
-            <td className="p-4">{item?.step || "-"}</td>
-            <td className="p-4">{item?.weightGiven || "-"}</td>
-            <td className="p-4">{item?.weightBefore || "-"}</td>
-            <td className="p-4">{item?.weightAfter || "-"}</td>
-            <td className="p-4">{item?.parameters || "-"}</td>
-            <td className="p-4">{item?.location || "-"}</td>
-            <td className="p-4">{item?.locationAccuracy || "-"}</td>
-            <td className="p-4">{item?.district || "-"}</td>
-            <td className="p-4">{item?.photos || "-"}</td>
-            <td className="p-4">{item?.status || "-"}</td>
-            <td className="p-4">{item?.approvedBy || "-"}</td>
-            <td className="p-4">{formatDate(item?.registrationDate)}</td>
+            <td className="p-4">
+              <div className="flex items-center space-x-3">
+                <div className="flex items-center justify-center w-8 h-8 bg-primary/10 rounded-full">
+                  <Icon
+                    name={stakeholderIcon}
+                    size={16}
+                    className="text-primary"
+                  />
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-foreground">
+                    {item?.processorId}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    {getTabDisplayName(activeTab)?.slice(0, -1)}
+                  </p>
+                </div>
+              </div>
+            </td>
+
+            <td className="p-4">
+              <span className="text-sm font-mono text-foreground">
+                {item?.id}
+              </span>
+            </td>
+            <td className="p-4">
+              <span className="text-sm font-mono text-foreground">
+                {item?.linkedFarmerBatchId || "-"}
+              </span>
+            </td>
+            <td className="p-4">
+              <span className="text-sm font-mono text-foreground">
+                {item?.step || "-"}{" "}
+              </span>
+            </td>
+            <td className="p-4">
+              <span className="text-sm font-mono text-foreground">
+                {item?.weightGiven || "-"}
+              </span>
+            </td>
+            <td className="p-4">
+              <span className="text-sm font-mono text-foreground">
+                {item?.weightBefore || "-"}
+              </span>
+            </td>
+            <td className="p-4">
+              <span className="text-sm font-mono text-foreground">
+                {item?.weightAfter || "-"}
+              </span>
+            </td>
+
+            <td className="p-4">
+              <span className="text-sm font-mono text-foreground">
+                {item?.parameters || "-"}
+              </span>
+            </td>
+            <td className="p-4">
+              <span className="text-sm font-mono text-foreground">
+                {item?.location || "-"}
+              </span>
+            </td>
+            <td className="p-4">
+              <span className="text-sm font-mono text-foreground">
+                {item?.locationAccuracy || "-"}
+              </span>
+            </td>
+            <td className="p-4">
+              <span className="text-sm font-mono text-foreground">
+                {item?.district || "-"}
+              </span>
+            </td>
+
+            <td className="p-4">
+              <span className="text-sm font-mono text-foreground">
+                {item?.photos || "-"}
+              </span>
+            </td>
+            <td className="p-4">
+              <span className="text-sm text-muted-foreground">
+                {formatDate(item?.registrationDate)}
+              </span>
+            </td>
+            <td className="p-4">
+              <div
+                className={`inline-flex items-center space-x-1 px-2 py-1 rounded-full ${statusConfig?.bgColor}`}
+              >
+                <Icon
+                  name={statusConfig?.icon}
+                  size={12}
+                  className={statusConfig?.textColor}
+                />
+                <span
+                  className={`text-xs font-medium ${statusConfig?.textColor}`}
+                >
+                  {item?.status}
+                </span>
+              </div>
+            </td>
           </>
         );
       case "manufacturers":
@@ -719,23 +802,40 @@ const StakeholderVerificationTable = ({ activeTab, data = [], re }) => {
       processors: (
         <>
           <th className="text-left p-4 text-sm font-medium text-muted-foreground">
-            Processor ID
+            <button
+              className="flex items-center space-x-1 hover:text-foreground transition-colors"
+              onClick={() => handleSort("name")}
+            >
+              <span>Processor ID</span>
+              <Icon name={getSortIcon("name")} size={14} />
+            </button>
           </th>
           <th className="text-left p-4 text-sm font-medium text-muted-foreground">
-            Linked Farmer Batch ID
+            <button
+              className="flex items-center space-x-1 hover:text-foreground transition-colors"
+              onClick={() => handleSort("id")}
+            >
+              <span> Batch ID</span>
+              <Icon name={getSortIcon("id")} size={14} />
+            </button>
           </th>
           <th className="text-left p-4 text-sm font-medium text-muted-foreground">
-            Processing Step
+            Linked batch
           </th>
           <th className="text-left p-4 text-sm font-medium text-muted-foreground">
-            Weight Given
+            Step
+          </th>
+
+          <th className="text-left p-4 text-sm font-medium text-muted-foreground">
+            Weight
           </th>
           <th className="text-left p-4 text-sm font-medium text-muted-foreground">
-            Weight Before
+            Initial Weight
           </th>
           <th className="text-left p-4 text-sm font-medium text-muted-foreground">
-            Weight After
+            Weight after
           </th>
+
           <th className="text-left p-4 text-sm font-medium text-muted-foreground">
             Parameters
           </th>
@@ -751,9 +851,27 @@ const StakeholderVerificationTable = ({ activeTab, data = [], re }) => {
           <th className="text-left p-4 text-sm font-medium text-muted-foreground">
             Photos
           </th>
-
           <th className="text-left p-4 text-sm font-medium text-muted-foreground">
-            Approved By
+            <button
+              className="flex items-center space-x-1 hover:text-foreground transition-colors"
+              onClick={() => handleSort("registrationDate")}
+            >
+              <span>Registration Date</span>
+              <Icon name={getSortIcon("registrationDate")} size={14} />
+            </button>
+          </th>
+          <th className="text-left p-4 text-sm font-medium text-muted-foreground">
+            <button
+              className="flex items-center space-x-1 hover:text-foreground transition-colors"
+              onClick={() => handleSort("status")}
+            >
+              <span>Status</span>
+              <Icon name={getSortIcon("status")} size={14} />
+            </button>
+          </th>
+
+          <th className="text-right p-4 text-sm font-medium text-muted-foreground">
+            Actions
           </th>
         </>
       ),
