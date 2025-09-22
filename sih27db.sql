@@ -172,6 +172,20 @@ CREATE TABLE manufacturer_data_collection (
     FOREIGN KEY (ApprovedBy) REFERENCES admins(AdminID)
 );
 
+CREATE VIEW supply_chain_ids AS
+SELECT
+    f.FbatchID     AS farmer_id,
+    p.PbatchID     AS processor_id,
+    l.LbatchID     AS labtester_id,
+    m.MbatchID     AS manufacturer_id
+FROM farmer_data_collection f
+LEFT JOIN processor_data_collection p 
+       ON p.LinkedFarmerBatchID = f.FbatchID
+LEFT JOIN labtester_data_collection l
+       ON l.LinkedBatchID = p.PbatchID
+LEFT JOIN manufacturer_data_collection m
+       ON m.LinkedLabBatchID = l.LbatchID;
+
 -- ================================
 -- Junction Table for Manufacturer ↔ LabTester Batches
 -- ================================
