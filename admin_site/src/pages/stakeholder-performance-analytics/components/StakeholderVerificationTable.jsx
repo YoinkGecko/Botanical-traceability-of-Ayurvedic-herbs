@@ -326,7 +326,7 @@ const StakeholderVerificationTable = ({ activeTab, data = [], re }) => {
   const getTabDisplayName = (tab) => {
     const names = {
       farmers: "Farmers",
-      "lab-testers": "Lab Testers",
+      "lab-testers": "Lab ",
       processors: "Processors",
       manufacturers: "Manufacturers",
     };
@@ -661,7 +661,7 @@ const StakeholderVerificationTable = ({ activeTab, data = [], re }) => {
             </button>
           </th>
           <th className="text-left p-4 text-sm font-medium text-muted-foreground">
-            Linked processor batch
+            Linked batch
           </th>
           <th className="text-left p-4 text-sm font-medium text-muted-foreground">
             Test
