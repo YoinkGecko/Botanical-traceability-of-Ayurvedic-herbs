@@ -386,29 +386,5 @@
     },
     "previousHash": "bd4d8d93e4b563670089153f9f94d4a892f4b67c06f0a62a740d4eb0e3049889",
     "hash": "e94f62433869dac38468059ada8f1b5e71dabf99ccc97a33eea69c86cc38e761"
-  },
-  {
-    "index": 19,
-    "timestamp": 1758617458265,
-    "data": {
-      "LbatchID": 6,
-      "LabID": 1,
-      "LinkedBatchID": 4,
-      "TestType": "Moisture",
-      "TestResults": " 12%",
-      "DNASequence": "ADNSDJDSEDSFFF",
-      "PassFailStatus": "PASS",
-      "CertificateFile": "cert1.pdf",
-      "Location": "19.0118,73.195",
-      "LocationAccuracy": "1.50",
-      "District": "mumbai",
-      "Timestamp": "2025-09-23T07:34:40.000Z",
-      "Photos": "photo1.jpg",
-      "Status": "APPROVED",
-      "ApprovedBy": 1,
-      "role": "lab-testers"
-    },
-    "previousHash": "e94f62433869dac38468059ada8f1b5e71dabf99ccc97a33eea69c86cc38e761",
-    "hash": "9052c84df786b0b3f86cc17da3db07e740c15835a32ed806e32d75e94d751895"
   }
 ]
