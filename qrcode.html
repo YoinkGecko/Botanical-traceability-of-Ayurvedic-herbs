@@ -7,28 +7,23 @@
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-50 min-h-screen flex flex-col items-center p-4">
-  <!-- Heading -->
   <h1 class="text-2xl md:text-3xl font-bold text-gray-800 mb-6 text-center">
     Blockchain Supply Chain Data
   </h1>
 
-  <div class="w-full max-w-xl space-y-4" id="blocksContainer">
-    <!-- Blocks will be injected here -->
-  </div>
+  <div class="w-full max-w-xl space-y-4" id="blocksContainer"></div>
 
   <script>
-    // ----- Get IDs from URL query (in correct order) -----
     const urlParams = new URLSearchParams(window.location.search);
     const ids = [
-      urlParams.get("farmer"),      // Farmer first
-      urlParams.get("processor"),   // Processor second
-      urlParams.get("labtester"),   // Lab Tester third
-      urlParams.get("manufacturer") // Manufacturer last
+      urlParams.get("farmer"),
+      urlParams.get("processor"),
+      urlParams.get("labtester"),
+      urlParams.get("manufacturer")
     ];
     const labels = ["Farmer", "Processor", "Lab Tester", "Manufacturer"];
     const container = document.getElementById("blocksContainer");
 
-    // ----- Map display label to role key in data -----
     const roleKeyMap = {
       Farmer: "farmer",
       Processor: "processor",
@@ -36,26 +31,29 @@
       Manufacturer: "manufacturer"
     };
 
-    // ----- Define fields per role -----
     const roleFields = {
-      farmer: [
-        "FbatchID","Fid","TypeOfHerb","HarvestedBy","Quantity","Location","Timestamp","District","Photos","Status","ApprovedBy"
-      ],
-      processor: [
-        "PbatchID","Pid","LinkedFarmerBatchID","ProcessingStep","WeightGivenByFarmer","WeightBeforeProc","WeightAfterProcessing",
-        "Parameters","Location","LocationAccuracy","District","Timestamp","Photos","Status","ApprovedBy"
-      ],
-      "lab-testers": [
-        "LbatchID","LabID","LinkedBatchID","TestType","TestResults","DNASequence","PassFailStatus",
-        "CertificateFile","Location","LocationAccuracy","District","Timestamp","Photos","Status","ApprovedBy"
-      ],
-      manufacturer: [
-        "MbatchID","ManufacturerID","LinkedLabBatchID","ProductName","ProductForm","Ingredients","PackagingInfo",
-        "WeightFinal","Location","District","Timestamp","Photos","Status","ApprovedBy"
-      ]
+      farmer: ["FbatchID","Fid","TypeOfHerb","HarvestedBy","Quantity","Location","Timestamp","District","Photos","Status","ApprovedBy"],
+      processor: ["PbatchID","Pid","LinkedFarmerBatchID","ProcessingStep","WeightGivenByFarmer","WeightBeforeProc","WeightAfterProcessing",
+                  "Parameters","Location","LocationAccuracy","District","Timestamp","Photos","Status","ApprovedBy"],
+      "lab-testers": ["LbatchID","LabID","LinkedBatchID","TestType","TestResults","DNASequence","PassFailStatus",
+                       "CertificateFile","Location","LocationAccuracy","District","Timestamp","Photos","Status","ApprovedBy"],
+      manufacturer: ["MbatchID","ManufacturerID","LinkedLabBatchID","ProductName","ProductForm","Ingredients","PackagingInfo",
+                     "WeightFinal","Location","District","Timestamp","Photos","Status","ApprovedBy"]
     };
 
-    // ----- Fetch block from server -----
+    const friendlyNames = {
+      FbatchID:"Farmer Batch ID", Fid:"Farmer ID", TypeOfHerb:"Herb Type", HarvestedBy:"Harvested By", Quantity:"Quantity (kg)",
+      Location:"Location (lat,long)", Timestamp:"Harvested On", District:"District", Photos:"Photos", Status:"Status", ApprovedBy:"Approved By",
+      PbatchID:"Processor Batch ID", Pid:"Processor ID", LinkedFarmerBatchID:"Linked Farmer Batch ID", ProcessingStep:"Processing Step",
+      WeightGivenByFarmer:"Weight Given By Farmer", WeightBeforeProc:"Weight Before Processing", WeightAfterProcessing:"Weight After Processing",
+      Parameters:"Parameters", LocationAccuracy:"Location Accuracy",
+      LbatchID:"Lab Batch ID", LabID:"Lab ID", LinkedBatchID:"Linked Batch ID", TestType:"Test Type", TestResults:"Test Results",
+      DNASequence:"DNA Sequence", PassFailStatus:"Pass/Fail Status", CertificateFile:"Certificate File",
+      MbatchID:"Manufacturer Batch ID", ManufacturerID:"Manufacturer ID", LinkedLabBatchID:"Linked Lab Batch ID",
+      ProductName:"Product Name", ProductForm:"Product Form", Ingredients:"Ingredients", PackagingInfo:"Packaging Info",
+      WeightFinal:"Final Weight"
+    };
+
     async function fetchBlock(id) {
       try {
         const res = await fetch(`http://localhost:3000/block/${id}`);
@@ -66,12 +64,10 @@
       }
     }
 
-    // ----- Create card UI -----
     function createBlockUI(label, block, role) {
       const card = document.createElement("div");
       card.className = "bg-white shadow-md rounded-lg p-4 cursor-pointer transition hover:shadow-lg";
 
-      // Header
       const header = document.createElement("div");
       header.className = "flex justify-between items-center";
       const title = document.createElement("h2");
@@ -80,32 +76,29 @@
       const toggleIcon = document.createElement("span");
       toggleIcon.innerText = "+";
       toggleIcon.className = "text-xl font-bold transition-transform";
-
       header.appendChild(title);
       header.appendChild(toggleIcon);
       card.appendChild(header);
 
-      // Content
       const content = document.createElement("div");
       content.className = "mt-2 text-sm text-gray-700 hidden space-y-1";
 
-      if (block.error) {
+      if(block.error){
         content.innerHTML = `<p class="text-red-500">${block.error}</p>`;
       } else {
         const fields = roleFields[role];
         fields.forEach(f => {
-          if (block.data[f] !== undefined) {
+          if(block.data[f] !== undefined){
+            const displayName = friendlyNames[f] || f;
             const p = document.createElement("p");
-            p.innerHTML = `<span class="font-semibold">${f}:</span> ${block.data[f]}`;
+            p.innerHTML = `<span class="font-semibold">${displayName}:</span> ${block.data[f]}`;
             content.appendChild(p);
           }
         });
       }
 
       card.appendChild(content);
-
-      // Toggle expand/collapse
-      card.addEventListener("click", () => {
+      card.addEventListener("click", ()=> {
         content.classList.toggle("hidden");
         toggleIcon.innerText = content.classList.contains("hidden") ? "+" : "−";
       });
@@ -113,13 +106,18 @@
       container.appendChild(card);
     }
 
-    // ----- Main: fetch and show all blocks in correct order -----
-    ids.forEach(async (id, idx) => {
-      if (!id) return;
-      const block = await fetchBlock(id);
-      const roleKey = roleKeyMap[labels[idx]];
-      createBlockUI(labels[idx], block, roleKey);
-    });
+    // ----- Sequentially fetch and display blocks to maintain order -----
+    async function displayBlocksInOrder() {
+      for(let i=0; i<ids.length; i++){
+        const id = ids[i];
+        if(!id) continue;
+        const block = await fetchBlock(id);
+        const roleKey = roleKeyMap[labels[i]];
+        createBlockUI(labels[i], block, roleKey);
+      }
+    }
+
+    displayBlocksInOrder();
   </script>
 </body>
 </html>
