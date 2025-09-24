@@ -3,32 +3,59 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Blockchain Data Viewer</title>
+  <title>Blockchain Supply Chain Data</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-50 min-h-screen flex flex-col items-center justify-start p-4">
+<body class="bg-gray-50 min-h-screen flex flex-col items-center p-4">
   <!-- Heading -->
   <h1 class="text-2xl md:text-3xl font-bold text-gray-800 mb-6 text-center">
-     Supply Chain Data Powered by Blockchain
+    Blockchain Supply Chain Data
   </h1>
+
   <div class="w-full max-w-xl space-y-4" id="blocksContainer">
     <!-- Blocks will be injected here -->
   </div>
 
   <script>
-    // ----- Helper: Get IDs from URL query params -----
+    // ----- Get IDs from URL query (in correct order) -----
     const urlParams = new URLSearchParams(window.location.search);
     const ids = [
-      urlParams.get("farmer"),
-      urlParams.get("processor"),
-      urlParams.get("labtester"),
-      urlParams.get("manufacturer")
+      urlParams.get("farmer"),      // Farmer first
+      urlParams.get("processor"),   // Processor second
+      urlParams.get("labtester"),   // Lab Tester third
+      urlParams.get("manufacturer") // Manufacturer last
     ];
-
     const labels = ["Farmer", "Processor", "Lab Tester", "Manufacturer"];
     const container = document.getElementById("blocksContainer");
 
-    // ----- Fetch Block Data from Server -----
+    // ----- Map display label to role key in data -----
+    const roleKeyMap = {
+      Farmer: "farmer",
+      Processor: "processor",
+      "Lab Tester": "lab-testers",
+      Manufacturer: "manufacturer"
+    };
+
+    // ----- Define fields per role -----
+    const roleFields = {
+      farmer: [
+        "FbatchID","Fid","TypeOfHerb","HarvestedBy","Quantity","Location","Timestamp","District","Photos","Status","ApprovedBy"
+      ],
+      processor: [
+        "PbatchID","Pid","LinkedFarmerBatchID","ProcessingStep","WeightGivenByFarmer","WeightBeforeProc","WeightAfterProcessing",
+        "Parameters","Location","LocationAccuracy","District","Timestamp","Photos","Status","ApprovedBy"
+      ],
+      "lab-testers": [
+        "LbatchID","LabID","LinkedBatchID","TestType","TestResults","DNASequence","PassFailStatus",
+        "CertificateFile","Location","LocationAccuracy","District","Timestamp","Photos","Status","ApprovedBy"
+      ],
+      manufacturer: [
+        "MbatchID","ManufacturerID","LinkedLabBatchID","ProductName","ProductForm","Ingredients","PackagingInfo",
+        "WeightFinal","Location","District","Timestamp","Photos","Status","ApprovedBy"
+      ]
+    };
+
+    // ----- Fetch block from server -----
     async function fetchBlock(id) {
       try {
         const res = await fetch(`http://localhost:3000/block/${id}`);
@@ -39,8 +66,8 @@
       }
     }
 
-    // ----- Create Expandable Block UI -----
-    function createBlockUI(label, block) {
+    // ----- Create card UI -----
+    function createBlockUI(label, block, role) {
       const card = document.createElement("div");
       card.className = "bg-white shadow-md rounded-lg p-4 cursor-pointer transition hover:shadow-lg";
 
@@ -58,10 +85,23 @@
       header.appendChild(toggleIcon);
       card.appendChild(header);
 
-      // Content (hidden initially)
-      const content = document.createElement("pre");
-      content.className = "mt-2 text-sm text-gray-700 hidden overflow-x-auto";
-      content.innerText = JSON.stringify(block, null, 2);
+      // Content
+      const content = document.createElement("div");
+      content.className = "mt-2 text-sm text-gray-700 hidden space-y-1";
+
+      if (block.error) {
+        content.innerHTML = `<p class="text-red-500">${block.error}</p>`;
+      } else {
+        const fields = roleFields[role];
+        fields.forEach(f => {
+          if (block.data[f] !== undefined) {
+            const p = document.createElement("p");
+            p.innerHTML = `<span class="font-semibold">${f}:</span> ${block.data[f]}`;
+            content.appendChild(p);
+          }
+        });
+      }
+
       card.appendChild(content);
 
       // Toggle expand/collapse
@@ -73,11 +113,12 @@
       container.appendChild(card);
     }
 
-    // ----- Main: fetch and display all blocks -----
+    // ----- Main: fetch and show all blocks in correct order -----
     ids.forEach(async (id, idx) => {
       if (!id) return;
       const block = await fetchBlock(id);
-      createBlockUI(labels[idx], block);
+      const roleKey = roleKeyMap[labels[idx]];
+      createBlockUI(labels[idx], block, roleKey);
     });
   </script>
 </body>
