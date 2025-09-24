@@ -91,7 +91,20 @@
           if(block.data[f] !== undefined){
             const displayName = friendlyNames[f] || f;
             const p = document.createElement("p");
-            p.innerHTML = `<span class="font-semibold">${displayName}:</span> ${block.data[f]}`;
+
+            // Only Location clickable
+            if(f === "Location"){ 
+              const link = document.createElement("a");
+              link.href = `https://www.google.com/maps?q=${block.data[f]}`;
+              link.target = "_blank";
+              link.className = "text-blue-600 underline";
+              link.innerText = block.data[f];
+              p.innerHTML = `<span class="font-semibold">${displayName}:</span> `;
+              p.appendChild(link);
+            } else {
+              p.innerHTML = `<span class="font-semibold">${displayName}:</span> ${block.data[f]}`;
+            }
+
             content.appendChild(p);
           }
         });
@@ -106,7 +119,6 @@
       container.appendChild(card);
     }
 
-    // ----- Sequentially fetch and display blocks to maintain order -----
     async function displayBlocksInOrder() {
       for(let i=0; i<ids.length; i++){
         const id = ids[i];
