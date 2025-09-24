@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blockchain Data Viewer</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 min-h-screen flex items-center justify-center p-4">
+  <div class="w-full max-w-xl space-y-4" id="blocksContainer">
+    <!-- Blocks will be injected here -->
+  </div>
+
+  <script>
+    // ----- Helper: Get IDs from URL query params -----
+    const urlParams = new URLSearchParams(window.location.search);
+    const ids = [
+      urlParams.get("farmer"),
+      urlParams.get("processor"),
+      urlParams.get("labtester"),
+      urlParams.get("manufacturer")
+    ];
+
+    const labels = ["Farmer", "Processor", "Lab Tester", "Manufacturer"];
+    const container = document.getElementById("blocksContainer");
+
+    // ----- Fetch Block Data from Server -----
+    async function fetchBlock(id) {
+      try {
+        const res = await fetch(`http://localhost:3000/block/${id}`);
+        if (!res.ok) throw new Error("Block not found");
+        return await res.json();
+      } catch (err) {
+        return { error: err.message };
+      }
+    }
+
+    // ----- Create Expandable Block UI -----
+    function createBlockUI(label, block) {
+      const card = document.createElement("div");
+      card.className = "bg-white shadow-md rounded-lg p-4 cursor-pointer transition hover:shadow-lg";
+
+      // Header
+      const header = document.createElement("div");
+      header.className = "flex justify-between items-center";
+      const title = document.createElement("h2");
+      title.className = "text-lg font-semibold";
+      title.innerText = label;
+      const toggleIcon = document.createElement("span");
+      toggleIcon.innerText = "+";
+      toggleIcon.className = "text-xl font-bold transition-transform";
+
+      header.appendChild(title);
+      header.appendChild(toggleIcon);
+      card.appendChild(header);
+
+      // Content (hidden initially)
+      const content = document.createElement("pre");
+      content.className = "mt-2 text-sm text-gray-700 hidden overflow-x-auto";
+      content.innerText = JSON.stringify(block, null, 2);
+      card.appendChild(content);
+
+      // Toggle expand/collapse
+      card.addEventListener("click", () => {
+        content.classList.toggle("hidden");
+        toggleIcon.innerText = content.classList.contains("hidden") ? "+" : "−";
+      });
+
+      container.appendChild(card);
+    }
+
+    // ----- Main: fetch and display all blocks -----
+    ids.forEach(async (id, idx) => {
+      if (!id) return;
+      const block = await fetchBlock(id);
+      createBlockUI(labels[idx], block);
+    });
+  </script>
+</body>
+</html>
