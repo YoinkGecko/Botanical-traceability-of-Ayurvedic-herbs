@@ -27,6 +27,7 @@ app.get("/test", (req, res) => {
 // Check if phone number exists
 app.post("/check-phone", (req, res) => {
   const { phone } = req.body;
+  console.log("Received phone:", phone); // <-- add this
 
   if (!phone) {
     return res.status(400).json({ success: false, message: "Phone is required" });
@@ -39,8 +40,10 @@ app.post("/check-phone", (req, res) => {
       return res.status(500).json({ success: false, message: "Database error" });
     }
 
+    console.log("DB query result:", result); // <-- add this
+
     if (result.length > 0) {
-      return res.json({ success: true, exists: true });
+      return res.json({ success: true, exists: true, data: result[0] });
     } else {
       return res.json({ success: true, exists: false });
     }
