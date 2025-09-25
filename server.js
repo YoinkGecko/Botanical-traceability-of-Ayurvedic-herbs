@@ -24,6 +24,29 @@ app.get("/test", (req, res) => {
   res.send("Hello from Express + MySQL!");
 });
 
+// Check if phone number exists
+app.post("/check-phone", (req, res) => {
+  const { phone } = req.body;
+
+  if (!phone) {
+    return res.status(400).json({ success: false, message: "Phone is required" });
+  }
+
+  const sql = "SELECT * FROM farmers WHERE FarmerPhone = ?";
+  db.query(sql, [phone], (err, result) => {
+    if (err) {
+      console.error("❌ MySQL error:", err);
+      return res.status(500).json({ success: false, message: "Database error" });
+    }
+
+    if (result.length > 0) {
+      return res.json({ success: true, exists: true });
+    } else {
+      return res.json({ success: true, exists: false });
+    }
+  });
+});
+
 // ✅ Get admin counts
 app.get("/api/admins/count", async (req, res) => {
   try {
