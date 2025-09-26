@@ -50,6 +50,51 @@ app.post("/check-phone", (req, res) => {
   });
 });
 
+app.post("/add-collection", (req, res) => {
+  console.log("📥 Received body:", req.body);  // debug line
+
+  const {
+    FarmerID,
+    TypeOfHerb,
+    HarvestedBy,
+    Quantity,
+    Location,
+    LocationAccuracy,
+    District,
+    Photos
+  } = req.body;
+
+  if (!FarmerID || !TypeOfHerb || !Quantity) {
+    console.log("❌ Missing fields:", req.body);
+    return res.status(400).json({ success: false, message: "Missing required fields" });
+  }
+
+  const sql = `
+    INSERT INTO farmer_data_collection 
+    (Fid, TypeOfHerb, HarvestedBy, Quantity, Location, LocationAccuracy, District, Photos) 
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+  `;
+
+  db.query(
+    sql,
+    [FarmerID, TypeOfHerb, HarvestedBy, Quantity, Location, LocationAccuracy, District, Photos],
+    (err, result) => {
+      if (err) {
+        console.error("❌ MySQL error:", err.sqlMessage);
+        return res.status(500).json({ success: false, message: "Database error" });
+      }
+
+      console.log("✅ Inserted with ID:", result.insertId);
+
+      res.json({
+        success: true,
+        message: "Collection added successfully",
+        collectionId: result.insertId
+      });
+    }
+  );
+});
+
 // ✅ Get admin counts
 app.get("/api/admins/count", async (req, res) => {
   try {
