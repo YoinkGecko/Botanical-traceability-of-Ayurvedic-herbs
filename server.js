@@ -95,6 +95,36 @@ app.post("/add-collection", (req, res) => {
   );
 });
 
+// Get all collections for a specific farmer
+app.get("/farmer/collections", (req, res) => {
+  const farmerId = req.query.farmerId;
+
+  if (!farmerId) {
+    return res.status(400).json({ error: "FarmerID is required" });
+  }
+
+  const query = `
+    SELECT 
+      FbatchID,
+      Status,
+      TypeOfHerb,
+      Timestamp,
+      ApprovedBy
+    FROM farmer_data_collection
+    WHERE Fid = ?
+    ORDER BY Timestamp DESC
+  `;
+
+  db.query(query, [farmerId], (err, results) => {
+    if (err) {
+      console.error("❌ Error fetching collections:", err);
+      return res.status(500).json({ error: "Database error" });
+    }
+
+    res.json(results);
+  });
+});
+
 // ✅ Get admin counts
 app.get("/api/admins/count", async (req, res) => {
   try {

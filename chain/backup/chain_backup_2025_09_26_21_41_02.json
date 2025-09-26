@@ -515,26 +515,5 @@
     },
     "previousHash": "bd6eb17caa174bcfe0dc6a35a5e1f1d83f70099fd30851ac1b172fe60687f692",
     "hash": "0670b0a0f85b8f69953e156aa036f06de64f7233adf6356c36ba92e994f26de4"
-  },
-  {
-    "index": 25,
-    "timestamp": 1758903118865,
-    "data": {
-      "FbatchID": 38,
-      "Fid": 1,
-      "TypeOfHerb": "hriday",
-      "HarvestedBy": "Manual",
-      "Quantity": "111.00",
-      "Location": "19.0639844, 73.0778109",
-      "LocationAccuracy": "27.53",
-      "Timestamp": "2025-09-26T07:46:38.000Z",
-      "District": "mumbai",
-      "Photos": "hriday",
-      "Status": "APPROVED",
-      "ApprovedBy": 1,
-      "role": "farmers"
-    },
-    "previousHash": "0670b0a0f85b8f69953e156aa036f06de64f7233adf6356c36ba92e994f26de4",
-    "hash": "9d55b5fa6f7f325fd17595b14522eaf8116575a475444f5b7a5135a24b0de14a"
   }
 ]
