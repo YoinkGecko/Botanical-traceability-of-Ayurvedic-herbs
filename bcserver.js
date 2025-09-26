@@ -143,6 +143,38 @@ app.get("/block/:id", (req, res) => {
   res.json(block);
 });
 
+// Fetch by Farmer batch ID
+app.get("/block/fbatch/:fbatchid", (req, res) => {
+  const chain = loadChain();
+  const block = chain.find(b => b.data.FbatchID === parseInt(req.params.fbatchid));
+  if (!block) return res.status(404).send("FbatchID not found!");
+  res.json(block);
+});
+
+// Fetch by Processor ID
+app.get("/block/processor/:pid", (req, res) => {
+  const chain = loadChain();
+  const block = chain.find(b => b.data.PbatchID === parseInt(req.params.pid));
+  if (!block) return res.status(404).send("Processor ID not found!");
+  res.json(block);
+});
+
+// Fetch by Lab Tester ID
+app.get("/block/labtester/:lid", (req, res) => {
+  const chain = loadChain();
+  const block = chain.find(b => b.data.LbatchID === parseInt(req.params.lid));
+  if (!block) return res.status(404).send("Lab Tester ID not found!");
+  res.json(block);
+});
+
+// Fetch by Manufacturer ID
+app.get("/block/manufacturer/:mid", (req, res) => {
+  const chain = loadChain();
+  const block = chain.find(b => b.data.MbatchID === parseInt(req.params.mid));
+  if (!block) return res.status(404).send("Manufacturer ID not found!");
+  res.json(block);
+});
+
 app.get("/chain", (req, res) => res.json(loadChain()));
 
 app.get("/verify", (req, res) => {

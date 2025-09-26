@@ -8,35 +8,33 @@
 </head>
 <body class="bg-gray-50 min-h-screen flex flex-col items-center p-4">
   <h1 class="text-2xl md:text-3xl font-bold text-gray-800 mb-6 text-center">
-     Supply Chain Data powered by Blockchain
+    Supply Chain Data powered by Blockchain
   </h1>
 
   <div class="w-full max-w-xl space-y-4" id="blocksContainer"></div>
 
   <script>
     const urlParams = new URLSearchParams(window.location.search);
-    const ids = [
-      urlParams.get("farmer"),
-      urlParams.get("processor"),
-      urlParams.get("labtester"),
-      urlParams.get("manufacturer")
-    ];
-    const labels = ["Farmer", "Processor", "Lab Tester", "Manufacturer"];
-    const container = document.getElementById("blocksContainer");
-
-    const roleKeyMap = {
-      Farmer: "farmer",
-      Processor: "processor",
-      "Lab Tester": "lab-testers",
-      Manufacturer: "manufacturer"
+    const ids = {
+      farmer: urlParams.get("farmer"),
+      processor: urlParams.get("processor"),
+      labtester: urlParams.get("labtester"),
+      manufacturer: urlParams.get("manufacturer")
     };
+    const labels = {
+      farmer: "Farmer",
+      processor: "Processor",
+      labtester: "Lab Tester",
+      manufacturer: "Manufacturer"
+    };
+    const container = document.getElementById("blocksContainer");
 
     const roleFields = {
       farmer: ["FbatchID","Fid","TypeOfHerb","HarvestedBy","Quantity","Location","Timestamp","District","Photos","Status","ApprovedBy"],
       processor: ["PbatchID","Pid","LinkedFarmerBatchID","ProcessingStep","WeightGivenByFarmer","WeightBeforeProc","WeightAfterProcessing",
                   "Parameters","Location","LocationAccuracy","District","Timestamp","Photos","Status","ApprovedBy"],
-      "lab-testers": ["LbatchID","LabID","LinkedBatchID","TestType","TestResults","DNASequence","PassFailStatus",
-                       "CertificateFile","Location","LocationAccuracy","District","Timestamp","Photos","Status","ApprovedBy"],
+      labtester: ["LbatchID","LabID","LinkedBatchID","TestType","TestResults","DNASequence","PassFailStatus",
+                  "CertificateFile","Location","LocationAccuracy","District","Timestamp","Photos","Status","ApprovedBy"],
       manufacturer: ["MbatchID","ManufacturerID","LinkedLabBatchID","ProductName","ProductForm","Ingredients","PackagingInfo",
                      "WeightFinal","Location","District","Timestamp","Photos","Status","ApprovedBy"]
     };
@@ -54,10 +52,18 @@
       WeightFinal:"Final Weight"
     };
 
-    async function fetchBlock(id) {
+    async function fetchBlock(role, id) {
+      if(!id) return { error: `No ${role} ID provided` };
       try {
-        const res = await fetch(`https://9rp3msd0-3000.inc1.devtunnels.ms/block/${id}`);
-        if (!res.ok) throw new Error("Block not found");
+        let endpoint = "";
+        switch(role) {
+          case "farmer": endpoint = `/block/fbatch/${id}`; break;
+          case "processor": endpoint = `/block/processor/${id}`; break;
+          case "labtester": endpoint = `/block/labtester/${id}`; break;
+          case "manufacturer": endpoint = `/block/manufacturer/${id}`; break;
+        }
+        const res = await fetch(`https://9rp3msd0-3000.inc1.devtunnels.ms${endpoint}`);
+        if(!res.ok) throw new Error(`${labels[role]} ID not found`);
         return await res.json();
       } catch (err) {
         return { error: err.message };
@@ -92,7 +98,6 @@
             const displayName = friendlyNames[f] || f;
             const p = document.createElement("p");
 
-            // Only Location clickable
             if(f === "Location"){ 
               const link = document.createElement("a");
               link.href = `https://www.google.com/maps?q=${block.data[f]}`;
@@ -119,17 +124,14 @@
       container.appendChild(card);
     }
 
-    async function displayBlocksInOrder() {
-      for(let i=0; i<ids.length; i++){
-        const id = ids[i];
-        if(!id) continue;
-        const block = await fetchBlock(id);
-        const roleKey = roleKeyMap[labels[i]];
-        createBlockUI(labels[i], block, roleKey);
+    async function displayBlocks() {
+      for (const role of ["farmer", "processor", "labtester", "manufacturer"]) {
+        const block = await fetchBlock(role, ids[role]);
+        createBlockUI(labels[role], block, role);
       }
     }
 
-    displayBlocksInOrder();
+    displayBlocks();
   </script>
 </body>
 </html>
