@@ -557,26 +557,5 @@
     },
     "previousHash": "9d55b5fa6f7f325fd17595b14522eaf8116575a475444f5b7a5135a24b0de14a",
     "hash": "75a9e55fd4f0bafac97a569fe2580c2dd8bebf9a06700555359f63a17f61031c"
-  },
-  {
-    "index": 27,
-    "timestamp": 1758948933017,
-    "data": {
-      "FbatchID": 47,
-      "Fid": 2,
-      "TypeOfHerb": "Mint",
-      "HarvestedBy": "Manual",
-      "Quantity": "500.00",
-      "Location": "19.0644675, 73.0785677",
-      "LocationAccuracy": "33.81",
-      "Timestamp": "2025-09-27T04:55:09.000Z",
-      "District": "mumbai",
-      "Photos": "img",
-      "Status": "APPROVED",
-      "ApprovedBy": 1,
-      "role": "farmers"
-    },
-    "previousHash": "75a9e55fd4f0bafac97a569fe2580c2dd8bebf9a06700555359f63a17f61031c",
-    "hash": "710180dc6717b394b8b0dba588277c4deae2cc7c3380294d773a3e7db8461f16"
   }
 ]
