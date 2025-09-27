@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF"  android:paddingStart="24dp"
+    android:paddingEnd="24dp"
+    tools:context=".Farmershomepage">
+
+    <LinearLayout
+        android:id="@+id/header_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="40dp"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="32dp"> <TextView
+        android:id="@+id/welcome"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Welcome,"
+        android:textSize="28sp"
+        android:textColor="#1A1A1A"
+        android:textStyle="normal"
+        />
+
+        <TextView
+            android:id="@+id/farmername"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Farmer Name!"
+            android:textSize="28sp"
+            android:textColor="#6200EE"  android:textStyle="bold"
+            android:layout_marginStart="8dp"
+            />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/newcollectionbut"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:text="ADD NEW COLLECTION"
+        android:textSize="17sp"
+        android:textStyle="bold"
+        android:textColor="#FFFFFF"
+        android:backgroundTint="#6200EE"  android:layout_below="@id/header_layout"
+        android:layout_marginTop="0dp"  android:stateListAnimator="@null"
+        android:minHeight="0dp"
+        android:minWidth="0dp"
+        android:elevation="2dp" />
+
+    <TextView
+        android:id="@+id/history_label"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Recent Collections"
+        android:textSize="20sp"
+        android:textColor="#1A1A1A"
+        android:textStyle="bold"
+        android:layout_below="@id/newcollectionbut"
+        android:layout_marginTop="32dp"
+        android:layout_marginBottom="12dp"
+        />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/collectionRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/history_label"
+        android:clipToPadding="false"
+        android:paddingBottom="24dp"  android:layout_marginTop="0dp"
+        />
+</RelativeLayout>

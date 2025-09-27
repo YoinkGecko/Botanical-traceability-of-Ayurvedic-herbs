@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF"  tools:context=".farmernewcollectionpage">
+
+    <TextView
+        android:id="@+id/heading"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:text="New Herb Collection"
+        android:textSize="26sp"
+        android:textColor="#1A1A1A"
+        android:textStyle="bold"
+        android:layout_marginTop="32dp"
+        android:paddingStart="24dp"
+        android:paddingEnd="24dp"
+        android:layout_marginBottom="16dp"
+        />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/heading"
+        android:clipToPadding="false"
+        android:paddingBottom="24dp"
+        >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="24dp"
+            android:paddingEnd="24dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Farmer ID"
+                android:textSize="14sp"
+                android:textColor="#6A6A6A"
+                android:layout_marginTop="8dp" />
+            <EditText
+                android:id="@+id/farmerid"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:hint="ID will auto-populate"
+                android:inputType="none"
+                android:focusable="false"
+                android:clickable="false"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:textColor="#1A1A1A"
+                android:background="@drawable/rounded_readonly_edittext_background" android:layout_marginBottom="16dp"
+                />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Type of Herb *"
+                android:textSize="14sp"
+                android:textColor="#6A6A6A" />
+            <EditText
+                android:id="@+id/typeOfHerb"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:hint="e.g., Lavender, Peppermint"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:background="@drawable/rounded_edittext_background"
+                android:layout_marginBottom="16dp"
+                />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Harvested By *"
+                android:textSize="14sp"
+                android:textColor="#6A6A6A" />
+            <EditText
+                android:id="@+id/harvestedBy"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:hint="Manual or Mechanical"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:background="@drawable/rounded_edittext_background"
+                android:layout_marginBottom="16dp"
+                />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Quantity (in kg) *"
+                android:textSize="14sp"
+                android:textColor="#6A6A6A" />
+            <EditText
+                android:id="@+id/quantity"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:hint="Enter quantity"
+                android:inputType="numberDecimal"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:background="@drawable/rounded_edittext_background"
+                android:layout_marginBottom="16dp"
+                />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Location Details (Auto-Captured)"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="#1A1A1A"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"/>
+
+            <EditText
+                android:id="@+id/location"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:hint="Latitude, Longitude"
+                android:inputType="none"
+                android:focusable="false"
+                android:clickable="false"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:textColor="#1A1A1A"
+                android:background="@drawable/rounded_readonly_edittext_background"
+                android:layout_marginBottom="12dp"
+                />
+
+            <EditText
+                android:id="@+id/locationAccuracy"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:hint="Accuracy (meters)"
+                android:inputType="none"
+                android:focusable="false"
+                android:clickable="false"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:textColor="#1A1A1A"
+                android:background="@drawable/rounded_readonly_edittext_background"
+                android:layout_marginBottom="12dp"
+                />
+
+            <EditText
+                android:id="@+id/district"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:hint="District"
+                android:inputType="none"
+                android:focusable="false"
+                android:clickable="false"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:textColor="#1A1A1A"
+                android:background="@drawable/rounded_readonly_edittext_background"
+                android:layout_marginBottom="24dp"
+                />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Collection Photos"
+                android:textSize="14sp"
+                android:textColor="#6A6A6A" />
+            <EditText
+                android:id="@+id/photos"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:hint="Tap to add photos/media"
+                android:inputType="text"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:background="@drawable/rounded_edittext_background"
+                android:layout_marginBottom="32dp"
+                />
+
+            <Button
+                android:id="@+id/btnAddData"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:text="SUBMIT COLLECTION DATA"
+                android:textSize="17sp"
+                android:textStyle="bold"
+                android:textColor="#FFFFFF"
+                android:backgroundTint="#6200EE"  android:layout_gravity="center"
+                android:layout_marginBottom="40dp"
+                android:stateListAnimator="@null"
+                android:minHeight="0dp"
+                android:minWidth="0dp"
+                />
+
+        </LinearLayout>
+    </ScrollView>
+</RelativeLayout>
