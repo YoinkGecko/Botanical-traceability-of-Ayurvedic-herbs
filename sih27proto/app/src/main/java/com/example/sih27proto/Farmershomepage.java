@@ -100,7 +100,7 @@ public class Farmershomepage extends AppCompatActivity {
 
     private void fetchCollections(String farmerId) {
         // 👇 Yahan apna API URL daal
-        String url = "https://9rp3msd0-5001.inc1.devtunnels.ms/farmer/collections?farmerId=" + farmerId;
+        String url = "https://cgq4646h-5001.inc1.devtunnels.ms/farmer/collections?farmerId=" + farmerId;
 
         Request request = new Request.Builder()
                 .url(url)

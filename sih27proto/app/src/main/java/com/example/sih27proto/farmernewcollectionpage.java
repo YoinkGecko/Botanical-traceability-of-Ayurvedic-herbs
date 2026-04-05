@@ -127,7 +127,7 @@ public class farmernewcollectionpage extends AppCompatActivity {
             RequestBody body = RequestBody.create(json.toString(), JSON);
 
             Request request = new Request.Builder()
-                    .url("https://9rp3msd0-5001.inc1.devtunnels.ms/add-collection")
+                    .url("https://cgq4646h-5001.inc1.devtunnels.ms/add-collection")
                     .post(body)
                     .build();
 

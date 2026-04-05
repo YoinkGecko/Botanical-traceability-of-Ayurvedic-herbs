@@ -11,8 +11,8 @@ app.use(cors()); // allow all origins
 
 // Paths
 // Paths
-const chainFile = "/Users/kartikeyasharma/Desktop/sih_2025/sih27/chain/chain.json";
-const backupDir = "/Users/kartikeyasharma/Desktop/sih_2025/sih27/chain/backup";
+const chainFile = "/Users/kartikeyasharma/Desktop/sih27/chain/chain.json";
+const backupDir = "/Users/kartikeyasharma/Desktop/sih27/chain/backup";
 
 // ----------------- IST Timestamp Helpers -----------------
 function getISTTimestamp() {

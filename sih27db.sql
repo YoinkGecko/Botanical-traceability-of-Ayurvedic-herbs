@@ -14,6 +14,8 @@ CREATE TABLE admins (
     status ENUM('ACTIVE','SUSPENDED') DEFAULT 'ACTIVE' 
 );
 
+select * from admins;
+
 -- ================================
 -- Admin Functions (Audit Log)
 -- ================================
